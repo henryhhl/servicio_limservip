@@ -20,10 +20,10 @@ class UsuarioController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-
+    //comentario
 
     public function inicio() {
-
+        
         try {
 
             $sesion = Auth::guest();
