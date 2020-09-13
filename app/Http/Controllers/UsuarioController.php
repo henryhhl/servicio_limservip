@@ -23,7 +23,7 @@ class UsuarioController extends Controller
 
 
     public function inicio() {
-
+        //comentario
         try {
 
             $sesion = Auth::guest();
