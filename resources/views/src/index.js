@@ -33,6 +33,14 @@ import IndexCliente from './servicio/cliente';
 import CreateCliente from './servicio/cliente/crear';
 import EditarCliente from './servicio/cliente/editar';
 
+import IndexServicio from './servicio/service';
+import CreateServicio from './servicio/service/crear';
+import EditarServicio from './servicio/service/editar';
+
+import IndexPersonal from './administracion/personal';
+import CreatePersonal from './administracion/personal/crear';
+import EditarPersonal from './administracion/personal/editar';
+
 import Reporte from './reporte';
 
 import web from './utils/services';
@@ -81,6 +89,7 @@ export default class Index extends Component {
 
             paginate: {
                 usuario: 1, rol: 1, promocion: 1, cliente: 1,
+                servicio: 1, categoria: 1, personal: 1,
             },
 
             pagination: {
@@ -88,12 +97,18 @@ export default class Index extends Component {
                 rol: pagination_default,
                 promocion: pagination_default,
                 cliente: pagination_default,
+                servicio: pagination_default,
+                categoria: pagination_default,
+                personal: pagination_default,
             },
 
             array_rol: [],
             array_usuario: [],
             array_promocion: [],
             array_cliente: [],
+            array_servicio: [],
+            array_categoria: [],
+            array_personal: [],
             
             menu: {
                 dashboards: '',
@@ -113,6 +128,8 @@ export default class Index extends Component {
                 promocion: '',
                 cliente: '',
                 servicio: '',
+
+                personal: '',
             },
 
         }
@@ -212,6 +229,39 @@ export default class Index extends Component {
         this.state.paginate.cliente = page;
         this.setState({
             array_cliente: data,
+            pagination: this.state.pagination,
+            paginate: this.state.paginate,
+            visible_drawer: false,
+            visitasitio: visitasitio,
+        });
+    }
+    getservicio(data, pagination, page, visitasitio = '') {
+        this.state.pagination.servicio = pagination;
+        this.state.paginate.servicio = page;
+        this.setState({
+            array_servicio: data,
+            pagination: this.state.pagination,
+            paginate: this.state.paginate,
+            visible_drawer: false,
+            visitasitio: visitasitio,
+        });
+    }
+    getcategoria(data, pagination, page, visitasitio = '') {
+        this.state.pagination.categoria = pagination;
+        this.state.paginate.categoria = page;
+        this.setState({
+            array_categoria: data,
+            pagination: this.state.pagination,
+            paginate: this.state.paginate,
+            visible_drawer: false,
+            visitasitio: visitasitio,
+        });
+    }
+    getpersonal(data, pagination, page, visitasitio = '') {
+        this.state.pagination.personal = pagination;
+        this.state.paginate.personal = page;
+        this.setState({
+            array_personal: data,
             pagination: this.state.pagination,
             paginate: this.state.paginate,
             visible_drawer: false,
@@ -368,6 +418,9 @@ export default class Index extends Component {
         this.state.link.usuario = '';
         this.state.link.rol = '';
         this.state.link.promocion = '';
+        this.state.link.cliente = '';
+        this.state.link.personal = '';
+        this.state.link.servicio = '';
         this.state.link.asignar_permiso = '';
 
         if (link == 'home') {
@@ -409,6 +462,10 @@ export default class Index extends Component {
         if (link == 'servicio') {
             this.state.menu.servicio = 'mm-active';
             this.state.link.servicio = 'mm-active';
+        }
+        if (link == 'personal') {
+            this.state.menu.servicio = 'mm-active';
+            this.state.link.personal = 'mm-active';
         }
         this.setState({
             menu: this.state.menu,
@@ -664,6 +721,78 @@ export default class Index extends Component {
                                     <Route exact path={ web.serv_link + '/cliente/editar/:id'} 
                                         render={props => 
                                         <EditarCliente get_link={this.get_link.bind(this)} { ...props} 
+                                            logout={this.onLogout.bind(this)}
+                                            loadingservice={this.loadingservice.bind(this)}
+                                            buttoncolor={this.state.layoutoption.buttoncolor}
+                                        />} 
+                                    />
+
+
+
+                                    <Route exact path={ web.serv_link + '/servicio'} render={props => 
+                                        <IndexServicio { ...props} 
+                                            getservicio={this.getservicio.bind(this)}
+                                            servicio={this.state.array_servicio}
+                                            getcategoria={this.getcategoria.bind(this)}
+                                            categoria={this.state.array_categoria}
+                                            onModalActive={this.onModalActive.bind(this)} { ...props}
+                                            pagination= {this.state.pagination}
+                                            paginate= {this.state.paginate}
+
+                                            get_link={this.get_link.bind(this)}
+                                            logout={this.onLogout.bind(this)}
+
+                                            buttoncolor={this.state.layoutoption.buttoncolor}
+                                            permisos_habilitados={this.state.permisos_habilitados}
+
+                                        />} 
+                                    />
+                                    <Route exact path={ web.serv_link + '/servicio/create'} 
+                                        render={props => 
+                                        <CreateServicio get_link={this.get_link.bind(this)} { ...props} 
+                                            logout={this.onLogout.bind(this)}
+                                            loadingservice={this.loadingservice.bind(this)}
+                                            buttoncolor={this.state.layoutoption.buttoncolor}
+                                        />} 
+                                    />
+                                    <Route exact path={ web.serv_link + '/servicio/editar/:id'} 
+                                        render={props => 
+                                        <EditarServicio get_link={this.get_link.bind(this)} { ...props} 
+                                            logout={this.onLogout.bind(this)}
+                                            loadingservice={this.loadingservice.bind(this)}
+                                            buttoncolor={this.state.layoutoption.buttoncolor}
+                                        />} 
+                                    />
+
+
+
+                                    <Route exact path={ web.serv_link + '/personal'} render={props => 
+                                        <IndexPersonal { ...props} 
+                                            getpersonal={this.getpersonal.bind(this)}
+                                            personal={this.state.array_personal}
+                                            onModalActive={this.onModalActive.bind(this)} { ...props}
+                                            pagination= {this.state.pagination}
+                                            paginate= {this.state.paginate}
+
+                                            get_link={this.get_link.bind(this)}
+                                            logout={this.onLogout.bind(this)}
+
+                                            buttoncolor={this.state.layoutoption.buttoncolor}
+                                            permisos_habilitados={this.state.permisos_habilitados}
+
+                                        />} 
+                                    />
+                                    <Route exact path={ web.serv_link + '/personal/create'} 
+                                        render={props => 
+                                        <CreatePersonal get_link={this.get_link.bind(this)} { ...props} 
+                                            logout={this.onLogout.bind(this)}
+                                            loadingservice={this.loadingservice.bind(this)}
+                                            buttoncolor={this.state.layoutoption.buttoncolor}
+                                        />} 
+                                    />
+                                    <Route exact path={ web.serv_link + '/personal/editar/:id'} 
+                                        render={props => 
+                                        <EditarPersonal get_link={this.get_link.bind(this)} { ...props} 
                                             logout={this.onLogout.bind(this)}
                                             loadingservice={this.loadingservice.bind(this)}
                                             buttoncolor={this.state.layoutoption.buttoncolor}

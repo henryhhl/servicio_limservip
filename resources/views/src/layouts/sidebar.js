@@ -165,6 +165,17 @@ export default class Sidebar extends Component {
                                                 </Link>
                                             </li> : null 
                                         }
+
+                                        { isPermission(this.props.permisos_habilitados, permissions.gestionarpromocion) ?
+                                            <li>
+                                                <Link to={ web.serv_link + '/personal'} onClick={this.props.init} 
+                                                    className={this.props.link_active.personal + ' ' + this.props.sizetext}
+                                                >
+                                                    <i className="metismenu-icon">
+                                                    </i> Personal
+                                                </Link>
+                                            </li> : null 
+                                        }
                                         
                                     </ul>
                                 </li> : null 
@@ -215,6 +226,8 @@ Sidebar.defaultProps = {
         promocion: '',
         cliente: '',
         servicio: '',
+
+        personal: '',
     },
     sidebarcolor: '',
     sizetext: '',

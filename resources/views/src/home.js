@@ -29,7 +29,7 @@ export default class Home extends Component {
     }
     componentDidMount() {
         this.props.get_link('home');
-        this.get_data();
+        //this.get_data();
     }
     generarNumero(numero){
         return (Math.random()*numero).toFixed(0);

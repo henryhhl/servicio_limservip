@@ -84,6 +84,31 @@ Route::post( $servidor . '/cliente/update', 'ClienteController@update');
 Route::post( $servidor . '/cliente/delete', 'ClienteController@destroy');
 
 
+Route::get( $local . '/servicio', 'HomeController@index');
+Route::get( $local . '/servicio/create', 'HomeController@index');
+Route::get( $local . '/servicio/editar/{id}', 'HomeController@index');
+Route::get( $local . '/servicio/show/{id}', 'HomeController@index');
+
+Route::get( $servidor . '/servicio/index', 'ServicioController@index');
+Route::get( $servidor . '/servicio/create', 'ServicioController@create');
+Route::post( $servidor . '/servicio/store', 'ServicioController@store');
+Route::get( $servidor . '/servicio/edit/{id}', 'ServicioController@edit');
+Route::post( $servidor . '/servicio/update', 'ServicioController@update');
+Route::post( $servidor . '/servicio/delete', 'ServicioController@destroy');
+
+
+Route::get( $local . '/personal', 'HomeController@index');
+Route::get( $local . '/personal/create', 'HomeController@index');
+Route::get( $local . '/personal/editar/{id}', 'HomeController@index');
+Route::get( $local . '/personal/show/{id}', 'HomeController@index');
+
+Route::get( $servidor . '/personal/index', 'PersonalController@index');
+Route::get( $servidor . '/personal/create', 'PersonalController@create');
+Route::post( $servidor . '/personal/store', 'PersonalController@store');
+Route::get( $servidor . '/personal/edit/{id}', 'PersonalController@edit');
+Route::post( $servidor . '/personal/update', 'PersonalController@update');
+Route::post( $servidor . '/personal/delete', 'PersonalController@destroy');
+
 
 Route::get( $local . '/promocion', 'HomeController@index');
 Route::get( $local . '/promocion/create', 'HomeController@index');
