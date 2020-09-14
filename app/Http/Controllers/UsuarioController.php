@@ -24,7 +24,7 @@ class UsuarioController extends Controller
     public function api (){
         $user = DB::table('users')->get();
         return response()->json([
-            'users'   => $sesion,
+            'users'   => $user,
         ]);
     }
     public function inicio() {
