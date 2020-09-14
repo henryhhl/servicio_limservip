@@ -193,7 +193,7 @@ class IndexPersonal extends Component {
                                                         { data.email == null ? ' S/Email ' : data.email }
                                                 </td>
                                                 <td>
-                                                { isPermission(this.props.permisos_habilitados, permissions.promocioneditar) ?
+                                                { isPermission(this.props.permisos_habilitados, permissions.personalshow) ?
                                                     <button className={"mb-2 mr-2 btn-hover-shine btn btn-xs btn-" + optionshow }
                                                         onClick={this.onShow.bind(this, data)}
                                                     >

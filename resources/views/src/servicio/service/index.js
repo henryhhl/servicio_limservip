@@ -189,7 +189,7 @@ class IndexServicio extends Component {
                                                                 { '' }
                                                         </td>
                                                         <td>
-                                                        { isPermission(this.props.permisos_habilitados, permissions.promocioneditar) ?
+                                                        { isPermission(this.props.permisos_habilitados, permissions.servicioshow) ?
                                                             <button className={"mb-2 mr-2 btn-hover-shine btn btn-xs btn-" + optionshow }
                                                                 onClick={this.onShow.bind(this, data)}
                                                             >
