@@ -976,7 +976,7 @@ export default class Index extends Component {
                         </div>
                         <div className="avatar-icon-wrapper avatar-icon-xl btn-hover-shine">
                             <div className="avatar-icon rounded logo_img">
-                                <img src={ web.img_servidor + '/img/logo.png'} alt="Avatar 5" />
+                                <img src={ web.img_servidor + '/img/limservip.png'} alt="Avatar 5" />
                             </div>
                         </div>
                     </Drawer>
