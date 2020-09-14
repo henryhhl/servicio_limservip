@@ -15,10 +15,10 @@ class UsuarioMovilController extends Controller
                 ->where( 'usuario', '=', $usuario )
                 ->get();
         if(count($user) == 0){
-            $user = 'error';   
+            $user = [];   
         }else{
             if (!(Hash::check($password, $user[0]->password))){
-                $user = 'error';
+                $user = [];
             }
         }
                
