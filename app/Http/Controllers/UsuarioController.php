@@ -6,8 +6,6 @@ use App\Ajuste;
 use App\GrupoUsuarioDetalle;
 use App\GrupoUsuario;
 use App\User;
-use App\Visitas;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -115,7 +113,6 @@ class UsuarioController extends Controller
             return response()->json([
                 'response' => 1,
                 'usuario'  => $usuario,
-                'visitasitio' => $this->getvisitasitio(5),
             ]);
         } catch(\Exception $th) {
             return response()->json([
@@ -251,7 +248,6 @@ class UsuarioController extends Controller
                     'from'         => $data->firstItem(),
                     'to'           => $data->lastItem(),
                 ],
-                'visitasitio' => $this->getvisitasitio(1),
             ]);
 
         }catch(\Exception $th) {
@@ -266,54 +262,6 @@ class UsuarioController extends Controller
             ]);
         }
     }
-
-    public function getvisitasitio($bandera) {
-
-        $mensaje = '';
-
-        $data = new Visitas();
-        if ($bandera == 1) {
-            $data->usuario = '1';
-        }
-        if ($bandera == 2) {
-            $data->usuariocreate = '1';
-        }
-        if ($bandera == 3) {
-            $data->usuarioedit = '1';
-        }
-        if ($bandera == 4) {
-            $data->usuarioshow = '1';
-        }
-        if ($bandera == 5) {
-            $data->perfil = '1';
-        }
-
-        $mytime = Carbon::now('America/La_paz');
-        $data->fecha = $mytime->toDateString();
-        $data->hora = $mytime->toTimeString();
-
-        $data->save();
-
-        if ($bandera == 1) {
-            $cantidad = sizeof( DB::table('visitas')->whereNotNull('usuario')->get() );
-            return ' LISTADO DE USUARIO: ' . $cantidad;
-        }
-        if ($bandera == 2) {
-            $cantidad = sizeof( DB::table('visitas')->whereNotNull('usuariocreate')->get() );
-            return ' NUEVO USUARIO: ' . $cantidad;
-        }
-        if ($bandera == 3) {
-            $cantidad = sizeof( DB::table('visitas')->whereNotNull('usuarioedit')->get() );
-            return ' EDITAR USUARIO: ' . $cantidad;
-        }
-        if ($bandera == 3) {
-            $cantidad = sizeof( DB::table('visitas')->whereNotNull('usuarioshow')->get() );
-            return ' DETALLE USUARIO: ' . $cantidad;
-        }
-        $cantidad = sizeof( DB::table('visitas')->whereNotNull('perfil')->get() );
-        return ' PERFIL: ' . $cantidad;
-    }
-
     /**
      * Show the form for creating a new resource.
      *
@@ -337,7 +285,6 @@ class UsuarioController extends Controller
             return response()->json([
                 'response'  => 1,
                 'data'      => $data,
-                'visitasitio' => $this->getvisitasitio(2),
             ]);
 
         }catch(\Exception $th) {
@@ -587,7 +534,6 @@ class UsuarioController extends Controller
                 'data' => $data,
                 'rol' => $rol,
                 'array_rol' => $array_rol,
-                'visitasitio' => $this->getvisitasitio(3),
             ]);
 
         }catch(\Exception $th) {

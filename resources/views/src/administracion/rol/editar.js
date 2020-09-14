@@ -62,7 +62,7 @@ class EditarRol extends Component {
                                 usuario: usuario.toUpperCase(),
                             });
                         }
-                        this.props.loadingservice(false, response.data.visitasitio);
+                        this.props.loadingservice(false, '');
                         this.setState({
                             nombre: response.data.data.nombre,
                             descripcion: response.data.data.descripcion == null ? '' : response.data.data.descripcion,

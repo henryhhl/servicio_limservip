@@ -36,7 +36,7 @@ class IndexRol extends Component {
                         return;
                     }
                     if (response.data.response == 1) {
-                        this.props.getrol(response.data.data.data, response.data.pagination, page, response.data.visitasitio);
+                        this.props.getrol(response.data.data.data, response.data.pagination, page, '');
                         return;
                     }
                 }

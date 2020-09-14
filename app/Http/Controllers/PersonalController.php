@@ -201,7 +201,42 @@ class PersonalController extends Controller
      */
     public function show($id)
     {
-        //
+        try {
+
+            $sesion = Auth::guest();
+
+            if ($sesion) {
+                return response()->json([
+                    'response' => -3,
+                    'sesion'   => $sesion,
+                ]);
+            }
+            
+            $data = DB::table('personal as pers')
+                ->leftJoin('users as user', 'pers.idusuario', '=', 'user.id')
+                ->select('pers.id', 'user.nombre', 'user.apellido', 'user.usuario', 'pers.contacto', 'user.password',
+                    'user.imagen', 'user.email', 'user.nacimiento', 'pers.ci', 'pers.ciudad', 'pers.direccion'
+                )
+                ->where('pers.id', '=', $id)
+                ->first();
+
+
+            return response()->json([
+                'response' => 1,
+                'data' => $data,
+            ]);
+
+        }catch(\Exception $th) {
+            return response()->json([
+                'response' => 0,
+                'message' => 'Error al procesar la solicitud',
+                'error' => [
+                    'file'    => $th->getFile(),
+                    'line'    => $th->getLine(),
+                    'message' => $th->getMessage()
+                ]
+            ]);
+        }
     }
 
     /**

@@ -612,18 +612,18 @@ class Header extends Component {
                                         Ajuste
                                 </Link>
                             </li>
-                            <li className="nav-item">
+                            {/* <li className="nav-item">
                                 <a href="#" className="nav-link">
                                     Messages
                                     <div className="ml-auto badge badge-warning">
                                         512
                                     </div>
                                 </a>
-                            </li>
+                            </li> */}
                         </ul>
                     </div>
                 </div>
-                <ul className="nav flex-column">
+                {/* <ul className="nav flex-column">
                     <li className="nav-item-divider nav-item">
                     </li>
                     <li className="nav-item-btn text-center nav-item">
@@ -633,7 +633,7 @@ class Header extends Component {
                             Open Messages
                         </button>
                     </li>
-                </ul>
+                </ul> */}
             </div>
           );
 
@@ -641,7 +641,7 @@ class Header extends Component {
             <div className={"app-header header-shadow " + this.props.headercolor}>
                 <div className="app-header__logo">
                     <div className="logo-src" style={{background: 'none', fontWeight: 'bold',}}>
-                        ROTTERDAM
+                        LIMSERVIP
                     </div>
                     <div className="header__pane ml-auto">
                         <div>

@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\GrupoUsuarioDetalle;
 use App\PermisoDetalle;
 use App\GrupoUsuario;
-use App\Visitas;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -61,7 +60,6 @@ class RolController extends Controller
                     'from'         => $data->firstItem(),
                     'to'           => $data->lastItem(),
                 ],
-                'visitasitio' => $this->getvisitasitio(1),
             ]);
 
         }catch(\Exception $th) {
@@ -75,42 +73,6 @@ class RolController extends Controller
                 ]
             ]);
         }
-    }
-
-    public function getvisitasitio($bandera) {
-
-        $data = new Visitas();
-        if ($bandera == 1) {
-            $data->grupousuario = '1';
-        }
-        if ($bandera == 2) {
-            $data->grupousuariocreate = '1';
-        }
-        if ($bandera == 3) {
-            $data->grupousuarioedit = '1';
-        }
-        if ($bandera == 4) {
-            $data->grupousuarioshow = '1';
-        }
-        $mytime = Carbon::now('America/La_paz');
-        $data->fecha = $mytime->toDateString();
-        $data->hora = $mytime->toTimeString();
-        $data->save();
-
-        if ($bandera == 1) {
-            $cantidad = sizeof( DB::table('visitas')->whereNotNull('grupousuario')->get() );
-            return ' LISTADO DE ROL: ' . $cantidad;
-        }
-        if ($bandera == 2) {
-            $cantidad = sizeof( DB::table('visitas')->whereNotNull('grupousuariocreate')->get() );
-            return ' NUEVO ROL: ' . $cantidad;
-        }
-        if ($bandera == 3) {
-            $cantidad = sizeof( DB::table('visitas')->whereNotNull('grupousuarioedit')->get() );
-            return ' EDITAR ROL: ' . $cantidad;
-        }
-        $cantidad = sizeof( DB::table('visitas')->whereNotNull('grupousuarioshow')->get() );
-        return ' DETALLE ROL: ' . $cantidad;
     }
 
     /**
@@ -145,7 +107,6 @@ class RolController extends Controller
             return response()->json([
                 'response'      => 1,
                 'array_usuario' => $array_usuario,
-                'visitasitio' => $this->getvisitasitio(2),
                 // 'data' => $data,
             ]);
 
@@ -377,8 +338,6 @@ class RolController extends Controller
                 'data'     => $data,
                 'array_usuario' => $array_usuario,
                 'usuario_activo' => $usuario_activo,
-                'visitasitio' => $this->getvisitasitio(3),
-                //'permiso' => $permiso,
             ]);
 
         }catch(\Exception $th) {

@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Ajuste;
-use App\Visitas;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -34,7 +32,6 @@ class AjusteController extends Controller
             return response()->json([
                 'response' => 1,
                 'data' => $data,
-                'visitasitio' => $this->getvisitasitio(),
             ]);
 
         }catch(\Exception $th) {
@@ -48,19 +45,6 @@ class AjusteController extends Controller
                 ],
             ]);
         }
-    }
-
-    public function getvisitasitio() {
-
-        $data = new Visitas();
-        $data->ajuste = '1';
-        $mytime = Carbon::now('America/La_paz');
-        $data->fecha = $mytime->toDateString();
-        $data->hora = $mytime->toTimeString();
-        $data->save();
-
-        $cantidad = sizeof( DB::table('visitas')->whereNotNull('ajuste')->get() );
-        return ' AJUSTE: ' . $cantidad;
     }
 
     public function search_general(Request $request) {

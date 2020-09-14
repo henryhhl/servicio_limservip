@@ -80,6 +80,7 @@ Route::get( $servidor . '/cliente/index', 'ClienteController@index');
 Route::get( $servidor . '/cliente/create', 'ClienteController@create');
 Route::post( $servidor . '/cliente/store', 'ClienteController@store');
 Route::get( $servidor . '/cliente/edit/{id}', 'ClienteController@edit');
+Route::get( $servidor . '/cliente/show/{id}', 'ClienteController@show');
 Route::post( $servidor . '/cliente/update', 'ClienteController@update');
 Route::post( $servidor . '/cliente/delete', 'ClienteController@destroy');
 
@@ -93,8 +94,23 @@ Route::get( $servidor . '/servicio/index', 'ServicioController@index');
 Route::get( $servidor . '/servicio/create', 'ServicioController@create');
 Route::post( $servidor . '/servicio/store', 'ServicioController@store');
 Route::get( $servidor . '/servicio/edit/{id}', 'ServicioController@edit');
+Route::get( $servidor . '/servicio/show/{id}', 'ServicioController@show');
 Route::post( $servidor . '/servicio/update', 'ServicioController@update');
 Route::post( $servidor . '/servicio/delete', 'ServicioController@destroy');
+
+
+Route::get( $local . '/solicitud_pedido', 'HomeController@index');
+Route::get( $local . '/solicitud_pedido/create', 'HomeController@index');
+Route::get( $local . '/solicitud_pedido/editar/{id}', 'HomeController@index');
+Route::get( $local . '/solicitud_pedido/show/{id}', 'HomeController@index');
+
+Route::get( $servidor . '/solicitud/index', 'SolicitudController@index');
+Route::get( $servidor . '/solicitud/create', 'SolicitudController@create');
+Route::post( $servidor . '/solicitud/store', 'SolicitudController@store');
+Route::get( $servidor . '/solicitud/edit/{id}', 'SolicitudController@edit');
+Route::get( $servidor . '/solicitud/show/{id}', 'SolicitudController@show');
+Route::post( $servidor . '/solicitud/update', 'SolicitudController@update');
+Route::post( $servidor . '/solicitud/delete', 'SolicitudController@destroy');
 
 
 Route::get( $local . '/personal', 'HomeController@index');
@@ -106,6 +122,7 @@ Route::get( $servidor . '/personal/index', 'PersonalController@index');
 Route::get( $servidor . '/personal/create', 'PersonalController@create');
 Route::post( $servidor . '/personal/store', 'PersonalController@store');
 Route::get( $servidor . '/personal/edit/{id}', 'PersonalController@edit');
+Route::get( $servidor . '/personal/show/{id}', 'PersonalController@show');
 Route::post( $servidor . '/personal/update', 'PersonalController@update');
 Route::post( $servidor . '/personal/delete', 'PersonalController@destroy');
 

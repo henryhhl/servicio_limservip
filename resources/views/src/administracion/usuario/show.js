@@ -63,7 +63,7 @@ class ShowUsuario extends Component {
                         if (response.data.rol != null) {
                             objeto = response.data.rol;
                         }
-                        this.props.loadingservice(false, response.data.visitasitio);
+                        this.props.loadingservice(false, '');
                         var data = response.data.data;
                         this.setState({
                             array_rol: response.data.array_rol, rol: objeto,

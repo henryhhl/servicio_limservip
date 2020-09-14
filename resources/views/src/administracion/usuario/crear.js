@@ -59,7 +59,7 @@ class CreateUsuario extends Component {
                         return;
                     }
                     if (response.data.response == 1) {
-                        this.props.loadingservice(false, response.data.visitasitio);
+                        this.props.loadingservice(false, '');
                         this.setState({
                             array_rol: response.data.data,
                         });

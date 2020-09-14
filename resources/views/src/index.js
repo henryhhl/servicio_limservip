@@ -32,14 +32,19 @@ import EditarPromocion from './servicio/promocion/editar';
 import IndexCliente from './servicio/cliente';
 import CreateCliente from './servicio/cliente/crear';
 import EditarCliente from './servicio/cliente/editar';
+import ShowCliente from './servicio/cliente/show';
 
 import IndexServicio from './servicio/service';
 import CreateServicio from './servicio/service/crear';
 import EditarServicio from './servicio/service/editar';
+import ShowServicio from './servicio/service/show';
+
+import IndexSolicitud from './servicio/solicitud';
 
 import IndexPersonal from './administracion/personal';
 import CreatePersonal from './administracion/personal/crear';
 import EditarPersonal from './administracion/personal/editar';
+import ShowPersonal from './administracion/personal/show';
 
 import Reporte from './reporte';
 
@@ -89,7 +94,7 @@ export default class Index extends Component {
 
             paginate: {
                 usuario: 1, rol: 1, promocion: 1, cliente: 1,
-                servicio: 1, categoria: 1, personal: 1,
+                servicio: 1, categoria: 1, solicitud: 1, personal: 1,
             },
 
             pagination: {
@@ -99,6 +104,7 @@ export default class Index extends Component {
                 cliente: pagination_default,
                 servicio: pagination_default,
                 categoria: pagination_default,
+                solicitud: pagination_default,
                 personal: pagination_default,
             },
 
@@ -109,6 +115,7 @@ export default class Index extends Component {
             array_servicio: [],
             array_categoria: [],
             array_personal: [],
+            array_solicitud: [],
             
             menu: {
                 dashboards: '',
@@ -128,6 +135,7 @@ export default class Index extends Component {
                 promocion: '',
                 cliente: '',
                 servicio: '',
+                solicitud: '',
 
                 personal: '',
             },
@@ -251,6 +259,17 @@ export default class Index extends Component {
         this.state.paginate.categoria = page;
         this.setState({
             array_categoria: data,
+            pagination: this.state.pagination,
+            paginate: this.state.paginate,
+            visible_drawer: false,
+            visitasitio: visitasitio,
+        });
+    }
+    getsolicitud(data, pagination, page, visitasitio = '') {
+        this.state.pagination.solicitud = pagination;
+        this.state.paginate.solicitud = page;
+        this.setState({
+            array_solicitud: data,
             pagination: this.state.pagination,
             paginate: this.state.paginate,
             visible_drawer: false,
@@ -421,6 +440,7 @@ export default class Index extends Component {
         this.state.link.cliente = '';
         this.state.link.personal = '';
         this.state.link.servicio = '';
+        this.state.link.solicitud = '';
         this.state.link.asignar_permiso = '';
 
         if (link == 'home') {
@@ -460,6 +480,10 @@ export default class Index extends Component {
             this.state.link.cliente = 'mm-active';
         }
         if (link == 'servicio') {
+            this.state.menu.servicio = 'mm-active';
+            this.state.link.servicio = 'mm-active';
+        }
+        if (link == 'solicitud') {
             this.state.menu.servicio = 'mm-active';
             this.state.link.servicio = 'mm-active';
         }
@@ -726,6 +750,14 @@ export default class Index extends Component {
                                             buttoncolor={this.state.layoutoption.buttoncolor}
                                         />} 
                                     />
+                                    <Route exact path={ web.serv_link + '/cliente/show/:id'} 
+                                        render={props => 
+                                        <ShowCliente get_link={this.get_link.bind(this)} { ...props} 
+                                            logout={this.onLogout.bind(this)}
+                                            loadingservice={this.loadingservice.bind(this)}
+                                            buttoncolor={this.state.layoutoption.buttoncolor}
+                                        />} 
+                                    />
 
 
 
@@ -763,6 +795,33 @@ export default class Index extends Component {
                                             buttoncolor={this.state.layoutoption.buttoncolor}
                                         />} 
                                     />
+                                    <Route exact path={ web.serv_link + '/servicio/show/:id'} 
+                                        render={props => 
+                                        <ShowServicio get_link={this.get_link.bind(this)} { ...props} 
+                                            logout={this.onLogout.bind(this)}
+                                            loadingservice={this.loadingservice.bind(this)}
+                                            buttoncolor={this.state.layoutoption.buttoncolor}
+                                        />} 
+                                    />
+
+
+
+                                    <Route exact path={ web.serv_link + '/solicitud_pedido'} render={props => 
+                                        <IndexSolicitud { ...props} 
+                                            getsolicitud={this.getsolicitud.bind(this)}
+                                            solicitud={this.state.array_solicitud}
+                                            onModalActive={this.onModalActive.bind(this)} { ...props}
+                                            pagination= {this.state.pagination}
+                                            paginate= {this.state.paginate}
+
+                                            get_link={this.get_link.bind(this)}
+                                            logout={this.onLogout.bind(this)}
+
+                                            buttoncolor={this.state.layoutoption.buttoncolor}
+                                            permisos_habilitados={this.state.permisos_habilitados}
+
+                                        />} 
+                                    />
 
 
 
@@ -793,6 +852,14 @@ export default class Index extends Component {
                                     <Route exact path={ web.serv_link + '/personal/editar/:id'} 
                                         render={props => 
                                         <EditarPersonal get_link={this.get_link.bind(this)} { ...props} 
+                                            logout={this.onLogout.bind(this)}
+                                            loadingservice={this.loadingservice.bind(this)}
+                                            buttoncolor={this.state.layoutoption.buttoncolor}
+                                        />} 
+                                    />
+                                    <Route exact path={ web.serv_link + '/personal/show/:id'} 
+                                        render={props => 
+                                        <ShowPersonal get_link={this.get_link.bind(this)} { ...props} 
                                             logout={this.onLogout.bind(this)}
                                             loadingservice={this.loadingservice.bind(this)}
                                             buttoncolor={this.state.layoutoption.buttoncolor}
@@ -837,7 +904,6 @@ export default class Index extends Component {
                             </div>
 
                             <Footer footercolor={this.state.layoutoption.footercolor}
-                                visitasitio={this.state.visitasitio} 
                             />
                             
                         </div>
@@ -906,7 +972,7 @@ export default class Index extends Component {
                         <div className='card-body' 
                             style={{ position: 'absolute', top: 80, left: 0, width: '100%', textAlign: 'center', }}
                         >
-                            <h5 className="card-title font-size-lg">taller mecanico rotterdam</h5>
+                            <h5 className="card-title font-size-lg">LIMSERVIP</h5>
                         </div>
                         <div className="avatar-icon-wrapper avatar-icon-xl btn-hover-shine">
                             <div className="avatar-icon rounded logo_img">

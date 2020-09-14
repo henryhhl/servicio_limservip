@@ -233,7 +233,37 @@ class ServicioController extends Controller
      */
     public function show($id)
     {
-        //
+        try {
+
+            $sesion = Auth::guest();
+
+            if ($sesion) {
+                return response()->json([
+                    'response' => -3,
+                    'sesion'   => $sesion,
+                ]);
+            }
+            
+            $data = DB::table('servicio as serv')
+                ->where('serv.id', '=', $id)
+                ->first();
+
+            return response()->json([
+                'response' => 1,
+                'data' => $data,
+            ]);
+
+        }catch(\Exception $th) {
+            return response()->json([
+                'response' => 0,
+                'message' => 'Error al procesar la solicitud',
+                'error' => [
+                    'file'    => $th->getFile(),
+                    'line'    => $th->getLine(),
+                    'message' => $th->getMessage()
+                ]
+            ]);
+        }
     }
 
     /**

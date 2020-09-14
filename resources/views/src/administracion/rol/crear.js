@@ -63,7 +63,7 @@ class CreateRol extends Component {
                                 usuario: usuario.toUpperCase(),
                             });
                         }
-                        this.props.loadingservice(false, response.data.visitasitio);
+                        this.props.loadingservice(false, '');
                         this.setState({
                             // permiso: response.data.data,
                             array_usuario: this.state.array_usuario,

@@ -52,7 +52,7 @@ class Perfil extends Component {
                     return;
                 }
                 if (response.data.response == 1) {
-                    this.props.loadingservice(false, response.data.visitasitio);
+                    this.props.loadingservice(false, '');
                     this.setState({
                         usuario: response.data.usuario,
                         nombre: response.data.usuario.nombre,

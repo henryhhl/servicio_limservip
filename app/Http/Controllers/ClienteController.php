@@ -197,7 +197,42 @@ class ClienteController extends Controller
      */
     public function show($id)
     {
-        //
+        try {
+
+            $sesion = Auth::guest();
+
+            if ($sesion) {
+                return response()->json([
+                    'response' => -3,
+                    'sesion'   => $sesion,
+                ]);
+            }
+            
+            $data = DB::table('cliente as cli')
+                ->leftJoin('users as user', 'cli.idusuario', '=', 'user.id')
+                ->select('cli.id', 'user.nombre', 'user.apellido', 'user.usuario','cli.nit', 'cli.contacto', 
+                    'user.imagen', 'user.email', 'user.password'
+                )
+                ->where('cli.id', '=', $id)
+                ->first();
+
+
+            return response()->json([
+                'response' => 1,
+                'data' => $data,
+            ]);
+
+        }catch(\Exception $th) {
+            return response()->json([
+                'response' => 0,
+                'message' => 'Error al procesar la solicitud',
+                'error' => [
+                    'file'    => $th->getFile(),
+                    'line'    => $th->getLine(),
+                    'message' => $th->getMessage()
+                ]
+            ]);
+        }
     }
 
     /**
@@ -231,7 +266,6 @@ class ClienteController extends Controller
             return response()->json([
                 'response' => 1,
                 'data' => $data,
-                //'visitasitio' => $this->getvisitasitio(3),
             ]);
 
         }catch(\Exception $th) {

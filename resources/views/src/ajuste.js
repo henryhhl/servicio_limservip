@@ -44,7 +44,7 @@ export default class Ajuste extends Component {
                     return;
                 }
                 if (response.data.response == 1) {
-                    this.props.loadingservice(false, response.data.visitasitio);
+                    this.props.loadingservice(false, '');
                     console.log(response.data.data)
                     if (response.data.data != null) {
                         this.setState({

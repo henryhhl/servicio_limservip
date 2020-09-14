@@ -53,7 +53,7 @@ class Asignar_Permiso extends Component {
                                 title: data.nombre.toUpperCase(),
                             });
                         }
-                        this.props.loadingservice(false, response.data.visitasitio);
+                        this.props.loadingservice(false, '');
                         this.setState({ 
                             array_data: this.state.array_data,
                             array_rol: response.data.rol, 

@@ -88,6 +88,10 @@ class IndexPersonal extends Component {
 
         return day + '/' + month + '/' + year;
     }
+    onShow(data, event) {
+        event.preventDefault();
+        this.props.history.push( web.serv_link + '/personal/show/' + data.id);
+    }
     onEdit(data, event) {
         event.preventDefault();
         this.props.history.push( web.serv_link + '/personal/editar/' + data.id);
@@ -114,6 +118,7 @@ class IndexPersonal extends Component {
     }
     render() {
         var color = this.props.buttoncolor == '' ? 'outline-focus' : this.props.buttoncolor;
+        var optionshow = this.props.buttoncolor == '' ? 'success' : 'outline-' + this.props.buttoncolor;
         var optioneditar = this.props.buttoncolor == '' ? 'primary' : 'outline-' + this.props.buttoncolor;
         var optiondelete = this.props.buttoncolor == '' ? 'danger' : 'outline-' + this.props.buttoncolor;
         return (
@@ -188,6 +193,13 @@ class IndexPersonal extends Component {
                                                         { data.email == null ? ' S/Email ' : data.email }
                                                 </td>
                                                 <td>
+                                                { isPermission(this.props.permisos_habilitados, permissions.promocioneditar) ?
+                                                    <button className={"mb-2 mr-2 btn-hover-shine btn btn-xs btn-" + optionshow }
+                                                        onClick={this.onShow.bind(this, data)}
+                                                    >
+                                                        <i className='fa fa-eye'></i>
+                                                    </button> : null 
+                                                }
                                                 { isPermission(this.props.permisos_habilitados, permissions.promocioneditar) ?
                                                     <button className={"mb-2 mr-2 btn-hover-shine btn btn-xs btn-" + optioneditar }
                                                         onClick={this.onEdit.bind(this, data)}
