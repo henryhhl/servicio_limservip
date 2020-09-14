@@ -22,7 +22,7 @@ class UsuarioMovilController extends Controller
             }
         }
                
-        return response()->json([
+        return response()->json_encode([
             'data'   => $user
         ]);
     }
