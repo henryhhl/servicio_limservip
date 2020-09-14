@@ -143,7 +143,7 @@ class IndexServicio extends Component {
                             </div>      
                         </div>
                         <div className="btn-actions-pane-right text-capitalize mb-4">
-                            { isPermission(this.props.permisos_habilitados, permissions.promocioncreate) ?
+                            { isPermission(this.props.permisos_habilitados, permissions.serviciocreate) ?
                                 <button className={"btn-wide btn-outline-2x mr-md-2 btn btn-sm btn-" + color }
                                     onClick={this.onAdd.bind(this)}
                                 >
@@ -196,14 +196,14 @@ class IndexServicio extends Component {
                                                                 <i className='fa fa-eye'></i>
                                                             </button> : null 
                                                         }
-                                                        { isPermission(this.props.permisos_habilitados, permissions.promocioneditar) ?
+                                                        { isPermission(this.props.permisos_habilitados, permissions.servicioeditar) ?
                                                             <button className={"mb-2 mr-2 btn-hover-shine btn btn-xs btn-" + optioneditar }
                                                                 onClick={this.onEdit.bind(this, data)}
                                                             >
                                                                 <i className='fa fa-edit'></i>
                                                             </button> : null 
                                                         }
-                                                        { isPermission(this.props.permisos_habilitados, permissions.promociondelete) ?
+                                                        { isPermission(this.props.permisos_habilitados, permissions.serviciodelete) ?
                                                             <button className={"mb-2 mr-2 btn-hover-shine btn btn-xs btn-" + optiondelete}
                                                                 onClick={this.onDelete.bind(this, data)}
                                                             >

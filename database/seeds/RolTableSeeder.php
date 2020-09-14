@@ -33,13 +33,29 @@ class RolTableSeeder extends Seeder
                 'hora'         => $mytime->toTimeString(),
             ], //1
             [
-                'nombre'       => 'VENDEDOR',
-                'descripcion'  => 'Encargado de realizar el ventas y servicios del sistema.',
+                'nombre'       => 'SUPERVISOR',
+                'descripcion'  => 'Encargado de asignar los trabajos a las solicitudes.',
                 'estado'       => 'A',
                 'delete'       => 'A',
                 'fecha'        => $mytime->toDateString(),
                 'hora'         => $mytime->toTimeString(),
             ], //2
+            [
+                'nombre'       => 'CLIENTE',
+                'descripcion'  => 'Persona externa a la empresa.',
+                'estado'       => 'A',
+                'delete'       => 'A',
+                'fecha'        => $mytime->toDateString(),
+                'hora'         => $mytime->toTimeString(),
+            ], //3
+            [
+                'nombre'       => 'PERSONAL DE LIMPIEZA',
+                'descripcion'  => 'Encargado de realizar los trabajos.',
+                'estado'       => 'A',
+                'delete'       => 'A',
+                'fecha'        => $mytime->toDateString(),
+                'hora'         => $mytime->toTimeString(),
+            ], //4
         ];
     }
 

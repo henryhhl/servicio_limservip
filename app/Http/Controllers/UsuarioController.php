@@ -18,8 +18,7 @@ class UsuarioController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    //comentario
-
+    //comentario  2
     public function inicio() {
         
         try {

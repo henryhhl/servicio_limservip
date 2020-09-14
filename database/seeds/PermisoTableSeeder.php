@@ -20,250 +20,142 @@ class PermisoTableSeeder extends Seeder
     private function _get_data() {
         return [
             [
-                'nombre'    => 'paquete-seguridad',
+                'nombre'    => 'paquete-personal',
             ], //1
 
             [
-                'nombre'    => 'gestionar-usuario',
+                'nombre'    => 'gestionar-personal',
             ], //2
 
             [
-                'nombre'    => 'crear-usuario',
+                'nombre'    => 'crear-personal',
             ], //3
             [
-                'nombre'    => 'editar-usuario',
+                'nombre'    => 'editar-personal',
             ], //4
             [
-                'nombre'    => 'delete-usuario',
+                'nombre'    => 'delete-personal',
             ], //5
             [
-                'nombre'    => 'show-usuario',
-            ], //5
-
-
-            [
-                'nombre'    => 'gestionar-rol',
+                'nombre'    => 'show-personal',
             ], //6
+
+
             [
-                'nombre'    => 'crear-rol',
+                'nombre'    => 'asignar-trabajo',
             ], //7
             [
-                'nombre'    => 'editar-rol',
+                'nombre'    => 'crear-trabajo',
             ], //8
             [
-                'nombre'    => 'delete-rol',
+                'nombre'    => 'show-trabajo',
             ], //9
             [
-                'nombre'    => 'show-rol',
-            ], //5
-
-
-            [
-                'nombre'    => 'asignar-permiso',
-            ], //9
-
-
-
-            [
-                'nombre'    => 'paquete-servicio',
+                'nombre'    => 'visualizar-seguimiento',
             ], //10
-
-
             [
-                'nombre'    => 'gestionar-servicio',
+                'nombre'    => 'show-seguimiento',
             ], //11
+
+
             [
-                'nombre'    => 'crear-servicio',
+                'nombre'    => 'paquete-solicitud-servicio',
             ], //12
-            [
-                'nombre'    => 'editar-servicio',
-            ], //13
-            [
-                'nombre'    => 'delete-servicio',
-            ], //14
-            [
-                'nombre'    => 'show-servicio',
-            ], //14
 
-            [
-                'nombre'    => 'crear-articulo',
-            ], //32
-            [
-                'nombre'    => 'editar-articulo',
-            ], //33
-            [
-                'nombre'    => 'delete-articulo',
-            ], //34
-            [
-                'nombre'    => 'show-articulo',
-            ], //14
-
-            [
-                'nombre'    => 'crear-categoria',
-            ], //32
-            [
-                'nombre'    => 'editar-categoria',
-            ], //33
-            [
-                'nombre'    => 'delete-categoria',
-            ], //34
-            [
-                'nombre'    => 'show-categoria',
-            ], //14
-
-
-
-            [
-                'nombre'    => 'gestionar-mecanico',
-            ], //15
-            [
-                'nombre'    => 'crear-mecanico',
-            ], //16
-            [
-                'nombre'    => 'editar-mecanico',
-            ], //17
-            [
-                'nombre'    => 'delete-mecanico',
-            ], //18
-            [
-                'nombre'    => 'show-mecanico',
-            ], //14
-
-
-            [
-                'nombre'    => 'gestionar-vehiculo',
-            ], //19
-
-            [
-                'nombre'    => 'crear-vehiculo',
-            ], //20
-            [
-                'nombre'    => 'editar-vehiculo',
-            ], //21
-            [
-                'nombre'    => 'delete-vehiculo',
-            ], //22
-            [
-                'nombre'    => 'show-vehiculo',
-            ], //14
 
 
             [
                 'nombre'    => 'gestionar-cliente',
-            ], //23
+            ], //13
+
             [
                 'nombre'    => 'crear-cliente',
-            ], //24
+            ], //14
             [
                 'nombre'    => 'editar-cliente',
-            ], //25
+            ], //15
             [
                 'nombre'    => 'delete-cliente',
-            ], //26
+            ], //16
             [
                 'nombre'    => 'show-cliente',
-            ], //14
+            ], //17
 
-            
             [
-                'nombre'    => 'crear-vehiculotipo',
+                'nombre'    => 'gestionar-servicio',
+            ], //18
+            [
+                'nombre'    => 'crear-servicio',
+            ], //19
+            [
+                'nombre'    => 'editar-servicio',
+            ], //20
+            [
+                'nombre'    => 'delete-servicio',
+            ], //21
+            [
+                'nombre'    => 'show-servicio',
+            ], //22
+            [
+                'nombre'    => 'gestionar-solicitud',
+            ], //23
+            [
+                'nombre'    => 'crear-solicitud',
+            ], //24
+            [
+                'nombre'    => 'editar-solicitud',
+            ], //25
+            [
+                'nombre'    => 'delete-solicitud',
+            ], //26
+            [
+                'nombre'    => 'show-solicitud',
+            ], //27
+            [
+                'nombre'    => 'administrar-pago',
             ], //28
             [
-                'nombre'    => 'editar-vehiculotipo',
+                'nombre'    => 'show-pago',
             ], //29
             [
-                'nombre'    => 'delete-vehiculotipo',
+                'nombre'    => 'gestionar-rol',
             ], //30
             [
-                'nombre'    => 'show-vehiculotipo',
-            ], //14
-
-
+                'nombre'    => 'crear-rol',
+            ], //31
             [
-                'nombre'    => 'crear-marca',
-            ], //14
+                'nombre'    => 'editar-rol',
+            ], //32
             [
-                'nombre'    => 'editar-marca',
-            ], //14
+                'nombre'    => 'delete-rol',
+            ], //33
             [
-                'nombre'    => 'delete-marca',
-            ], //14
+                'nombre'    => 'show-rol',
+            ], //34
             [
-                'nombre'    => 'show-marca',
-            ], //14
-
+                'nombre'    => 'gestionar-usuario',
+            ], //35
             [
-                'nombre'    => 'crear-modelomarca',
-            ], //14
+                'nombre'    => 'crear-usuario',
+            ], //36
             [
-                'nombre'    => 'editar-modelomarca',
-            ], //14
+                'nombre'    => 'editar-usuario',
+            ], //37
             [
-                'nombre'    => 'delete-modelomarca',
-            ], //14
+                'nombre'    => 'delete-usuario',
+            ], //38
             [
-                'nombre'    => 'show-modelomarca',
-            ], //14
-
+                'nombre'    => 'show-usuario',
+            ], //39
             [
-                'nombre'    => 'crear-color',
-            ], //14
+                'nombre'    => 'paquete-seguridad',
+            ], //40
             [
-                'nombre'    => 'editar-color',
-            ], //14
+                'nombre'    => 'generar-reporte',
+            ], //41
             [
-                'nombre'    => 'delete-color',
-            ], //14
-            [
-                'nombre'    => 'show-color',
-            ], //14
-
-            [
-                'nombre'    => 'crear-year',
-            ], //14
-            [
-                'nombre'    => 'editar-year',
-            ], //14
-            [
-                'nombre'    => 'delete-year',
-            ], //14
-            [
-                'nombre'    => 'show-year',
-            ], //14
-            
-
-            [
-                'nombre'    => 'gestionar-mantenimiento',
-            ], //14
-            [
-                'nombre'    => 'crear-mantenimiento',
-            ], //14
-            [
-                'nombre'    => 'editar-mantenimiento',
-            ], //14
-            [
-                'nombre'    => 'delete-mantenimiento',
-            ], //14
-            [
-                'nombre'    => 'show-mantenimiento',
-            ], //14
-
-
-            [
-                'nombre'    => 'gestionar-promocion',
-            ], //14
-            [
-                'nombre'    => 'crear-promocion',
-            ], //14
-            [
-                'nombre'    => 'editar-promocion',
-            ], //14
-            [
-                'nombre'    => 'delete-promocion',
-            ], //14
-            [
-                'nombre'    => 'show-promocion',
-            ], //14
+                'nombre'    => 'asignar-permiso',
+            ], //42
         ];
     }
 }
