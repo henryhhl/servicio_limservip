@@ -177,7 +177,7 @@ export default class Sidebar extends Component {
                                             </li> : null 
                                         }
 
-                                        { isPermission(this.props.permisos_habilitados, permissions.gestionarpromocion) ?
+                                        { isPermission(this.props.permisos_habilitados, permissions.gestionarpersonal) ?
                                             <li>
                                                 <Link to={ web.serv_link + '/personal'} onClick={this.props.init} 
                                                     className={this.props.link_active.personal + ' ' + this.props.sizetext}
