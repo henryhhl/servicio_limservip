@@ -124,7 +124,7 @@ export default class Sidebar extends Component {
                                 </li> : null 
                             }
 
-                            { isPermission(this.props.permisos_habilitados, permissions.paqueteservicio) ?
+                            { isPermission(this.props.permisos_habilitados, permissions.paquetesolicitudservicio) ?
 
                                 <li className={this.props.menu_active.servicio}>
                                     <a href="#" className={ this.props.sizetext }>
@@ -144,7 +144,7 @@ export default class Sidebar extends Component {
                                             </li> : null 
                                         }
 
-                                        { isPermission(this.props.permisos_habilitados, permissions.gestionarpromocion) ?
+                                        { isPermission(this.props.permisos_habilitados, permissions.gestionarcliente) ?
                                             <li>
                                                 <Link to={ web.serv_link + '/cliente'} onClick={this.props.init} 
                                                     className={this.props.link_active.cliente + ' ' + this.props.sizetext}
@@ -155,7 +155,7 @@ export default class Sidebar extends Component {
                                             </li> : null 
                                         }
 
-                                        { isPermission(this.props.permisos_habilitados, permissions.gestionarpromocion) ?
+                                        { isPermission(this.props.permisos_habilitados, permissions.gestionarservicio) ?
                                             <li>
                                                 <Link to={ web.serv_link + '/servicio'} onClick={this.props.init} 
                                                     className={this.props.link_active.servicio + ' ' + this.props.sizetext}
@@ -166,7 +166,7 @@ export default class Sidebar extends Component {
                                             </li> : null 
                                         }
 
-                                        { isPermission(this.props.permisos_habilitados, permissions.gestionarpromocion) ?
+                                        { isPermission(this.props.permisos_habilitados, permissions.gestionarpersonal) ?
                                             <li>
                                                 <Link to={ web.serv_link + '/personal'} onClick={this.props.init} 
                                                     className={this.props.link_active.personal + ' ' + this.props.sizetext}
@@ -181,7 +181,7 @@ export default class Sidebar extends Component {
                                 </li> : null 
                             }
 
-                        { isPermission(this.props.permisos_habilitados, permissions.paqueteseguridad) ?
+                        { isPermission(this.props.permisos_habilitados, permissions.generarreporte) ?
                             <li>
                                 <Link to={ web.serv_link + '/reporte_general'} onClick={this.props.init} 
                                     className={this.props.link_active.reporte + ' ' + this.props.sizetext}
