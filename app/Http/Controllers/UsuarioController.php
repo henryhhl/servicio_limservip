@@ -21,6 +21,12 @@ class UsuarioController extends Controller
      * @return \Illuminate\Http\Response
      */
     //comentario  2
+    public function api (){
+        $user = DB::table('users')->get();
+        return response()->json([
+            'users'   => $sesion,
+        ]);
+    }
     public function inicio() {
         
         try {
