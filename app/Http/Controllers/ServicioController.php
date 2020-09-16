@@ -14,6 +14,8 @@ class ServicioController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    //1. cual es el proposito del ccmi
+    //2. explicar las caracteristicas esenciales de los nivel del ccmi
 
     public function get_data(Request $request) {
         try {

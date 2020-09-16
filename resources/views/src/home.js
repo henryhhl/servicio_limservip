@@ -12,6 +12,7 @@ import { isPermission } from './utils/functions';
 import permissions from './utils/permisions';
 
 import PropTypes from 'prop-types';
+import C_Input from './components/input';
 
 export default class Home extends Component {
     constructor(props) {
@@ -108,7 +109,7 @@ export default class Home extends Component {
     }
     render() {
 
-        if (!this.state.loading) return null;
+        //if (!this.state.loading) return null;
 
         var today = new Date();
         var dd = today.getDate();
@@ -212,33 +213,24 @@ export default class Home extends Component {
                                 </div>
                             </div>
                         </div>
-                        { isPermission(this.props.permisos_habilitados, permissions.paqueteseguridad) ?
-                            <div className='rows'>
-                                <div className='cards'>
-                                    <div className="forms-groups">
-                                        <Card
-                                            style={{ width: '100%', }}
-                                            title="ESTADISTICA DE SERVICIO DE MANTENIMIENTO"
-                                            bodyStyle={{padding: 0,}}
-                                            headStyle={{fontSize: 14, }}
-                                        >
-                                            <div className='forms-groups'>
-                                                <div className={'cols-lg-6 cols-md-6 cols-sm-12 cols-xs-12'} style={{padding: 2, height: 350}}>
-                                                    <Bar 
-                                                        data={servicio} options={opciones}
-                                                    />
-                                                </div>
-                                                <div className={'cols-lg-6 cols-md-6 cols-sm-12 cols-xs-12'} style={{padding: 2, height: 350}}>
-                                                    <Pie 
-                                                        data={circular} options={opcioncircular}
-                                                    />
-                                                </div>
-                                            </div>
-                                        </Card>
-                                    </div>
+
+
+
+                        <div className="rows">
+                            <div className="cards">
+                                <div className="forms-groups">
+                                    <C_Input 
+                                        onChange={ (event) => console.log(event) }
+                                        // onPressEnter={ () => console.log(3) }
+                                        value={'wwdwdhi'}
+                                        textarea={true}
+                                    />
                                 </div>
-                            </div> : null 
-                        }
+                            </div>
+                        </div>
+
+
+
                     </div>
                 </div>
             </div>
