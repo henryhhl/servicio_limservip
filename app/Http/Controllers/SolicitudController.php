@@ -107,7 +107,38 @@ class SolicitudController extends Controller
      */
     public function create()
     {
-        //
+        try {
+
+            $sesion = Auth::guest();
+
+            if ($sesion) {
+                return response()->json([
+                    'response' => -3,
+                    'sesion'   => $sesion,
+                ]);
+            }
+
+            $nro = DB::table('solicitud')
+                ->where('idusuario', '=', Auth::user()->id)
+                ->whereNull('deleted_at')
+                ->get();
+
+            return response()->json([
+                'response'  => 1,
+                'nro' => sizeof($nro) + 1,
+            ]);
+
+        }catch(\Exception $th) {
+            return response()->json([
+                'response' => 0,
+                'message' => 'Error al procesar la solicitud',
+                'error' => [
+                    'file'    => $th->getFile(),
+                    'line'    => $th->getLine(),
+                    'message' => $th->getMessage()
+                ]
+            ]);
+        }
     }
 
     /**

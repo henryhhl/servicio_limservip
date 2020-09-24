@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\GrupoUsuario;
+use App\GrupoUsuarioDetalle;
 use App\Personal;
 use App\User;
 use Illuminate\Http\Request;
@@ -104,9 +106,13 @@ class PersonalController extends Controller
                 ]);
             }
 
+            $data = GrupoUsuario::select('id', 'nombre', 'descripcion')
+                ->where([ ['estado', '=', 'A'], ['id', '<>', '1'], ['id', '<>', '3'] ])
+                ->get();
+
             return response()->json([
                 'response'  => 1,
-                //'visitasitio' => $this->getvisitasitio(2),
+                'data' => $data,
             ]);
 
         }catch(\Exception $th) {
@@ -145,6 +151,8 @@ class PersonalController extends Controller
             $usuario = $request->input('usuario');
             $password = $request->input('password');
 
+            $idrol = $request->input('idrol');
+
             $value = User::where('usuario', '=', $usuario)->get();
 
             if (sizeof($value) > 0) {
@@ -172,6 +180,12 @@ class PersonalController extends Controller
             $data->direccion = $direccion;
             $data->contacto = $contacto;
             $data->save();
+
+            $grupousuario = new GrupoUsuarioDetalle();
+            $grupousuario->idrol = $idrol;
+            $grupousuario->idusuario = $user->id;
+            $grupousuario->estado = 'A';
+            $grupousuario->save();
 
             DB::commit();
 
@@ -261,16 +275,28 @@ class PersonalController extends Controller
             $data = DB::table('personal as pers')
                 ->leftJoin('users as user', 'pers.idusuario', '=', 'user.id')
                 ->select('pers.id', 'user.nombre', 'user.apellido', 'user.usuario', 'pers.contacto', 'user.password',
-                    'user.imagen', 'user.email', 'user.nacimiento', 'pers.ci', 'pers.ciudad', 'pers.direccion'
+                    'user.imagen', 'user.email', 'user.nacimiento', 'pers.ci', 'pers.ciudad', 'pers.direccion', 'user.id as idusuario'
                 )
                 ->where('pers.id', '=', $id)
+                ->first();
+
+            $array_rol = GrupoUsuario::select('id', 'nombre', 'descripcion')
+                ->where([ ['estado', '=', 'A'], ['id', '<>', '1'], ['id', '<>', '3'] ])
+                ->get();
+
+            $rol = DB::table('detalle_rol as det')
+                ->leftJoin('rol as r', 'det.idrol', '=', 'r.id')
+                ->select('r.id', 'r.nombre', 'r.descripcion')
+                ->where('det.idusuario', '=', $data->idusuario)
+                ->where('det.estado', '=', 'A')
                 ->first();
 
 
             return response()->json([
                 'response' => 1,
                 'data' => $data,
-                //'visitasitio' => $this->getvisitasitio(3),
+                'array_rol' => $array_rol,
+                'rol' => $rol,
             ]);
 
         }catch(\Exception $th) {
@@ -310,6 +336,8 @@ class PersonalController extends Controller
             $usuario = $request->input('usuario');
             $password = $request->input('password');
 
+            $idrol = $request->input('idrol');
+
             $data = Personal::findOrFail($request->input('id'));
             $data->ci = $ci;
             $data->ciudad = $ciudad;
@@ -327,6 +355,26 @@ class PersonalController extends Controller
             }
             $user->password = bcrypt($password);
             $user->update();
+
+            $rol_usuario = DB::table('detalle_rol')
+                ->select('id', 'idrol', 'idusuario', 'estado')
+                ->where('idusuario', '=', $data->idusuario)
+                ->first();
+
+            if ($rol_usuario == null) {
+
+                $detalle = new GrupoUsuarioDetalle();
+                $detalle->idrol = $idrol;
+                $detalle->idusuario = $data->idusuario;
+                $detalle->estado = 'A';
+                $detalle->save();
+
+            }else {
+                $detalle = GrupoUsuarioDetalle::find($rol_usuario->id);
+                $detalle->estado = 'A';
+                $detalle->idrol = $idrol;
+                $detalle->update();
+            }
 
             DB::commit();
 
@@ -354,8 +402,50 @@ class PersonalController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        //
+        try {
+
+            $idpersonal = $request->input('idpersonal');
+
+            $data = Personal::findOrFail($idpersonal);
+
+            $data->estado = 'N';
+            $data->update();
+
+            $data = DB::table('personal as pers')
+                ->leftJoin('users as user', 'pers.idusuario', '=', 'user.id')
+                ->select('pers.id', 'user.nombre', 'user.apellido', 'user.usuario', 'pers.contacto', 
+                    'user.imagen', 'user.email', 'pers.ci', 'pers.ciudad', 'pers.direccion'
+                )
+                ->where('pers.estado', '=', 'A')
+                ->whereNull('pers.deleted_at')
+                ->orderBy('pers.id', 'desc')
+                ->paginate(10);
+
+            return response()->json([
+                'response' => 1,
+                'data' => $data,
+                'pagination' => [
+                    'total'        => $data->total(),
+                    'current_page' => $data->currentPage(),
+                    'per_page'     => $data->perPage(),
+                    'last_page'    => $data->lastPage(),
+                    'from'         => $data->firstItem(),
+                    'to'           => $data->lastItem(),
+                ],
+            ]);
+
+        }catch(\Exception $th) {
+            return response()->json([
+                'response' => 0,
+                'message' => 'Error al procesar la solicitud',
+                'error' => [
+                    'file'    => $th->getFile(),
+                    'line'    => $th->getLine(),
+                    'message' => $th->getMessage()
+                ]
+            ]);
+        }
     }
 }

@@ -473,30 +473,58 @@ class RolController extends Controller
     public function destroy(Request $request)
     {
         try {
+
             DB::beginTransaction();
 
-            $id = $request->input('idrol');
+            $idrol = $request->input('idrol', null);
 
-            $data = GrupoUsuario::find($id);
+            $value = DB::table('detalle_rol')
+                ->where('idrol', '=', $idrol)
+                ->where('estado', '=', 'A')
+                ->get();
+
+            if (sizeof($value) > 0) {
+                DB::rollBack();
+                return response()->json([
+                    'response' => -1,
+                ]);
+            }
+
+            $data = GrupoUsuario::findOrFail($idrol);
             $data->estado = 'N';
             $data->update();
 
             $data = DB::table('rol')
+                ->select('id', 'nombre', 'descripcion', 'estado')
                 ->where('estado', '=', 'A')
                 ->orderBy('id', 'asc')
-                ->get();
+                ->paginate(10);
 
             DB::commit();
 
             return response()->json([
                 'response' => 1,
                 'data' => $data,
+                'pagination' => [
+                    'total'        => $data->total(),
+                    'current_page' => $data->currentPage(),
+                    'per_page'     => $data->perPage(),
+                    'last_page'    => $data->lastPage(),
+                    'from'         => $data->firstItem(),
+                    'to'           => $data->lastItem(),
+                ],
             ]);
 
-        }catch(\Exception $e) {
+        }catch(\Exception $th) {
             DB::rollBack();
             return response()->json([
                 'response' => 0,
+                'message' => 'Error al procesar la solicitud',
+                'error' => [
+                    'file'    => $th->getFile(),
+                    'line'    => $th->getLine(),
+                    'message' => $th->getMessage()
+                ]
             ]);
         }
     }

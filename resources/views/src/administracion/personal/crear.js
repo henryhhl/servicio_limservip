@@ -17,6 +17,14 @@ class CreatePersonal extends Component {
         this.state = {
             auth: false,
             loading: false,
+
+            visible_rol: false,
+            new_create: false,
+            loading_create: false,
+
+            nombre_rol: '',
+            error_nombrerol: '',
+            descripcion_rol: '',
             
             nombre: '',
             apellido: '',
@@ -31,6 +39,10 @@ class CreatePersonal extends Component {
             deleteimg: false,
             usuario: '',
             password: '',
+
+            rol: {id: '', nombre: '',},
+
+            array_rol: [],
             
             error_nombre: '',
             error_apellido: '',
@@ -38,6 +50,7 @@ class CreatePersonal extends Component {
             error_email: '',
             error_usuario: '',
             error_password: '',
+            error_rol: '',
         }
     }
     componentDidMount() {
@@ -54,7 +67,9 @@ class CreatePersonal extends Component {
                     }
                     if (response.data.response == 1) {
                         this.props.loadingservice(false, '');
-                        this.setState({ });
+                        this.setState({
+                            array_rol: response.data.data,
+                        });
                         return;
                     }
                 }
@@ -149,7 +164,7 @@ class CreatePersonal extends Component {
         }
         if ( this.state.nombre.toString().trim().length > 0 && this.state.usuario.toString().trim().length > 0 &&
                 this.state.apellido.toString().trim().length > 0 && this.state.ci.toString().trim().length > 0 &&
-                this.state.password.toString().trim().length > 0
+                this.state.password.toString().trim().length > 0 && this.state.rol.id.toString().trim().length > 0
             ) {
             this.onSesion();
         }else {
@@ -191,6 +206,14 @@ class CreatePersonal extends Component {
                     description: 'PASSWORD REQUERIDO.',
                 });
                 this.setState({ error_password: 'error', });
+                return;
+            }
+            if (this.state.rol.id.toString().trim().length == 0) {
+                notification.error({
+                    message: 'ERROR',
+                    description: 'GRUPO DE USUARIO REQUERIDO.',
+                });
+                this.setState({ error_rol: 'error', });
                 return;
             }
         }
@@ -243,6 +266,8 @@ class CreatePersonal extends Component {
         formdata.append('usuario', this.state.usuario);
         formdata.append('password', this.state.password);
 
+        formdata.append('idrol', this.state.rol.id);
+
         axios(
             {
                 method: 'post',
@@ -286,12 +311,264 @@ class CreatePersonal extends Component {
             });
         } );
     }
+    onSubmitRol() {
+        var formdata = new FormData();
+        formdata.append('nombre', this.state.nombre_rol);
+        formdata.append('descripcion', this.state.descripcion_rol);
+        axios(
+            {
+                method: 'post',
+                url: web.servidor + '/rol/store',
+                data: formdata,
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'enctype' : 'multipart/form-data',
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                }
+            }
+        ).then(
+            response => {
+                if (response.status == 200) {
+                    if (response.data.response == 1) {
+                        notification.success({
+                            message: 'SUCCESS',
+                            description: 'ROL REGISTRADO EXITOSAMENTE.',
+                        });
+                        this.setState({
+                            visible_rol: false, new_create: false,
+                            loading_create: false, nombre_rol: '',
+                            descripcion_rol: '', rol: response.data.data, 
+                            array_rol: response.data.rol,
+                        });
+                        return;
+                    }
+                    if (response.data.response == -1) {
+                        notification.warning({
+                            message: 'ADVERTENCIA',
+                            description: 'NO SE PERMITE ROL REPETIDO.',
+                        });
+                        this.setState({ error_nombrerol: 'error', });
+                    }
+                }
+                this.setState({ loading_create: false, });
+            }
+        ).catch( error => {
+            this.setState({ loading_create: false, });
+            notification.error({
+                message: 'ERROR',
+                description: 'HUBO UN ERROR AL SOLICITAR SERVICIO FAVOR DE REVISAR CONEXION.',
+            });
+            if (error.response.status == 401) {
+                this.setState({ auth: true, });
+            }
+        } );
+    }
+    onSesionRol() {
+        axios.get( web.servidor + '/home/sesion')
+        .then( response => {
+            if (response.data.response == 1) {
+                if (response.data.sesion) {
+                    this.props.logout();
+                    return;
+                }
+                this.onSubmitRol();
+                return;
+            }
+            notification.error({
+                message: 'ERROR',
+                description: 'HUBO UN ERROR AL SOLICITAR SERVICIO. INTENTAR NUEVAMENTE.',
+            });
+            this.setState({ loading_create: false, });
+        } ).catch( error => {
+            this.setState({ loading_create: false, });
+            notification.error({
+                message: 'ERROR',
+                description: 'HUBO UN ERROR AL SOLICITAR SERVICIO FAVOR DE REVISAR CONEXION.',
+            });
+        });
+    }
+    onValidarRol() {
+        if (this.state.nombre_rol.toString().trim().length == 0) {
+            notification.error({
+                message: 'ADVERTENCIA',
+                description: 'CAMPO NOMBRE REQUERIDO',
+            });
+            this.setState({ error_nombrerol: 'error', });
+            return;
+        }
+        this.setState({ loading_create: true, });
+        this.onSesionRol();
+    }
+    style_selected(data, id) {
+        var objecto = { cursor: 'pointer', width: '100%', minWidth: '100%', fontSize: 13,
+            height: 18, lineHeight: 0, textAlign: 'center',
+            background: (data == null) ? 'white' : (data.id == id) ? '#e0f3ff' : 'white',
+            color: (data == null) ? 'rgba(0, 0, 0, 0.65)' : (data.id == id) ? '#3f6ad8' : 'rgba(0, 0, 0, 0.65)',
+            fontWeight: (data == null) ? '400' : (data.id == id) ? 'bold' : '400',
+        }
+        return objecto;
+    }
+    onModalRol() {
+        var rol = this.state.rol;
+        var colorsuccess = this.props.buttoncolor == '' ? 'primary' : this.props.buttoncolor;
+        var colordanger = this.props.buttoncolor == '' ? 'danger' : 'outline-' + this.props.buttoncolor;
+        var colornew = this.props.buttoncolor == '' ? 'secondary' : this.props.buttoncolor;
+        return (
+            <Modal
+                title={(!this.state.new_create) ? <div>&nbsp;</div> : null}
+                visible={this.state.visible_rol}
+                onCancel={() => {
+                    if (!this.state.new_create) {
+                        this.setState({
+                            visible_rol: false, new_create: false,
+                            loading_create: false,
+                        })
+                    }
+                }}
+                bodyStyle={{padding: 0, paddingBottom: 5,}}
+                style={{ top: 100, }} width={500} footer={null}
+            >
+                <div className="forms-groups">
+                    {(!this.state.new_create) ?
+                        <Card title="ROL" 
+                            bodyStyle={{ padding: 0, }} style={{position: 'relative', top: -9,}}
+                            headStyle={{color: 'white', background: '#1890ff', fontSize: 14, fontWeight: 'bold'}}
+                            extra={
+                                <button className={"btn-hover-shine btn btn-" + colornew}
+                                    onClick={() => this.setState({new_create: true,})}
+                                >
+                                    Nuevo
+                                </button>
+                            }
+                        >
+                            <div className='cols-lg-12 cols-md-12 cols-sm-12 cols-xs-12'
+                                style={{
+                                    padding: 0, height: 'auto', maxHeight: 350, overflowY: 'auto',
+                                    overflowX: 'none',
+                                }}
+                            >
+                                {this.state.array_rol.map(
+                                    (data, key) => (
+                                        <div className='cols-lg-12 cols-md-12 cols-sm-12 cols-xs-12'
+                                            style={{ padding: 0, }} key={key}
+                                            onClick={() => this.setState({ rol: data, visible_rol: false, }) }
+                                        >
+                                            <Card.Grid hoverable={false} 
+                                                style={ this.style_selected(rol, data.id) }
+                                            >
+                                                {data.nombre}
+                                            </Card.Grid>
+                                        </div>
+                                    )
+                                )}
+                                <div className='cols-lg-12 cols-md-12 cols-sm-12 cols-xs-12'
+                                    style={{ padding: 0, }}
+                                >
+                                    <Card.Grid hoverable={false} className='gridStyle'
+                                        style={{ cursor: 'pointer', width: '100%' }}>
+                                    </Card.Grid>
+                                </div>
+                            </div>
+                        </Card> : 
+                        <div className="cards">
+                            <div className="card-header-tab card-header">
+                                <div className="card-header-title font-size-lg text-capitalize font-weight-normal">
+                                    <i className="header-icon lnr-charts icon-gradient bg-happy-green"> </i>
+                                        NUEVO ROL
+                                </div>
+                            </div>
+                            {(!this.state.loading_create) ?
+                                <div className='forms-groups'>
+                                    <div className='cols-lg-12 cols-md-12 cols-sm-12 cols-xs-12' style={{ paddingTop: 0, }}>
+                                        <div className='cols-lg-4 cols-md-4 cols-sm-12 cols-xs-12'>
+                                            <div className='inputs-groups'>
+                                                <input type='text'
+                                                    className={`forms-control title_form ${this.props.buttoncolor}`} value={'Nombre'}
+                                                    readOnly
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className='cols-lg-8 cols-md-8 cols-sm-12 cols-xs-12'>
+                                            <div className='inputs-groups'>
+                                                <input type='text' placeholder='INGRESAR NOMBRE'
+                                                    style={{ textAlign: 'left', paddingLeft: 10, paddingRight: 24, }}
+                                                    className={`forms-control ${this.state.error_nombrerol}`}
+                                                    value={this.state.nombre_rol}
+                                                    onChange={ (event) => this.setState({nombre_rol: event.target.value.toUpperCase(), error_nombrerol: '', }) }
+                                                />
+                                                {this.state.nombre_rol.toString().length == 0 ? null : 
+                                                    <i className='fa fa-close delete_icon'
+                                                        onClick={() => this.setState({ nombre_rol: '', }) }
+                                                    ></i> 
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className='cols-lg-12 cols-md-12 cols-sm-12 cols-xs-12 mb-4' style={{ paddingTop: 0, }}>
+                                        <div className='cols-lg-4 cols-md-4 cols-sm-12 cols-xs-12'>
+                                            <div className='inputs-groups'>
+                                                <input type='text'
+                                                    className={`forms-control title_form ${this.props.buttoncolor}`} value={'Descripcion'}
+                                                    readOnly
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className='cols-lg-8 cols-md-8 cols-sm-12 cols-xs-12'>
+                                            <div className='inputs-groups'>
+                                                <input type='text' placeholder='INGRESAR DESCRIPCION'
+                                                    style={{ textAlign: 'left', paddingLeft: 10, paddingRight: 24, }}
+                                                    className={`forms-control`}
+                                                    value={this.state.descripcion_rol}
+                                                    onChange={ (event) => this.setState({descripcion_rol: event.target.value, }) }
+                                                />
+                                                {this.state.descripcion_rol.toString().length == 0 ? null : 
+                                                    <i className='fa fa-close delete_icon'
+                                                        onClick={() => this.setState({ descripcion_rol: '', }) }
+                                                    ></i> 
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className='forms-groups txts-center mt-4'>
+                                        <button className={"mb-2 mr-2 btn-hover-shine btn btn-" + colorsuccess}
+                                            onClick={this.onValidarRol.bind(this)}
+                                        >
+                                            Aceptar
+                                        </button>
+                                        <button className={"mb-2 mr-2 btn-hover-shine btn btn-" + colordanger}
+                                            onClick={() => this.setState({
+                                                new_create: false, nombre_rol: '', error_nombrerol: '', descripcion_rol: '',
+                                            })}
+                                        >
+                                            Cancelar
+                                        </button>
+                                    </div>
+                                </div> : 
+                                <div className='forms-groups'>
+                                    <div className='loaders-wrappers d-flexs justifys-contents-centers aligns-items-centers'>
+                                        <div className='loaders'>
+                                            <div className='balls-scales-multiples'>
+                                                <div></div>
+                                                <div></div>
+                                                <div></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </Modal>
+        );
+    }
     render() {
         var colorsuccess = this.props.buttoncolor == '' ? 'primary' : this.props.buttoncolor;
         var colordanger = this.props.buttoncolor == '' ? 'danger' : 'outline-' + this.props.buttoncolor;
         var colorback = this.props.buttoncolor == '' ? 'focus' : this.props.buttoncolor;
-        return (
+        return ( 
             <div className="rows">
+                {this.onModalRol()}
                 <div className="cards">
                     {(!this.state.loading)?
                         <div className='forms-groups'>
@@ -532,7 +809,6 @@ class CreatePersonal extends Component {
                                     </div>
                                 </div>
                                 <div className="forms-groups">
-                                    <div className='cols-lg-2 cols-md-2 cols-sm-2'></div>
                                     <div className='cols-lg-4 cols-md-4 cols-sm-4 cols-xs-12' style={{paddingTop: 0, }}>
                                         <div className='inputs-groups'>
                                             <input type='text' readOnly
@@ -547,9 +823,15 @@ class CreatePersonal extends Component {
                                             />
                                         </div>
                                     </div>
+                                    <div className='cols-lg-4 cols-md-4 cols-sm-4 cols-xs-12' style={{paddingTop: 0, }}>
+                                        <div className='inputs-groups'>
+                                            <input type='text' readOnly
+                                                className={`forms-control title_form ${this.props.buttoncolor}`} value={'Grupo Usuario'}
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
                                 <div className='forms-groups'>
-                                    <div className='cols-lg-2 cols-md-2 cols-sm-2'></div>
                                     <div className='cols-lg-4 cols-md-4 cols-sm-4 cols-xs-12' style={{paddingTop: 0, }}>
                                         <div className='inputs-groups'>
                                             <input type='text' placeholder='INGRESAR USUARIO...'
@@ -579,6 +861,21 @@ class CreatePersonal extends Component {
                                             {this.state.password.toString().length == 0 ? null : 
                                                 <i className='fa fa-close delete_icon'
                                                     onClick={() => this.setState({ password: '', }) }
+                                                ></i> 
+                                            }
+                                        </div>
+                                    </div>
+                                    <div className='cols-lg-4 cols-md-4 cols-sm-4 cols-xs-12' style={{paddingTop: 0, }}>
+                                        <div className='inputs-groups'>
+                                            <input type='text' placeholder='SELECCIONAR GRUPO USUARIO'
+                                                style={{ textAlign: 'left', paddingLeft: 10, paddingRight: 24, cursor: 'pointer', }}
+                                                className={`forms-control ${this.state.error_rol}`}
+                                                value={this.state.rol.nombre} readOnly
+                                                onClick={ () => this.setState({ visible_rol: true, }) }
+                                            />
+                                            {this.state.rol.id == '' ? null : 
+                                                <i className='fa fa-close delete_icon'
+                                                    onClick={() => this.setState({ rol: {id: '', nombre: '', } }) }
                                                 ></i> 
                                             }
                                         </div>

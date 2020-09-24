@@ -136,7 +136,7 @@ class IndexSolicitud extends Component {
                             </div>      
                         </div>
                         <div className="btn-actions-pane-right text-capitalize mb-4">
-                            { isPermission(this.props.permisos_habilitados, permissions.promocioncreate) ?
+                            { isPermission(this.props.permisos_habilitados, permissions.solicitudcreate) ?
                                 <button className={"btn-wide btn-outline-2x mr-md-2 btn btn-sm btn-" + color }
                                     onClick={this.onAdd.bind(this)}
                                 >

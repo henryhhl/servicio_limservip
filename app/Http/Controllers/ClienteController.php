@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Cliente;
+use App\GrupoUsuario;
+use App\GrupoUsuarioDetalle;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -168,6 +170,12 @@ class ClienteController extends Controller
             $data->nit = $nit;
             $data->contacto = $contacto;
             $data->save();
+
+            $grupousuario = new GrupoUsuarioDetalle();
+            $grupousuario->idrol = 3;
+            $grupousuario->idusuario = $user->id;
+            $grupousuario->estado = 'A';
+            $grupousuario->save();
 
             DB::commit();
 
@@ -342,8 +350,54 @@ class ClienteController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        //
+        try {
+
+            DB::beginTransaction();
+
+            $idcliente = $request->input('idcliente');
+
+            $data = Cliente::findOrFail($idcliente);
+            $data->estado = 'N';
+            $data->update(); // en analisis TT__TT
+
+            $data = DB::table('cliente as cli')
+                ->leftJoin('users as user', 'cli.idusuario', '=', 'user.id')
+                ->select('cli.id', 'user.nombre', 'user.apellido', 'user.usuario','cli.nit', 'cli.contacto', 
+                    'user.imagen', 'user.email'
+                )
+                ->where('cli.estado', '=', 'A')
+                ->whereNull('cli.deleted_at')
+                ->orderBy('cli.id', 'desc')
+                ->paginate(10);
+
+            DB::commit();
+
+            return response()->json([
+                'response' => 1,
+                'data' => $data,
+                'pagination' => [
+                    'total'        => $data->total(),
+                    'current_page' => $data->currentPage(),
+                    'per_page'     => $data->perPage(),
+                    'last_page'    => $data->lastPage(),
+                    'from'         => $data->firstItem(),
+                    'to'           => $data->lastItem(),
+                ],
+            ]);
+
+        }catch(\Exception $th) {
+            DB::rollBack();
+            return response()->json([
+                'response' => 0,
+                'message' => 'Error al procesar la solicitud',
+                'error' => [
+                    'file'    => $th->getFile(),
+                    'line'    => $th->getLine(),
+                    'message' => $th->getMessage()
+                ]
+            ]);
+        }
     }
 }

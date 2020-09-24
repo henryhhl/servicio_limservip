@@ -92,7 +92,7 @@ class IndexRol extends Component {
         this.props.history.push( web.serv_link + '/rol/edit/' + data.id);
     }
     onDelete(data) {
-        this.props.onModalActive(data, 'rol');
+        this.props.onModalActive(data, 'grupousuario');
     }
     onChangePagina(page) {
         this.get_data(page, this.state.search);
