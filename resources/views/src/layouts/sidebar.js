@@ -124,25 +124,37 @@ export default class Sidebar extends Component {
                                 </li> : null 
                             }
 
+                            { isPermission(this.props.permisos_habilitados, permissions.paqueteseguridad) ?
+                                <li className={this.props.menu_active.seguridad}>
+                                    <a href="#">
+                                        <i className="fa fa-clone pe-7s-rocket"></i>
+                                            <label className={this.props.sizetext}> ADMINISTRACION </label>
+                                        <i className="metismenu-state-icon pe-7s-angle-down fa fa-angle-double-down"></i>
+                                    </a>
+                                    <ul>
+                                        { isPermission(this.props.permisos_habilitados, permissions.gestionarpersonal) ?
+                                            <li>
+                                                <Link to={ web.serv_link + '/personal'} onClick={this.props.init} 
+                                                    className={this.props.link_active.personal + ' ' + this.props.sizetext}
+                                                >
+                                                    <i className="metismenu-icon">
+                                                    </i> Personal
+                                                </Link>
+                                            </li> : null 
+                                        }
+                                    </ul>
+                                </li> : null 
+                            }
+
                             { isPermission(this.props.permisos_habilitados, permissions.paquetesolicitudservicio) ?
 
                                 <li className={this.props.menu_active.servicio}>
                                     <a href="#" className={ this.props.sizetext }>
                                         <i className="fa fa-clone pe-7s-rocket"></i>
-                                            <label className={this.props.sizetext}> SERVICIO </label>
+                                            <label className={this.props.sizetext}> SOLICITUD DE SERVICIO </label>
                                         <i className="metismenu-state-icon pe-7s-angle-down fa fa-angle-double-down"></i>
                                     </a>
                                     <ul>
-                                        {/* { isPermission(this.props.permisos_habilitados, permissions.gestionarpromocion) ?
-                                            <li>
-                                                <Link to={ web.serv_link + '/promocion'} onClick={this.props.init} 
-                                                    className={this.props.link_active.promocion + ' ' + this.props.sizetext}
-                                                >
-                                                    <i className="metismenu-icon">
-                                                    </i>Promocion
-                                                </Link>
-                                            </li> : null 
-                                        } */}
 
                                         { isPermission(this.props.permisos_habilitados, permissions.gestionarcliente) ?
                                             <li>
@@ -151,6 +163,17 @@ export default class Sidebar extends Component {
                                                 >
                                                     <i className="metismenu-icon">
                                                     </i> Cliente
+                                                </Link>
+                                            </li> : null 
+                                        }
+
+                                        { isPermission(this.props.permisos_habilitados, permissions.gestionarservicio) ?
+                                            <li>
+                                                <Link to={ web.serv_link + '/categoria'} onClick={this.props.init} 
+                                                    className={this.props.link_active.categoria + ' ' + this.props.sizetext}
+                                                >
+                                                    <i className="metismenu-icon">
+                                                    </i> Categoria 
                                                 </Link>
                                             </li> : null 
                                         }
@@ -166,24 +189,13 @@ export default class Sidebar extends Component {
                                             </li> : null 
                                         }
 
-                                        { isPermission(this.props.permisos_habilitados, permissions.gestionarpersonal) ?
+                                        { isPermission(this.props.permisos_habilitados, permissions.gestionarsolicitud) ?
                                             <li>
                                                 <Link to={ web.serv_link + '/solicitud_pedido'} onClick={this.props.init} 
                                                     className={this.props.link_active.solicitud + ' ' + this.props.sizetext}
                                                 >
                                                     <i className="metismenu-icon">
                                                     </i> Solictud Pedido
-                                                </Link>
-                                            </li> : null 
-                                        }
-
-                                        { isPermission(this.props.permisos_habilitados, permissions.gestionarpersonal) ?
-                                            <li>
-                                                <Link to={ web.serv_link + '/personal'} onClick={this.props.init} 
-                                                    className={this.props.link_active.personal + ' ' + this.props.sizetext}
-                                                >
-                                                    <i className="metismenu-icon">
-                                                    </i> Personal
                                                 </Link>
                                             </li> : null 
                                         }
@@ -236,6 +248,7 @@ Sidebar.defaultProps = {
 
         promocion: '',
         cliente: '',
+        categoria: '',
         servicio: '',
         solicitud: '',
 

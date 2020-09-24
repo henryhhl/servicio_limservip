@@ -157,9 +157,11 @@ class ServicioController extends Controller
                 ]);
             }
 
+            $data = DB::table('categoria')->where('estado', '=', 'A')->get();
+
             return response()->json([
                 'response'  => 1,
-                //'visitasitio' => $this->getvisitasitio(2),
+                'data' => $data,
             ]);
 
         }catch(\Exception $th) {
@@ -191,6 +193,8 @@ class ServicioController extends Controller
             $precio = $request->input('precio');
             $foto = $request->input('foto');
 
+            $idcategoria = $request->input('idcategoria');
+
             $value = Servicio::where([ ['nombre', '=', $nombre], ['estado', '=', 'A'] ])->get();
 
             if (sizeof($value) > 0) {
@@ -202,6 +206,7 @@ class ServicioController extends Controller
 
             $data = new Servicio();
             $data->nombre = $nombre;
+            $data->idcategoria = $idcategoria;
             $data->descripcion = $descripcion;
             $data->precio = $precio;
             $data->imagen = $foto;
@@ -247,6 +252,10 @@ class ServicioController extends Controller
             }
             
             $data = DB::table('servicio as serv')
+                ->leftJoin('categoria as cat', 'serv.idcategoria', '=', 'cat.id')
+                ->select('serv.id', 'serv.idcategoria', 'serv.nombre', 'serv.descripcion', 'serv.imagen',
+                    'serv.precio', 'cat.descripcion as categoria'
+                )
                 ->where('serv.id', '=', $id)
                 ->first();
 
@@ -288,14 +297,19 @@ class ServicioController extends Controller
             }
             
             $data = DB::table('servicio as serv')
+                ->leftJoin('categoria as cat', 'serv.idcategoria', '=', 'cat.id')
+                ->select('serv.id', 'serv.idcategoria', 'serv.nombre', 'serv.descripcion', 'serv.imagen',
+                    'serv.precio', 'cat.descripcion as categoria'
+                )
                 ->where('serv.id', '=', $id)
                 ->first();
 
+            $categoria = DB::table('categoria')->where('estado', '=', 'A')->get();
 
             return response()->json([
                 'response' => 1,
                 'data' => $data,
-                //'visitasitio' => $this->getvisitasitio(3),
+                'categoria' => $categoria,
             ]);
 
         }catch(\Exception $th) {
@@ -328,6 +342,8 @@ class ServicioController extends Controller
             $precio = $request->input('precio');
             $foto = $request->input('foto');
 
+            $idcategoria = $request->input('idcategoria');
+
             $data = Servicio::findOrFail($request->input('id'));
 
             if ($data->nombre != $nombre) {
@@ -342,6 +358,7 @@ class ServicioController extends Controller
             }
 
             $data->nombre = $nombre;
+            $data->idcategoria = $idcategoria;
             $data->descripcion = $descripcion;
             $data->precio = $precio;
             if ($foto != null) {
@@ -375,8 +392,115 @@ class ServicioController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        //
+        try {
+
+            DB::beginTransaction();
+
+            $idservicio = $request->input('idservicio');
+
+            $value = DB::table('solicituddetalle')
+                ->where('idservicio', '=', $idservicio)
+                ->where('estado', '=', 'A')
+                ->whereNull('deleted_at')
+                ->get();
+
+            if (sizeof($value) > 0) {
+                DB::rollBack();
+                return response()->json([
+                    'response'  => -1,
+                ]);
+            }
+
+            $data = Servicio::findOrFail($idservicio); //deleted_at o estado ?
+            $data->estado = 'N';
+            $data->update();
+
+            $data = DB::table('servicio as serv')
+                ->where('serv.estado', '=', 'A')
+                ->whereNull('serv.deleted_at')
+                ->orderBy('serv.id', 'desc')
+                ->paginate(10);
+
+            DB::commit();
+
+            return response()->json([
+                'response'  => 1,
+                'data' => $data,
+                'pagination' => [
+                    'total'        => $data->total(),
+                    'current_page' => $data->currentPage(),
+                    'per_page'     => $data->perPage(),
+                    'last_page'    => $data->lastPage(),
+                    'from'         => $data->firstItem(),
+                    'to'           => $data->lastItem(),
+                ],
+            ]);
+
+        }catch(\Exception $th) {
+            DB::rollBack();
+            return response()->json([
+                'response' => 0,
+                'message' => 'Error al procesar la solicitud',
+                'error' => [
+                    'file'    => $th->getFile(),
+                    'line'    => $th->getLine(),
+                    'message' => $th->getMessage()
+                ]
+            ]);
+        }
     }
+
+    public function search_servicio(Request $request)
+    {
+        try {
+
+            $sesion = Auth::guest();
+
+            if ($sesion) {
+                return response()->json([
+                    'response' => -3,
+                    'sesion'   => $sesion,
+                ]);
+            }
+
+            $search = $request->input('search');
+
+            $data = DB::table('servicio as serv')
+                ->where(function ($query) use ($search) {
+                    return $query
+                        ->orWhere('serv.nombre', 'LIKE', '%'.$search.'%');
+                })
+                ->where('serv.estado', '=', 'A')
+                ->whereNull('serv.deleted_at')
+                ->orderBy('serv.id', 'desc')
+                ->paginate(20);
+
+            return response()->json([
+                'response'  => 1,
+                'data' => $data,
+                'pagination' => [
+                    'total'        => $data->total(),
+                    'current_page' => $data->currentPage(),
+                    'per_page'     => $data->perPage(),
+                    'last_page'    => $data->lastPage(),
+                    'from'         => $data->firstItem(),
+                    'to'           => $data->lastItem(),
+                ],
+            ]);
+
+        }catch(\Exception $th) {
+            return response()->json([
+                'response' => 0,
+                'message' => 'Error al procesar la solicitud',
+                'error' => [
+                    'file'    => $th->getFile(),
+                    'line'    => $th->getLine(),
+                    'message' => $th->getMessage()
+                ]
+            ]);
+        }
+    }
+
 }

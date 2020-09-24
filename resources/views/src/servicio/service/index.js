@@ -129,7 +129,7 @@ class IndexServicio extends Component {
                     <div className="card-header-tab card-header mt-4" style={{border: '1px solid transparent'}}>
                         <div className="card-header-title font-size-lg text-capitalize font-weight-normal mb-4">
                             <i className="header-icon lnr-charts icon-gradient bg-happy-green"> </i>
-                                ALMACEN
+                                SERVICIO
                         </div>
                         <div className="app-header-left mb-4 ml-4">
                             <div className={`search-wrapper ${this.state.active_search}`}>
@@ -221,69 +221,6 @@ class IndexServicio extends Component {
                                     <Pagination 
                                         total={this.props.pagination.servicio.total}
                                         current={this.props.paginate.servicio}
-                                        pageSize={10}
-                                        showTotal = {(total, range) => `${range[0]} - ${range[1]} / Total ${total}`}
-                                        style={{ textAlign: 'right', paddingRight: 20, }}
-                                        //size="small"
-                                        onChange={this.onChangePagina.bind(this)}
-                                    />
-                                </div>
-                            </TabPane>
-                            <TabPane style={{width: '100%', maxWidth: '100%'}} tab="CATEGORIA" key="2">
-                                <div className="tabless">
-                                    <table className="tables-respons">
-                                        <thead>
-                                            <tr>
-                                                <td>ID</td>
-                                                <td>Descripcion</td>
-                                                <td>Opcion</td>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {this.props.categoria.map(
-                                                (data, key) => (
-                                                    <tr key={key}>
-                                                        <td>
-                                                            <label className='cols_show'>ID: </label>
-                                                            {data.id}
-                                                        </td>
-                                                        <td>
-                                                            <label className='cols_show'>Descripcion: </label>
-                                                                {data.descripcion} &nbsp;
-                                                        </td>
-                                                        <td>
-                                                        { isPermission(this.props.permisos_habilitados, permissions.promocioneditar) ?
-                                                            <button className={"mb-2 mr-2 btn-hover-shine btn btn-xs btn-" + optioneditar }
-                                                                onClick={this.onShow.bind(this, data)}
-                                                            >
-                                                                <i className='fa fa-eye'></i>
-                                                            </button> : null 
-                                                        }
-                                                        { isPermission(this.props.permisos_habilitados, permissions.promocioneditar) ?
-                                                            <button className={"mb-2 mr-2 btn-hover-shine btn btn-xs btn-" + optioneditar }
-                                                                onClick={this.onEdit.bind(this, data)}
-                                                            >
-                                                                <i className='fa fa-edit'></i>
-                                                            </button> : null 
-                                                        }
-                                                        { isPermission(this.props.permisos_habilitados, permissions.promociondelete) ?
-                                                            <button className={"mb-2 mr-2 btn-hover-shine btn btn-xs btn-" + optiondelete}
-                                                                onClick={this.onDelete.bind(this, data)}
-                                                            >
-                                                                <i className='fa fa-trash'></i>
-                                                            </button> : null 
-                                                        }
-                                                        </td>
-                                                    </tr>
-                                                )
-                                            )}
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div className="cols-lg-12 cols-md-12 cols-sm-12 cols-xs-12 main-card card card-body">
-                                    <Pagination 
-                                        total={this.props.pagination.categoria.total}
-                                        current={this.props.paginate.categoria}
                                         pageSize={10}
                                         showTotal = {(total, range) => `${range[0]} - ${range[1]} / Total ${total}`}
                                         style={{ textAlign: 'right', paddingRight: 20, }}

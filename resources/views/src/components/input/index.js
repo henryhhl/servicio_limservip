@@ -78,6 +78,7 @@ class C_Input extends Component {
                 prefix={this.props.prefix}
                 suffix={this.props.suffix}
                 onPressEnter={this.props.onPressEnter}
+                // className='successs'
             />
         );
     }

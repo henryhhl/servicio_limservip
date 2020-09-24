@@ -34,12 +34,17 @@ import CreateCliente from './servicio/cliente/crear';
 import EditarCliente from './servicio/cliente/editar';
 import ShowCliente from './servicio/cliente/show';
 
+import IndexCategoria from './servicio/categoria';
+import CreateCategoria from './servicio/categoria/crear';
+import EditarCategoria from './servicio/categoria/editar';
+
 import IndexServicio from './servicio/service';
 import CreateServicio from './servicio/service/crear';
 import EditarServicio from './servicio/service/editar';
 import ShowServicio from './servicio/service/show';
 
 import IndexSolicitud from './servicio/solicitud';
+import CreateSolicitud from './servicio/solicitud/crear';
 
 import IndexPersonal from './administracion/personal';
 import CreatePersonal from './administracion/personal/crear';
@@ -134,6 +139,7 @@ export default class Index extends Component {
 
                 promocion: '',
                 cliente: '',
+                categoria: '',
                 servicio: '',
                 solicitud: '',
 
@@ -298,7 +304,7 @@ export default class Index extends Component {
         this.setState({
             loading: true,
         });
-        if (this.state.namedelete == 'rol') {
+        if (this.state.namedelete == 'grupousuario') {
             this.deleterol();
         }
         if (this.state.namedelete == 'usuario') {
@@ -307,14 +313,26 @@ export default class Index extends Component {
         if (this.state.namedelete == 'promocion') {
             this.deletepromocion();
         }
+        if (this.state.namedelete == 'cliente') {
+            this.deletecliente();
+        }
+        if (this.state.namedelete == 'categoria') {
+            this.deletecategoria();
+        }
+        if (this.state.namedelete == 'servicio') {
+            this.deleteservicio();
+        }
+        if (this.state.namedelete == 'personal') {
+            this.deletepersonal();
+        }
     }
-    deleterol() {
+    deleterol(page = 1) {
         var formdata = new FormData();
         formdata.append('idrol', this.state.iddelete);
         axios(
             {
                 method: 'post',
-                url: web.servidor + '/rol/delete',
+                url: web.servidor + '/rol/delete?page=' + page,
                 data: formdata,
                 headers: {
                     'Content-Type': 'multipart/form-data',
@@ -325,17 +343,33 @@ export default class Index extends Component {
         ).then(
             response => {
                 if (response.data.response == 1) {
+                    notification.success({
+                        message: 'SUCCESS',
+                        description: 'EXITO EN ELIMINAR GRUPO USUARIO.',
+                    });
+                    this.state.pagination.rol = response.data.pagination;
+                    this.state.paginate.rol = page;
                     this.setState({
-                        array_rol: response.data.data,
+                        array_rol: response.data.data.data,
+                        pagination: this.state.pagination,
+                        paginate: this.state.paginate,
                     });
                 }
                 if (response.data.response == -1) {
+                    notification.warning({
+                        message: 'WARNING',
+                        description: 'NO SE PUDO ELIMINAR. YA QUE EXISTE EN UN USUARIO ASIGNADO.',
+                    });
                 }
                 this.onCloseModal();
             }
         ).catch(
             error => {
-                console.log(error)
+                notification.error({
+                    message: 'ERROR',
+                    description: 'HUBO PROBLEMA AL REALIZAR LA SOLICITUD.',
+                });
+                this.onCloseModal();
             }
         );
     }
@@ -417,6 +451,194 @@ export default class Index extends Component {
             }
         );
     }
+    deletecategoria(page = 1) {
+        var formdata = new FormData();
+        formdata.append('idcategoria', this.state.iddelete);
+        axios(
+            {
+                method: 'post',
+                url: web.servidor + '/categoria/delete?page=' + page,
+                data: formdata,
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'enctype' : 'multipart/form-data',
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                }
+            }
+        ).then(
+            response => {
+                if (response.data.response == 1) {
+                    notification.success({
+                        message: 'SUCCESS',
+                        description: 'EXITO EN ELIMINAR CATEGORIA.',
+                    });
+                    this.state.pagination.categoria = response.data.pagination;
+                    this.state.paginate.categoria = page;
+                    this.setState({
+                        array_categoria: response.data.data.data,
+                        pagination: this.state.pagination,
+                        paginate: this.state.paginate,
+                    });
+                }
+                if (response.data.response == -1) {
+                    notification.warning({
+                        message: 'WARNING',
+                        description: 'NO SE PUDO ELIMINAR. YA QUE ESTA REGISTRADO EN UN SERVICIO.',
+                    });
+                }
+                this.onCloseModal();
+            }
+        ).catch(
+            error => {
+                notification.error({
+                    message: 'ERROR',
+                    description: 'HUBO PROBLEMA AL REALIZAR LA SOLICITUD.',
+                });
+                this.onCloseModal();
+            }
+        );
+    }
+    deleteservicio(page = 1) {
+        var formdata = new FormData();
+        formdata.append('idservicio', this.state.iddelete);
+        axios(
+            {
+                method: 'post',
+                url: web.servidor + '/servicio/delete?page=' + page,
+                data: formdata,
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'enctype' : 'multipart/form-data',
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                }
+            }
+        ).then(
+            response => {
+                if (response.data.response == 1) {
+                    notification.success({
+                        message: 'SUCCESS',
+                        description: 'EXITO EN ELIMINAR SERVICIO.',
+                    });
+                    this.state.pagination.servicio = response.data.pagination;
+                    this.state.paginate.servicio = page;
+                    this.setState({
+                        array_servicio: response.data.data.data,
+                        pagination: this.state.pagination,
+                        paginate: this.state.paginate,
+                    });
+                }
+                if (response.data.response == -1) {
+                    notification.warning({
+                        message: 'WARNING',
+                        description: 'NO SE PUDO ELIMINAR. YA QUE EXISTE EN UNA SOLICITUD REALIZADA.',
+                    });
+                }
+                this.onCloseModal();
+            }
+        ).catch(
+            error => {
+                notification.error({
+                    message: 'ERROR',
+                    description: 'HUBO PROBLEMA AL REALIZAR LA SOLICITUD.',
+                });
+                this.onCloseModal();
+            }
+        );
+    }
+    deletecliente(page = 1) {
+        var formdata = new FormData();
+        formdata.append('idcliente', this.state.iddelete);
+        axios(
+            {
+                method: 'post',
+                url: web.servidor + '/cliente/delete?page=' + page,
+                data: formdata,
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'enctype' : 'multipart/form-data',
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                }
+            }
+        ).then(
+            response => {
+                if (response.data.response == 1) {
+                    notification.success({
+                        message: 'SUCCESS',
+                        description: 'EXITO EN ELIMINAR CLIENTE.',
+                    });
+                    this.state.pagination.cliente = response.data.pagination;
+                    this.state.paginate.cliente = page;
+                    this.setState({
+                        array_cliente: response.data.data.data,
+                        pagination: this.state.pagination,
+                        paginate: this.state.paginate,
+                    });
+                }
+                if (response.data.response == -1) {
+                    notification.warning({
+                        message: 'WARNING',
+                        description: 'NO SE PUDO ELIMINAR. YA QUE EXISTE EN UNA SOLICITUD REALIZADA.',
+                    });
+                }
+                this.onCloseModal();
+            }
+        ).catch(
+            error => {
+                notification.error({
+                    message: 'ERROR',
+                    description: 'HUBO PROBLEMA AL REALIZAR LA SOLICITUD.',
+                });
+                this.onCloseModal();
+            }
+        );
+    }
+    deletepersonal(page = 1) {
+        var formdata = new FormData();
+        formdata.append('idpersonal', this.state.iddelete);
+        axios(
+            {
+                method: 'post',
+                url: web.servidor + '/personal/delete?page=' + page,
+                data: formdata,
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'enctype' : 'multipart/form-data',
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                }
+            }
+        ).then(
+            response => {
+                if (response.data.response == 1) {
+                    notification.success({
+                        message: 'SUCCESS',
+                        description: 'EXITO EN ELIMINAR PERSONAL.',
+                    });
+                    this.state.pagination.personal = response.data.pagination;
+                    this.state.paginate.personal = page;
+                    this.setState({
+                        array_personal: response.data.data.data,
+                        pagination: this.state.pagination,
+                        paginate: this.state.paginate,
+                    });
+                }
+                if (response.data.response == -1) {
+                    notification.warning({
+                        message: 'WARNING',
+                        description: 'NO SE PUDO ELIMINAR. YA QUE EXISTE EN UNA SOLICITUD REALIZADA.',
+                    });
+                }
+                this.onCloseModal();
+            }
+        ).catch(
+            error => {
+                notification.error({
+                    message: 'ERROR',
+                    description: 'HUBO PROBLEMA AL REALIZAR LA SOLICITUD.',
+                });
+                this.onCloseModal();
+            }
+        );
+    }
     onCloseModal() {
         this.setState({
             visible: false,
@@ -439,6 +661,7 @@ export default class Index extends Component {
         this.state.link.promocion = '';
         this.state.link.cliente = '';
         this.state.link.personal = '';
+        this.state.link.categoria = '';
         this.state.link.servicio = '';
         this.state.link.solicitud = '';
         this.state.link.asignar_permiso = '';
@@ -479,13 +702,17 @@ export default class Index extends Component {
             this.state.menu.servicio = 'mm-active';
             this.state.link.cliente = 'mm-active';
         }
+        if (link == 'categoria') {
+            this.state.menu.servicio = 'mm-active';
+            this.state.link.categoria = 'mm-active';
+        }
         if (link == 'servicio') {
             this.state.menu.servicio = 'mm-active';
             this.state.link.servicio = 'mm-active';
         }
         if (link == 'solicitud') {
             this.state.menu.servicio = 'mm-active';
-            this.state.link.servicio = 'mm-active';
+            this.state.link.solicitud = 'mm-active';
         }
         if (link == 'personal') {
             this.state.menu.servicio = 'mm-active';
@@ -761,6 +988,41 @@ export default class Index extends Component {
 
 
 
+                                    <Route exact path={ web.serv_link + '/categoria'} render={props => 
+                                        <IndexCategoria { ...props} 
+                                            getcategoria={this.getcategoria.bind(this)}
+                                            categoria={this.state.array_categoria}
+                                            onModalActive={this.onModalActive.bind(this)} { ...props}
+                                            pagination= {this.state.pagination}
+                                            paginate= {this.state.paginate}
+
+                                            get_link={this.get_link.bind(this)}
+                                            logout={this.onLogout.bind(this)}
+
+                                            buttoncolor={this.state.layoutoption.buttoncolor}
+                                            permisos_habilitados={this.state.permisos_habilitados}
+
+                                        />} 
+                                    />
+                                    <Route exact path={ web.serv_link + '/categoria/create'} 
+                                        render={props => 
+                                        <CreateCategoria get_link={this.get_link.bind(this)} { ...props} 
+                                            logout={this.onLogout.bind(this)}
+                                            loadingservice={this.loadingservice.bind(this)}
+                                            buttoncolor={this.state.layoutoption.buttoncolor}
+                                        />} 
+                                    />
+                                    <Route exact path={ web.serv_link + '/categoria/editar/:id'} 
+                                        render={props => 
+                                        <EditarCategoria get_link={this.get_link.bind(this)} { ...props} 
+                                            logout={this.onLogout.bind(this)}
+                                            loadingservice={this.loadingservice.bind(this)}
+                                            buttoncolor={this.state.layoutoption.buttoncolor}
+                                        />} 
+                                    />
+
+
+
                                     <Route exact path={ web.serv_link + '/servicio'} render={props => 
                                         <IndexServicio { ...props} 
                                             getservicio={this.getservicio.bind(this)}
@@ -820,6 +1082,14 @@ export default class Index extends Component {
                                             buttoncolor={this.state.layoutoption.buttoncolor}
                                             permisos_habilitados={this.state.permisos_habilitados}
 
+                                        />} 
+                                    />
+                                    <Route exact path={ web.serv_link + '/solicitud_pedido/create'} 
+                                        render={props => 
+                                        <CreateSolicitud get_link={this.get_link.bind(this)} { ...props} 
+                                            logout={this.onLogout.bind(this)}
+                                            loadingservice={this.loadingservice.bind(this)}
+                                            buttoncolor={this.state.layoutoption.buttoncolor}
                                         />} 
                                     />
 

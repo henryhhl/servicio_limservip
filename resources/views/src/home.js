@@ -222,8 +222,8 @@ export default class Home extends Component {
                                     <C_Input 
                                         onChange={ (event) => console.log(event) }
                                         // onPressEnter={ () => console.log(3) }
-                                        value={'wwdwdhi'}
-                                        textarea={true}
+                                        // value={'wwdwdhi'}
+                                        // textarea={true}
                                     />
                                 </div>
                             </div>

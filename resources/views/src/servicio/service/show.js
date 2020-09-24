@@ -23,6 +23,7 @@ class ShowServicio extends Component {
             precio: '',
             descripcion: '',
             imagen: '',
+            categoria: '',
             
         }
     }
@@ -45,6 +46,7 @@ class ShowServicio extends Component {
                             precio: response.data.data.precio,
                             descripcion: response.data.data.descripcion == null ? '' : response.data.data.descripcion,
                             imagen: response.data.data.imagen == null ? '' : response.data.data.imagen,
+                            categoria: response.data.data.categoria == null ? ' - ' : response.data.data.categoria,
                         });
                         return;
                     }
@@ -145,7 +147,7 @@ class ShowServicio extends Component {
                                                                             { this.state.nombre }
                                                                         </div>
                                                                         <div className="widget-subheading">
-                                                                            { ' - ' }
+                                                                            { this.state.categoria }
                                                                         </div>
                                                                     </div>
                                                                     <div className="widget-content-right widget-content-actions">
@@ -183,11 +185,6 @@ class ShowServicio extends Component {
                                                                         <textarea className="widget-subheading" readOnly value={this.state.descripcion} 
                                                                             style={{width: '100%', height: 150, outline: 'none', maxHeight: 300, padding: 5, paddingLeft: 10, }}
                                                                         />
-                                                                    </div>
-                                                                    <div className="widget-content-right widget-content-actions">
-                                                                        <button className="border-0 btn-transition btn btn-outline-success">
-                                                                            <i className="fa fa-check"></i>
-                                                                        </button>
                                                                     </div>
                                                                 </div>
                                                             </div>

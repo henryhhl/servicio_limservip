@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Categoria;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class CategoriaController extends Controller
 {
@@ -11,9 +14,65 @@ class CategoriaController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        try {
+
+            $sesion = Auth::guest();
+
+            if ($sesion) {
+                return response()->json([
+                    'response' => -3,
+                    'sesion'   => $sesion,
+                ]);
+            }
+
+            $search = $request->input('search', null);
+
+            if ($search == null) {
+                $data = DB::table('categoria as cat')
+                    ->select('cat.id', 'cat.descripcion', 'cat.estado')
+                    ->where('cat.estado', '=', 'A')
+                    ->whereNull('cat.deleted_at')
+                    ->orderBy('cat.id', 'desc')
+                    ->paginate(10);
+            }else {
+                $data = DB::table('categoria as cat')
+                    ->select('cat.id', 'cat.descripcion', 'cat.estado')
+                    ->where(function ($query) use ($search) {
+                        return $query
+                            ->orWhere('cat.descripcion', 'LIKE', '%'.$search.'%');
+                    })
+                    ->where('cat.estado', '=', 'A')
+                    ->whereNull('cat.deleted_at')
+                    ->orderBy('cat.id', 'desc')
+                    ->paginate(10);
+            }
+
+            return response()->json([
+                'response' => 1,
+                'data' => $data,
+                'pagination' => [
+                    'total'        => $data->total(),
+                    'current_page' => $data->currentPage(),
+                    'per_page'     => $data->perPage(),
+                    'last_page'    => $data->lastPage(),
+                    'from'         => $data->firstItem(),
+                    'to'           => $data->lastItem(),
+                ],
+            ]);
+
+        }catch(\Exception $th) {
+            return response()->json([
+                'response' => 0,
+                'message' => 'Error al procesar la solicitud',
+                'error' => [
+                    'file'    => $th->getFile(),
+                    'line'    => $th->getLine(),
+                    'message' => $th->getMessage()
+                ]
+            ]);
+        }
     }
 
     /**
@@ -23,7 +82,32 @@ class CategoriaController extends Controller
      */
     public function create()
     {
-        //
+        try {
+
+            $sesion = Auth::guest();
+
+            if ($sesion) {
+                return response()->json([
+                    'response' => -3,
+                    'sesion'   => $sesion,
+                ]);
+            }
+
+            return response()->json([
+                'response'  => 1,
+            ]);
+
+        }catch(\Exception $th) {
+            return response()->json([
+                'response' => 0,
+                'message' => 'Error al procesar la solicitud',
+                'error' => [
+                    'file'    => $th->getFile(),
+                    'line'    => $th->getLine(),
+                    'message' => $th->getMessage()
+                ]
+            ]);
+        }
     }
 
     /**
@@ -34,7 +118,50 @@ class CategoriaController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {
+            DB::beginTransaction();
+
+            $descripcion = $request->input('descripcion');
+
+            $value = Categoria::where('descripcion', '=', $descripcion)->where('estado', '=', 'A')->get();
+
+            if (sizeof($value) > 0) {
+                DB::rollBack();
+                return response()->json([
+                    'response' => -1,
+                ]);
+            }
+
+
+            $data = new Categoria();
+            $data->descripcion = $descripcion;
+            $data->save();
+
+            $categoria = DB::table('categoria')
+                ->where('estado', '=', 'A')
+                ->orderBy('id', 'desc')
+                ->get();
+
+            DB::commit();
+
+            return response()->json([
+                'response'   => 1,
+                'categoria'  => $categoria,
+                'data'  => $data,
+            ]);
+
+        }catch(\Exception $th) {
+            DB::rollBack();
+            return response()->json([
+                'response' => 0,
+                'message' => 'Error al procesar la solicitud',
+                'error' => [
+                    'file'    => $th->getFile(),
+                    'line'    => $th->getLine(),
+                    'message' => $th->getMessage()
+                ]
+            ]);
+        }
     }
 
     /**
@@ -56,7 +183,39 @@ class CategoriaController extends Controller
      */
     public function edit($id)
     {
-        //
+        try {
+
+            $sesion = Auth::guest();
+
+            if ($sesion) {
+                return response()->json([
+                    'response' => -3,
+                    'sesion'   => $sesion,
+                ]);
+            }
+            
+            $data = DB::table('categoria as cat')
+                ->select('cat.id', 'cat.descripcion', 'cat.estado')
+                ->where('cat.id', '=', $id)
+                ->first();
+
+
+            return response()->json([
+                'response' => 1,
+                'data' => $data,
+            ]);
+
+        }catch(\Exception $th) {
+            return response()->json([
+                'response' => 0,
+                'message' => 'Error al procesar la solicitud',
+                'error' => [
+                    'file'    => $th->getFile(),
+                    'line'    => $th->getLine(),
+                    'message' => $th->getMessage()
+                ]
+            ]);
+        }
     }
 
     /**
@@ -66,9 +225,49 @@ class CategoriaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+        try {
+
+            DB::beginTransaction();
+
+            $descripcion = $request->input('descripcion');
+            $idcategoria = $request->input('idcategoria');
+
+            $data = Categoria::findOrFail($idcategoria);
+
+            if ($data->descripcion != $descripcion) {
+                $value = Categoria::where('descripcion', '=', $descripcion)->where('estado', '=', 'A')->get();
+
+                if (sizeof($value) > 0) {
+                    DB::rollBack();
+                    return response()->json([
+                        'response' => -1,
+                    ]);
+                }
+            }
+
+            $data->descripcion = $descripcion;
+            $data->save();
+
+            DB::commit();
+
+            return response()->json([
+                'response'      => 1,
+            ]);
+
+        }catch(\Exception $th) {
+            DB::rollBack();
+            return response()->json([
+                'response' => 0,
+                'message' => 'Error al procesar la solicitud',
+                'error' => [
+                    'file'    => $th->getFile(),
+                    'line'    => $th->getLine(),
+                    'message' => $th->getMessage()
+                ]
+            ]);
+        }
     }
 
     /**
@@ -77,8 +276,46 @@ class CategoriaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        //
+        try {
+
+            $idcategoria = $request->input('idcategoria', null);
+
+            $categoria = Categoria::findOrFail($idcategoria);
+            $categoria->estado = 'N';
+            $categoria->update();
+
+            $data = DB::table('categoria as cat')
+                ->select('cat.id', 'cat.descripcion', 'cat.estado')
+                ->where('cat.estado', '=', 'A')
+                ->whereNull('cat.deleted_at')
+                ->orderBy('cat.id', 'desc')
+                ->paginate(10);
+
+            return response()->json([
+                'response' => 1,
+                'data' => $data,
+                'pagination' => [
+                    'total'        => $data->total(),
+                    'current_page' => $data->currentPage(),
+                    'per_page'     => $data->perPage(),
+                    'last_page'    => $data->lastPage(),
+                    'from'         => $data->firstItem(),
+                    'to'           => $data->lastItem(),
+                ],
+            ]);
+
+        }catch(\Exception $th) {
+            return response()->json([
+                'response' => 0,
+                'message' => 'Error al procesar la solicitud',
+                'error' => [
+                    'file'    => $th->getFile(),
+                    'line'    => $th->getLine(),
+                    'message' => $th->getMessage()
+                ]
+            ]);
+        }
     }
 }

@@ -85,6 +85,21 @@ Route::post( $servidor . '/cliente/update', 'ClienteController@update');
 Route::post( $servidor . '/cliente/delete', 'ClienteController@destroy');
 
 
+
+Route::get( $local . '/categoria', 'HomeController@index');
+Route::get( $local . '/categoria/create', 'HomeController@index');
+Route::get( $local . '/categoria/editar/{id}', 'HomeController@index');
+Route::get( $local . '/categoria/show/{id}', 'HomeController@index');
+
+Route::get( $servidor . '/categoria/index', 'CategoriaController@index');
+Route::get( $servidor . '/categoria/create', 'CategoriaController@create');
+Route::post( $servidor . '/categoria/store', 'CategoriaController@store');
+Route::get( $servidor . '/categoria/edit/{id}', 'CategoriaController@edit');
+Route::get( $servidor . '/categoria/show/{id}', 'CategoriaController@show');
+Route::post( $servidor . '/categoria/update', 'CategoriaController@update');
+Route::post( $servidor . '/categoria/delete', 'CategoriaController@destroy');
+
+
 Route::get( $local . '/servicio', 'HomeController@index');
 Route::get( $local . '/servicio/create', 'HomeController@index');
 Route::get( $local . '/servicio/editar/{id}', 'HomeController@index');
@@ -97,6 +112,8 @@ Route::get( $servidor . '/servicio/edit/{id}', 'ServicioController@edit');
 Route::get( $servidor . '/servicio/show/{id}', 'ServicioController@show');
 Route::post( $servidor . '/servicio/update', 'ServicioController@update');
 Route::post( $servidor . '/servicio/delete', 'ServicioController@destroy');
+
+Route::get( $servidor . '/servicio/search_servicio', 'ServicioController@search_servicio');
 
 
 Route::get( $local . '/solicitud_pedido', 'HomeController@index');

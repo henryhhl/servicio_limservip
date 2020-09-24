@@ -16,6 +16,17 @@ class CreateServicio extends Component {
         this.state = {
             auth: false,
             loading: false,
+
+            visible_categoria: false,
+            new_create: false,
+            loading_create: false,
+
+            nombre_categoria: '',
+            error_nombrecategoria: '',
+
+            categoria: {id: '', descripcion: '',},
+
+            array_categoria: [],
             
             nombre: '',
             apellido: '',
@@ -43,7 +54,9 @@ class CreateServicio extends Component {
                     }
                     if (response.data.response == 1) {
                         this.props.loadingservice(false, '');
-                        this.setState({ });
+                        this.setState({
+                            array_categoria: response.data.data,
+                        });
                         return;
                     }
                 }
@@ -189,6 +202,8 @@ class CreateServicio extends Component {
         formdata.append('imagen', this.state.imagen);
         formdata.append('foto', this.state.foto);
 
+        formdata.append('idcategoria', this.state.categoria.id);
+
         axios(
             {
                 method: 'post',
@@ -202,6 +217,7 @@ class CreateServicio extends Component {
             }
         ).then(
             response => {
+                console.log(response)
                 this.setState({ loading: false, });
                 if (response.data.response == 1) {
                     notification.success({
@@ -225,6 +241,7 @@ class CreateServicio extends Component {
                 });
             }
         ).catch( error => {
+            console.log(error)
             this.setState({ loading: false, });
             notification.error({
                 message: 'ERROR',
@@ -232,12 +249,241 @@ class CreateServicio extends Component {
             });
         } );
     }
+
+
+    onSubmitCategoria() {
+        var formdata = new FormData();
+        formdata.append('descripcion', this.state.nombre_categoria);
+        axios(
+            {
+                method: 'post',
+                url: web.servidor + '/categoria/store',
+                data: formdata,
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'enctype' : 'multipart/form-data',
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                }
+            }
+        ).then(
+            response => {
+                if (response.status == 200) {
+                    if (response.data.response == 1) {
+                        notification.success({
+                            message: 'SUCCESS',
+                            description: 'CATEGORIA REGISTRADO EXITOSAMENTE.',
+                        });
+                        this.setState({
+                            visible_categoria: false, new_create: false,
+                            loading_create: false, nombre_categoria: '',
+                            categoria: response.data.data, 
+                            array_categoria: response.data.categoria,
+                        });
+                        return;
+                    }
+                    if (response.data.response == -1) {
+                        notification.warning({
+                            message: 'ADVERTENCIA',
+                            description: 'NO SE PERMITE DESCRIPCION DE CATEGORIA REPETIDO.',
+                        });
+                        this.setState({ error_nombrecategoria: 'error', });
+                    }
+                }
+                this.setState({ loading_create: false, });
+            }
+        ).catch( error => {
+            this.setState({ loading_create: false, });
+            notification.error({
+                message: 'ERROR',
+                description: 'HUBO UN ERROR AL SOLICITAR SERVICIO FAVOR DE REVISAR CONEXION.',
+            });
+            if (error.response.status == 401) {
+                this.setState({ auth: true, });
+            }
+        } );
+    }
+    onSesionCategoria() {
+        axios.get( web.servidor + '/home/sesion')
+        .then( response => {
+            if (response.data.response == 1) {
+                if (response.data.sesion) {
+                    this.props.logout();
+                    return;
+                }
+                this.onSubmitCategoria();
+                return;
+            }
+            notification.error({
+                message: 'ERROR',
+                description: 'HUBO UN ERROR AL SOLICITAR SERVICIO. INTENTAR NUEVAMENTE.',
+            });
+            this.setState({ loading_create: false, });
+        } ).catch( error => {
+            this.setState({ loading_create: false, });
+            notification.error({
+                message: 'ERROR',
+                description: 'HUBO UN ERROR AL SOLICITAR SERVICIO FAVOR DE REVISAR CONEXION.',
+            });
+        });
+    }
+    onValidarCategoria() {
+        if (this.state.nombre_categoria.toString().trim().length == 0) {
+            notification.error({
+                message: 'ADVERTENCIA',
+                description: 'CAMPO DESCRIPCION REQUERIDO',
+            });
+            this.setState({ error_nombrecategoria: 'error', });
+            return;
+        }
+        this.setState({ loading_create: true, });
+        this.onSesionCategoria();
+    }
+    style_selected(data, id) {
+        var objecto = { cursor: 'pointer', width: '100%', minWidth: '100%', fontSize: 13,
+            height: 18, lineHeight: 0, textAlign: 'center',
+            background: (data == null) ? 'white' : (data.id == id) ? '#e0f3ff' : 'white',
+            color: (data == null) ? 'rgba(0, 0, 0, 0.65)' : (data.id == id) ? '#3f6ad8' : 'rgba(0, 0, 0, 0.65)',
+            fontWeight: (data == null) ? '400' : (data.id == id) ? 'bold' : '400',
+        }
+        return objecto;
+    }
+    onModalCategoria() {
+        var categoria = this.state.categoria;
+        var colorsuccess = this.props.buttoncolor == '' ? 'primary' : this.props.buttoncolor;
+        var colordanger = this.props.buttoncolor == '' ? 'danger' : 'outline-' + this.props.buttoncolor;
+        var colornew = this.props.buttoncolor == '' ? 'secondary' : this.props.buttoncolor;
+        return (
+            <Modal
+                title={(!this.state.new_create) ? <div>&nbsp;</div> : null}
+                visible={this.state.visible_categoria}
+                onCancel={() => {
+                    if (!this.state.new_create) {
+                        this.setState({
+                            visible_categoria: false, new_create: false,
+                            loading_create: false,
+                        })
+                    }
+                }}
+                bodyStyle={{padding: 0, paddingBottom: 5,}}
+                style={{ top: 100, }} width={500} footer={null}
+            >
+                <div className="forms-groups">
+                    {(!this.state.new_create) ?
+                        <Card title="CATEGORIA" 
+                            bodyStyle={{ padding: 0, }} style={{position: 'relative', top: -9,}}
+                            headStyle={{color: 'white', background: '#1890ff', fontSize: 14, fontWeight: 'bold'}}
+                            extra={
+                                <button className={"btn-hover-shine btn btn-" + colornew}
+                                    onClick={() => this.setState({new_create: true,})}
+                                >
+                                    Nuevo
+                                </button>
+                            }
+                        >
+                            <div className='cols-lg-12 cols-md-12 cols-sm-12 cols-xs-12'
+                                style={{
+                                    padding: 0, height: 'auto', maxHeight: 350, overflowY: 'auto',
+                                    overflowX: 'none',
+                                }}
+                            >
+                                {this.state.array_categoria.map(
+                                    (data, key) => (
+                                        <div className='cols-lg-12 cols-md-12 cols-sm-12 cols-xs-12'
+                                            style={{ padding: 0, }} key={key}
+                                            onClick={() => this.setState({ categoria: data, visible_categoria: false, }) }
+                                        >
+                                            <Card.Grid hoverable={false} 
+                                                style={ this.style_selected(categoria, data.id) }
+                                            >
+                                                {data.descripcion}
+                                            </Card.Grid>
+                                        </div>
+                                    )
+                                )}
+                                <div className='cols-lg-12 cols-md-12 cols-sm-12 cols-xs-12'
+                                    style={{ padding: 0, }}
+                                >
+                                    <Card.Grid hoverable={false} className='gridStyle'
+                                        style={{ cursor: 'pointer', width: '100%' }}>
+                                    </Card.Grid>
+                                </div>
+                            </div>
+                        </Card> : 
+                        <div className="cards">
+                            <div className="card-header-tab card-header">
+                                <div className="card-header-title font-size-lg text-capitalize font-weight-normal">
+                                    <i className="header-icon lnr-charts icon-gradient bg-happy-green"> </i>
+                                        NUEVA CATEGORIA
+                                </div>
+                            </div>
+                            {(!this.state.loading_create) ?
+                                <div className='forms-groups'>
+                                    <div className='cols-lg-12 cols-md-12 cols-sm-12 cols-xs-12' style={{ paddingTop: 0, }}>
+                                        <div className='cols-lg-4 cols-md-4 cols-sm-12 cols-xs-12'>
+                                            <div className='inputs-groups'>
+                                                <input type='text'
+                                                    className={`forms-control title_form ${this.props.buttoncolor}`} value={'Descripcion'}
+                                                    readOnly
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className='cols-lg-8 cols-md-8 cols-sm-12 cols-xs-12'>
+                                            <div className='inputs-groups'>
+                                                <input type='text' placeholder='INGRESAR DESCRIPCION'
+                                                    style={{ textAlign: 'left', paddingLeft: 10, paddingRight: 24, }}
+                                                    className={`forms-control ${this.state.error_nombrecategoria}`}
+                                                    value={this.state.nombre_categoria}
+                                                    onChange={ (event) => this.setState({nombre_categoria: event.target.value, error_nombrecategoria: '', }) }
+                                                />
+                                                {this.state.nombre_categoria.toString().length == 0 ? null : 
+                                                    <i className='fa fa-close delete_icon'
+                                                        onClick={() => this.setState({ nombre_categoria: '', }) }
+                                                    ></i> 
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className='forms-groups txts-center mt-4'>
+                                        <button className={"mb-2 mr-2 btn-hover-shine btn btn-" + colorsuccess}
+                                            onClick={this.onValidarCategoria.bind(this)}
+                                        >
+                                            Aceptar
+                                        </button>
+                                        <button className={"mb-2 mr-2 btn-hover-shine btn btn-" + colordanger}
+                                            onClick={() => this.setState({
+                                                new_create: false, nombre_categoria: '', error_nombrecategoria: '',
+                                            })}
+                                        >
+                                            Cancelar
+                                        </button>
+                                    </div>
+                                </div> : 
+                                <div className='forms-groups'>
+                                    <div className='loaders-wrappers d-flexs justifys-contents-centers aligns-items-centers'>
+                                        <div className='loaders'>
+                                            <div className='balls-scales-multiples'>
+                                                <div></div>
+                                                <div></div>
+                                                <div></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </Modal>
+        );
+    }
+
     render() {
         var colorsuccess = this.props.buttoncolor == '' ? 'primary' : this.props.buttoncolor;
         var colordanger = this.props.buttoncolor == '' ? 'danger' : 'outline-' + this.props.buttoncolor;
         var colorback = this.props.buttoncolor == '' ? 'focus' : this.props.buttoncolor;
         return (
             <div className="rows">
+                {this.onModalCategoria()}
                 <div className="cards">
                     {(!this.state.loading)?
                         <div className='forms-groups'>
@@ -294,15 +540,15 @@ class CreateServicio extends Component {
                                     </div>
                                     <div className='cols-lg-4 cols-md-4 cols-sm-4 cols-xs-12' style={{paddingTop: 0, }}>
                                         <div className='inputs-groups'>
-                                            <input type='text' placeholder='INGRESAR APELLIDO...'
-                                                style={{ textAlign: 'left', paddingLeft: 10, paddingRight: 24, }}
+                                            <input type='text' placeholder='SELECCIONAR CATEGORIA   '
+                                                style={{ textAlign: 'left', paddingLeft: 10, paddingRight: 24, cursor: 'pointer', }}
                                                 className={`forms-control`}
-                                                value={this.state.apellido}
-                                                onChange={ (event) => this.setState({apellido: event.target.value,}) }
+                                                value={this.state.categoria.descripcion} readOnly
+                                                onClick={ () => this.setState({ visible_categoria: true, }) }
                                             />
-                                            {this.state.apellido.toString().length == 0 ? null : 
+                                            {this.state.categoria.id == '' ? null : 
                                                 <i className='fa fa-close delete_icon'
-                                                    onClick={() => this.setState({ apellido: '', }) }
+                                                    onClick={() => this.setState({ categoria: {id: '', descripcion: '', } }) }
                                                 ></i> 
                                             }
                                         </div>
