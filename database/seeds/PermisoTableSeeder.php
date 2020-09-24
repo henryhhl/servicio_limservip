@@ -20,7 +20,7 @@ class PermisoTableSeeder extends Seeder
     private function _get_data() {
         return [
             [
-                'nombre'    => 'paquete-personal',
+                'nombre'    => 'paquete-administracion',
             ], //1
 
             [
@@ -156,6 +156,19 @@ class PermisoTableSeeder extends Seeder
             [
                 'nombre'    => 'asignar-permiso',
             ], //42
+            [
+                'nombre'    => 'gestionar-categoria',
+            ], //43
+
+            [
+                'nombre'    => 'crear-categoria',
+            ], //44
+            [
+                'nombre'    => 'editar-categoria',
+            ], //45
+            [
+                'nombre'    => 'delete-categoria',
+            ], //46
         ];
     }
 }
