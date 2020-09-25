@@ -13,6 +13,13 @@ import web from '../../utils/services';
 
 import PropTypes from 'prop-types';
 
+import { GoogleMap, InfoWindow, Marker, withGoogleMap, withScriptjs } from "react-google-maps";
+
+import Geocode from "react-geocode";
+
+Geocode.setApiKey("AIzaSyAofod0Bp0frLcLHVLxuacn0QBXqVyJ7lc");
+Geocode.enableDebug();
+
 class CreateSolicitud extends Component {
 
     constructor(props) {
@@ -45,17 +52,127 @@ class CreateSolicitud extends Component {
             foto: '',
             deleteimg: false,
 
+            nombre: '',
+            apellido: '',
+            email: '',
+            telefono: '',
+            direccion: '',
+            ciudad: '',
+            zona: '',
+            pais: '',
+
             search_servicio: '',
             active_servicio: 'active',
             error_servicio: '',
+
+            mapPosition: {
+                lat: 0,
+                lng: 0,
+            },
+            markerPosition: {
+                lat: 0,
+                lng: 0,
+            },
+
+            direccioncompleto: '',
             
+            loadingcomponent: false,
         }
     }
     componentDidMount() {
         console.log(new Date())
         this.props.get_link('solicitud', true);
+        this.getLocationActual();
         this.get_data();
     }
+    getLocationActual() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(position => {
+                this.setState({
+                    mapPosition: {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude,
+                    },
+                    markerPosition: {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude,
+                    }
+                },
+                    () => {
+                        Geocode.fromLatLng(position.coords.latitude, position.coords.longitude).then(
+                            response => {
+                                const address = response.results[0].formatted_address,
+                                    addressArray = response.results[0].address_components,
+                                    city = this.getCity(addressArray),
+                                    area = this.getArea(addressArray),
+                                    state = this.getState(addressArray);
+
+                                var array = (address) ? address.split(',') : [];
+
+                                this.state.direccion = address;
+                                this.state.ciudad = array.length > 1 ? array[array.length - 2] : '';
+                                this.state.pais = array.length > 0 ? array[array.length - 1] : '';
+
+                                // console.log(area)
+                                // console.log(state)
+
+                                this.setState({
+                                    direccioncompleto: (address) ? address : '',
+                                    area: (area) ? area : '',
+                                    city: (city) ? city : '',
+                                    state: (state) ? state : '',
+
+                                    direccion: this.state.direccion,
+                                    ciudad: this.state.ciudad,
+                                    pais: this.state.pais,
+                                })
+                            },
+                            error => {
+                                console.error(error);
+                            }
+                        );
+
+                    })
+            });
+        } else {
+            console.error("Geolocation is not supported by this browser!");
+        }
+    }
+    getCity(addressArray) {
+        let city = '';
+        for (let i = 0; i < addressArray.length; i++) {
+            if (addressArray[i].types[0] && 'administrative_area_level_2' === addressArray[i].types[0]) {
+                city = addressArray[i].long_name;
+                return city;
+            }
+        }
+    };
+
+    getArea(addressArray){
+        let area = '';
+        for (let i = 0; i < addressArray.length; i++) {
+            if (addressArray[i].types[0]) {
+                for (let j = 0; j < addressArray[i].types.length; j++) {
+                    if ('sublocality_level_1' === addressArray[i].types[j] || 'locality' === addressArray[i].types[j]) {
+                        area = addressArray[i].long_name;
+                        return area;
+                    }
+                }
+            }
+        }
+    };
+
+    getState(addressArray) {
+        let state = '';
+        for (let i = 0; i < addressArray.length; i++) {
+            for (let i = 0; i < addressArray.length; i++) {
+                if (addressArray[i].types[0] && 'administrative_area_level_1' === addressArray[i].types[0]) {
+                    state = addressArray[i].long_name;
+                    return state;
+                }
+            }
+        }
+    };
     get_data() {
         axios.get( web.servidor + '/solicitud/create').then(
             (response) => {
@@ -68,6 +185,7 @@ class CreateSolicitud extends Component {
                         this.props.loadingservice(false, '');
                         this.setState({
                             nropedido: response.data.nro,
+                            loadingcomponent: true,
                         });
                         return;
                     }
@@ -427,10 +545,86 @@ class CreateSolicitud extends Component {
             });
         } );
     }
+
+    onMarkerDragEnd(event) {
+        let newLat = event.latLng.lat(),
+            newLng = event.latLng.lng();
+
+        Geocode.fromLatLng(newLat, newLng).then(
+            response => {
+                const address = response.results[0].formatted_address,
+                    addressArray = response.results[0].address_components,
+                    city = this.getCity(addressArray),
+                    area = this.getArea(addressArray),
+                    state = this.getState(addressArray);
+
+                    var array = (address) ? address.split(',') : [];
+
+                    this.state.direccion = address;
+                    this.state.ciudad = array.length > 1 ? array[array.length - 2] : '';
+                    this.state.pais = array.length > 0 ? array[array.length - 1] : '';
+
+                this.setState({
+                    direccioncompleto: (address) ? address : '',
+                    area: (area) ? area : '',
+                    city: (city) ? city : '',
+                    state: (state) ? state : '',
+
+                    direccion: this.state.direccion,
+                    ciudad: this.state.ciudad,
+                    pais: this.state.pais,
+
+                    markerPosition: {
+                        lat: newLat,
+                        lng: newLng
+                    },
+                    mapPosition: {
+                        lat: newLat,
+                        lng: newLng
+                    },
+                })
+            },
+            error => {
+                console.error(error);
+            }
+        );
+    };
+
+    onInfoWindowClose(event) { };
+
     render() {
+
+        // if (!this.state.loadingcomponent) return null;
+
         var colorsuccess = this.props.buttoncolor == '' ? 'primary' : this.props.buttoncolor;
         var colordanger = this.props.buttoncolor == '' ? 'danger' : 'outline-' + this.props.buttoncolor;
         var colorback = this.props.buttoncolor == '' ? 'focus' : this.props.buttoncolor;
+
+        const WrappedMap = withScriptjs( withGoogleMap(
+            props => <GoogleMap 
+                defaultZoom={15}
+                defaultCenter={ {lat: this.state.mapPosition.lat, lng: this.state.mapPosition.lng,} }
+            >
+                <Marker
+                    // google={this.props.google}
+                    // name={ this.state.nombre.toString().trim().length == 0 ? '-' : this.state.nombre }
+                    draggable={true}
+                    onDragEnd={this.onMarkerDragEnd.bind(this)}
+                    position={{ lat: this.state.markerPosition.lat, lng: this.state.markerPosition.lng }}
+                />
+                <InfoWindow
+                    onClose={this.onInfoWindowClose.bind(this)}
+                    position={{ lat: (this.state.markerPosition.lat + 0.0018), lng: this.state.markerPosition.lng }}
+                >
+                    <div>
+                        <span style={{ padding: 0, margin: 0 }}>
+                            {this.state.direccioncompleto}
+                        </span>
+                    </div>
+                </InfoWindow>
+            </GoogleMap>
+        ) );
+
         return (
             <div className="rows">
                 {this.onModalServicio()}
@@ -670,10 +864,10 @@ class CreateSolicitud extends Component {
                                                                 content={
                                                                     <div>
                                                                         <div style={{textAlign: 'center', paddingBottom: 5,}}>
-                                                                            <div className='inputs-groups' style={{width: 150, }}>
+                                                                            <div className='inputs-groups' style={{width: 200, }}>
                                                                                 <textarea type='text' placeholder=''
                                                                                     className={`forms-control`} 
-                                                                                    style={{paddingRight: 25, color: '#1890ff', }}
+                                                                                    style={{paddingRight: 25, color: '#1890ff', paddingTop: 5, height: 80, }}
                                                                                     value={data.nota}
                                                                                     onChange={(event) => {
                                                                                         data.nota = event.target.value;
@@ -701,7 +895,7 @@ class CreateSolicitud extends Component {
                                                                 title='NOTA'
                                                             >
                                                                 <a style={{color: 'blue', fontSize: 12, paddingLeft: 4, paddingRight: 4, border: '1px dashed blue' ,}}>
-                                                                    {data.nota}
+                                                                    {'AGREGAR NOTA'}
                                                                 </a>
                                                             </Popover>
                                                         </td>
@@ -739,11 +933,162 @@ class CreateSolicitud extends Component {
                                 </div>
                             </div>
                             <div className='forms-groups'>
-                                <div className='cols-lg-6 cols-md-6 cols-sm-6 cols-xs-12' style={{marginTop: 0,}}>
-                                    
+                                <div className='cols-lg-7 cols-md-7 cols-sm-12 cols-xs-12' style={{paddingTop: 0,}}>
+                                    <div className="cols-lg-12 cols-md-12 cols-sm-12 cols-xs-12" style={{padding: 0, }}>
+                                        <div className='cols-lg-6 cols-md-6 cols-sm-6 cols-xs-12' style={{paddingTop: 0, }}>
+                                            <div className='inputs-groups'>
+                                                <label>Nombre*</label>
+                                                <input type='text'
+                                                    className={`forms-control`}
+                                                    style={{ textAlign: 'left', paddingLeft: 10, paddingRight: 24, }}
+                                                    value={this.state.nombre}
+                                                    placeholder='INGRESAR NOMBRE...'
+                                                    onChange={ (event) => this.setState({
+                                                        nombre: event.target.value,
+                                                    }) }
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className='cols-lg-6 cols-md-6 cols-sm-6 cols-xs-12' style={{paddingTop: 0, }}>
+                                            <div className='inputs-groups'>
+                                                <label>Apellido*</label>
+                                                <input type='text'
+                                                    className={`forms-control`}
+                                                    style={{ textAlign: 'left', paddingLeft: 10, paddingRight: 24, }}
+                                                    value={this.state.apellido}
+                                                    placeholder='INGRESAR APELLIDO...'
+                                                    onChange={ (event) => this.setState({
+                                                        apellido: event.target.value,
+                                                    }) }
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="cols-lg-12 cols-md-12 cols-sm-12 cols-xs-12" style={{padding: 0, }}>
+                                        <div className='cols-lg-6 cols-md-6 cols-sm-6 cols-xs-12' style={{paddingTop: 0, }}>
+                                            <div className='inputs-groups'>
+                                                <label>Email*</label>
+                                                <input type='text'
+                                                    className={`forms-control`}
+                                                    style={{ textAlign: 'left', paddingLeft: 10, paddingRight: 24, }}
+                                                    value={this.state.email}
+                                                    placeholder='INGRESAR EMAIL...'
+                                                    onChange={ (event) => this.setState({
+                                                        email: event.target.value,
+                                                    }) }
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className='cols-lg-6 cols-md-6 cols-sm-6 cols-xs-12' style={{paddingTop: 0, }}>
+                                            <div className='inputs-groups'>
+                                                <label>Telefono*</label>
+                                                <input type='text'
+                                                    className={`forms-control`}
+                                                    style={{ textAlign: 'left', paddingLeft: 10, paddingRight: 24, }}
+                                                    value={this.state.telefono}
+                                                    placeholder='INGRESAR TELEFONO...'
+                                                    onChange={ (event) => {
+                                                        if (!isNaN(event.target.value)) {
+                                                            this.setState({
+                                                                telefono: event.target.value,
+                                                            });
+                                                        }
+                                                    } }
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="cols-lg-12 cols-md-12 cols-sm-12 cols-xs-12" style={{padding: 0, }}>
+                                        <div className='cols-lg-12 cols-md-12 cols-sm-12 cols-xs-12' style={{paddingTop: 0, }}>
+                                            <div className='inputs-groups'>
+                                                <label>Direccion*</label>
+                                                <input type='text'
+                                                    className={`forms-control`}
+                                                    style={{ textAlign: 'left', paddingLeft: 10, paddingRight: 24, }}
+                                                    value={this.state.direccion}
+                                                    placeholder='INGRESAR DIRECCION...'
+                                                    onChange={ (event) => this.setState({
+                                                        direccion: event.target.value,
+                                                    }) }
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="cols-lg-12 cols-md-12 cols-sm-12 cols-xs-12" style={{padding: 0, }}>
+                                        <div className='cols-lg-6 cols-md-6 cols-sm-6 cols-xs-12' style={{paddingTop: 0, }}>
+                                            <div className='inputs-groups'>
+                                                <label>Ciudad*</label>
+                                                <input type='text'
+                                                    className={`forms-control`}
+                                                    style={{ textAlign: 'left', paddingLeft: 10, paddingRight: 24, }}
+                                                    value={this.state.ciudad}
+                                                    placeholder='INGRESAR NOMBRE...'
+                                                    onChange={ (event) => this.setState({
+                                                        ciudad: event.target.value,
+                                                    }) } 
+                                                    // readOnly
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className='cols-lg-6 cols-md-6 cols-sm-6 cols-xs-12' style={{paddingTop: 0, }}>
+                                            <div className='inputs-groups'>
+                                                <label>Zona</label>
+                                                <input type='text'
+                                                    className={`forms-control`}
+                                                    style={{ textAlign: 'left', paddingLeft: 10, paddingRight: 24, }}
+                                                    value={this.state.zona}
+                                                    placeholder='INGRESAR ZONA...'
+                                                    onChange={ (event) => this.setState({
+                                                        zona: event.target.value,
+                                                    }) }
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="cols-lg-12 cols-md-12 cols-sm-12 cols-xs-12" style={{padding: 0, }}>
+                                        <div className='cols-lg-6 cols-md-6 cols-sm-6 cols-xs-12' style={{paddingTop: 0, }}>
+                                            <div className='inputs-groups'>
+                                                <label>Pais*</label>
+                                                <input type='text'
+                                                    className={`forms-control`}
+                                                    style={{ textAlign: 'left', paddingLeft: 10, paddingRight: 24, }}
+                                                    value={this.state.pais}
+                                                    placeholder='INGRESAR PAIS...'
+                                                    onChange={ (event) => this.setState({
+                                                        pais: event.target.value,
+                                                    }) } 
+                                                    // readOnly
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+
                                 </div>
-                                <div className='cols-lg-6 cols-md-6 cols-sm-6 cols-xs-12' style={{marginTop: 0,}}>
-                                    
+
+
+                                <div className='cols-lg-5 cols-md-5 cols-sm-12 cols-xs-12' style={{paddingTop: 0,}}>
+                                    <div className="cols-lg-12 cols-md-12 cols-sm-12 cols-xs-12" style={{padding: 0,}}>
+                                        <div style={{width: '100%', height: 350, }}>
+                                            <WrappedMap 
+                                                // googleMapURL={'https://maps.googleapis.com/maps/api/js?key=AIzaSyAofod0Bp0frLcLHVLxuacn0QBXqVyJ7lc&callback=initMap'}
+                                                googleMapURL={'https://maps.googleapis.com/maps/api/js?key=AIzaSyAofod0Bp0frLcLHVLxuacn0QBXqVyJ7lc&v=3.exp&libraries=geometry,drawing,places'}
+                                                loadingElement={ <div style={ {height:'100%', } }></div> }
+                                                containerElement={ <div style={ {height: '100%',} }></div> }
+                                                mapElement={ <div style={ {height: '100%',} }></div> }
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="cols-lg-12 cols-md-12 cols-sm-12 cols-xs-12" style={{padding: 0, textAlign: 'center'}}>
+                                        <button className={"mb-2 mr-2 btn-hover-shine btn btn-" + colorsuccess}
+                                            onClick={this.getLocationActual.bind(this)}
+                                        >
+                                            IR MI UBICACIÓN ACTUAL
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </Card>
