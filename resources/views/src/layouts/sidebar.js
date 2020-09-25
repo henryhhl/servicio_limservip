@@ -124,7 +124,7 @@ export default class Sidebar extends Component {
                                 </li> : null 
                             }
 
-                            { isPermission(this.props.permisos_habilitados, permissions.paqueteseguridad) ?
+                            { isPermission(this.props.permisos_habilitados, permissions.paqueteadministracion) ?
                                 <li className={this.props.menu_active.seguridad}>
                                     <a href="#">
                                         <i className="fa fa-clone pe-7s-rocket"></i>
@@ -167,7 +167,7 @@ export default class Sidebar extends Component {
                                             </li> : null 
                                         }
 
-                                        { isPermission(this.props.permisos_habilitados, permissions.gestionarservicio) ?
+                                        { isPermission(this.props.permisos_habilitados, permissions.gestionarcategoria) ?
                                             <li>
                                                 <Link to={ web.serv_link + '/categoria'} onClick={this.props.init} 
                                                     className={this.props.link_active.categoria + ' ' + this.props.sizetext}

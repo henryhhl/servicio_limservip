@@ -40,6 +40,7 @@ class LoginController extends Controller
 
     public function login(Request $request)
     {
+        //dd(DB::table('users')->get());
         $this->validateLogin($request);
 
         // If the class is using the ThrottlesLogins trait, we can automatically throttle

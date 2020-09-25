@@ -2,7 +2,7 @@
 
 const permissions = {
     
-    paquetepersonal: 1,
+    paqueteadministracion: 1,
 
     gestionarpersonal: 2,
     personalcreate: 3,
@@ -59,6 +59,10 @@ const permissions = {
 
     asignarpermiso: 42,
 
+    gestionarcategoria: 43,
+    categoriacreate: 44,
+    categoriaeditar: 45,
+    categoriadelete: 46,
        
 
     
