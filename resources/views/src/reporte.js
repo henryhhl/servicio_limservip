@@ -1013,7 +1013,7 @@ export default class Reporte extends Component {
                                                     this.setState({venta: false, ventadetalle: true, });
                                                 }}
                                             /> 
-                                            SERVICIO MANTENIMIENTO DETALLADO
+                                            SOLICITUD DE SERVICIO DETALLADO
                                         </label>
                                     </div>
                                     <div className="position-relative form-check">
@@ -1024,7 +1024,7 @@ export default class Reporte extends Component {
                                                     this.setState({venta: true, ventadetalle: false, });
                                                 }}
                                             /> 
-                                            SERVICIO MANTENIMIENTO
+                                            SOLICITUD DE SERVICIO
                                         </label>
                                     </div>
                                 </div>
