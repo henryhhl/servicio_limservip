@@ -171,61 +171,13 @@ export default class Home extends Component {
                     </div>
                     <div className="tabs-animation">
                         <div className="row">
-                            <div className="col-md-4 col-xl-4">
-                                <div className="card mb-3 widget-content bg-night-fade">
-                                    <div className="widget-content-wrapper text-white">
-                                        <div className="widget-content-left">
-                                            <div className="widget-heading">Total de Orden de Servicio</div>
-                                            <div className="widget-subheading">
-                                                {today} 
-                                            </div>
-                                        </div>
-                                        <div className="widget-content-right">
-                                            <div className="widget-numbers text-white"><span> {this.state.totalventa} </span></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="col-md-4 col-xl-4">
-                                <div className="card mb-3 widget-content bg-arielle-smile">
-                                    <div className="widget-content-wrapper text-white">
-                                        <div className="widget-content-left">
-                                            <div className="widget-heading">Servicio</div>
-                                            <div className="widget-subheading">Total de Ingreso de Servicio</div>
-                                        </div>
-                                        <div className="widget-content-right">
-                                            <div className="widget-numbers text-white"><span style={{fontSize: 18,}}>Bs. {this.state.montototal} </span></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="col-md-4 col-xl-4">
-                                <div className="card mb-3 widget-content bg-happy-green">
-                                    <div className="widget-content-wrapper text-white">
-                                        <div className="widget-content-left">
-                                            <div className="widget-heading">Cliente</div>
-                                            <div className="widget-subheading">Total Registro de cliente</div>
-                                        </div>
-                                        <div className="widget-content-right">
-                                            <div className="widget-numbers text-white"><span> {this.state.totalcliente} </span></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
 
 
 
                         <div className="rows">
                             <div className="cards">
-                                <div className="forms-groups">
-                                    <C_Input 
-                                        onChange={ (event) => console.log(event) }
-                                        // onPressEnter={ () => console.log(3) }
-                                        // value={'wwdwdhi'}
-                                        // textarea={true}
-                                    />
-                                </div>
+                                <div className="forms-groups"></div>
                             </div>
                         </div>
 
