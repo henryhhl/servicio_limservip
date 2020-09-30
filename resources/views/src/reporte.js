@@ -1024,7 +1024,7 @@ export default class Reporte extends Component {
                                                     this.setState({venta: true, ventadetalle: false, });
                                                 }}
                                             /> 
-                                            SOLICITUD DE SERVICIO
+                                            SOLICITUD DE SERVICIOS
                                         </label>
                                     </div>
                                 </div>
