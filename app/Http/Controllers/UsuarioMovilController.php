@@ -26,6 +26,14 @@ class UsuarioMovilController extends Controller
         }else{
             if (!(Hash::check($password, $user[0]->password))){
                 $user = [];
+            }else{
+                foreach($user as $ser){
+                    if(!(is_null($ser->imagen))){
+                        $pos = strpos($ser->imagen, ',');
+                        $nuevo = substr($ser->imagen,$pos+1,strlen($ser->imagen)-1);
+                        $ser->imagen = $nuevo;
+                    }
+                }
             }
         }
                
