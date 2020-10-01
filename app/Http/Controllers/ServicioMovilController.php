@@ -17,6 +17,14 @@ class ServicioMovilController extends Controller
                     ->get();
         if(count($servicio) == 0){
             $servicio = [];
+        }else{
+            foreach($servicio as $ser){
+                if(!(is_null($ser->imagen))){
+                    $pos = strpos($ser->imagen, ',');
+                    $nuevo = substr($ser->imagen,$pos+1,strlen($ser->imagen)-1);
+                    $ser->imagen = $nuevo;
+                }
+            }
         }
         return response()->json([
             'data'   => $servicio
