@@ -144,6 +144,11 @@ Route::post( $servidor . '/personal/update', 'PersonalController@update');
 Route::post( $servidor . '/personal/delete', 'PersonalController@destroy');
 
 
+Route::get( $local . '/asignar_trabajo', 'HomeController@index');
+
+Route::get( $servidor . '/asignar_trabajo/index', 'AsignarTrabajoController@index');
+
+
 Route::get( $local . '/promocion', 'HomeController@index');
 Route::get( $local . '/promocion/create', 'HomeController@index');
 Route::get( $local . '/promocion/editar/{id}', 'HomeController@index');

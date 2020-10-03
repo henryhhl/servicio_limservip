@@ -35,8 +35,10 @@ class PersonalController extends Controller
             if ($search == null) {
                 $data = DB::table('personal as pers')
                     ->leftJoin('users as user', 'pers.idusuario', '=', 'user.id')
+                    ->leftJoin('detalle_rol as det', 'user.id', '=', 'det.idusuario')
+                    ->leftJoin('rol as cargo', 'det.idrol', '=', 'cargo.id')
                     ->select('pers.id', 'user.nombre', 'user.apellido', 'user.usuario', 'pers.contacto', 
-                        'user.imagen', 'user.email', 'pers.ci', 'pers.ciudad', 'pers.direccion'
+                        'user.imagen', 'user.email', 'pers.ci', 'pers.ciudad', 'pers.direccion', 'cargo.nombre as cargo'
                     )
                     ->where('pers.estado', '=', 'A')
                     ->whereNull('pers.deleted_at')
@@ -45,8 +47,10 @@ class PersonalController extends Controller
             }else {
                 $data = DB::table('personal as pers')
                     ->leftJoin('users as user', 'pers.idusuario', '=', 'user.id')
+                    ->leftJoin('detalle_rol as det', 'user.id', '=', 'det.idusuario')
+                    ->leftJoin('rol as cargo', 'det.idrol', '=', 'cargo.id')
                     ->select('pers.id', 'user.nombre', 'user.apellido', 'user.usuario', 'pers.contacto', 
-                        'user.imagen', 'user.email', 'pers.ci', 'pers.ciudad', 'pers.direccion'
+                        'user.imagen', 'user.email', 'pers.ci', 'pers.ciudad', 'pers.direccion', 'cargo.nombre as cargo'
                     )
                     ->where(function ($query) use ($search) {
                         return $query->orWhere(DB::raw("CONCAT(user.nombre, ' ',user.apellido)"), 'LIKE', "%".$search."%")

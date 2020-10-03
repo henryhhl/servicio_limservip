@@ -45,11 +45,14 @@ import ShowServicio from './servicio/service/show';
 
 import IndexSolicitud from './servicio/solicitud';
 import CreateSolicitud from './servicio/solicitud/crear';
+import ShowSolicitud from './servicio/solicitud/show';
 
 import IndexPersonal from './administracion/personal';
 import CreatePersonal from './administracion/personal/crear';
 import EditarPersonal from './administracion/personal/editar';
 import ShowPersonal from './administracion/personal/show';
+
+import AsignarTrabajo from './administracion/asignartrabajo';
 
 import Reporte from './reporte';
 
@@ -126,6 +129,7 @@ export default class Index extends Component {
                 dashboards: '',
                 seguridad: '',
                 servicio: '',
+                administracion: '',
             },
             link: {
                 home: '',
@@ -144,6 +148,7 @@ export default class Index extends Component {
                 solicitud: '',
 
                 personal: '',
+                asignar_trabajo: '',
             },
 
         }
@@ -652,6 +657,7 @@ export default class Index extends Component {
         this.state.menu.dashboards = '';
         this.state.menu.seguridad = '';
         this.state.menu.servicio = '';
+        this.state.menu.administracion = '';
 
         this.state.link.home = '';
         this.state.link.perfil = '';
@@ -665,6 +671,7 @@ export default class Index extends Component {
         this.state.link.servicio = '';
         this.state.link.solicitud = '';
         this.state.link.asignar_permiso = '';
+        this.state.link.asignar_trabajo = '';
 
         if (link == 'home') {
             this.state.menu.dashboards = 'mm-active';
@@ -715,8 +722,12 @@ export default class Index extends Component {
             this.state.link.solicitud = 'mm-active';
         }
         if (link == 'personal') {
-            this.state.menu.servicio = 'mm-active';
+            this.state.menu.administracion = 'mm-active';
             this.state.link.personal = 'mm-active';
+        }
+        if (link == 'asignar_trabajo') {
+            this.state.menu.administracion = 'mm-active';
+            this.state.link.asignar_trabajo = 'mm-active';
         }
         this.setState({
             menu: this.state.menu,
@@ -1092,6 +1103,14 @@ export default class Index extends Component {
                                             buttoncolor={this.state.layoutoption.buttoncolor}
                                         />} 
                                     />
+                                    <Route exact path={ web.serv_link + '/solicitud_pedido/show/:id'} 
+                                        render={props => 
+                                        <ShowSolicitud get_link={this.get_link.bind(this)} { ...props} 
+                                            logout={this.onLogout.bind(this)}
+                                            loadingservice={this.loadingservice.bind(this)}
+                                            buttoncolor={this.state.layoutoption.buttoncolor}
+                                        />} 
+                                    />
 
 
 
@@ -1133,6 +1152,18 @@ export default class Index extends Component {
                                             logout={this.onLogout.bind(this)}
                                             loadingservice={this.loadingservice.bind(this)}
                                             buttoncolor={this.state.layoutoption.buttoncolor}
+                                        />} 
+                                    />
+
+
+
+                                    <Route exact path={ web.serv_link + '/asignar_trabajo'} render={props => 
+                                        <AsignarTrabajo { ...props} 
+                                            get_link={this.get_link.bind(this)}
+                                            logout={this.onLogout.bind(this)}
+                                            loadingservice={this.loadingservice.bind(this)}
+                                            buttoncolor={this.state.layoutoption.buttoncolor}
+
                                         />} 
                                     />
 
