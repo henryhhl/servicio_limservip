@@ -13,14 +13,27 @@ class UsuarioMovilController extends Controller
     public function loguear (Request $request){
         $usuario = $request->usuario;
         $password = $request->password;
-        $user = DB::table('users')
-                ->where( 'usuario', '=', $usuario )
+        $user = DB::table('cliente as cli')
+                ->leftJoin('users as user', 'cli.idusuario', '=', 'user.id')
+                ->select('cli.id', 'user.nombre', 'user.apellido', 'user.nacimiento','user.usuario' ,'cli.nit', 'cli.contacto', 
+                    'user.imagen', 'user.email', 'user.password','cli.estado', 'user.tipo', 'user.genero'
+                )
+                ->where('cli.estado', '=', 'A')
+                ->where( 'user.usuario', '=', $usuario )
                 ->get();
         if(count($user) == 0){
             $user = [];   
         }else{
             if (!(Hash::check($password, $user[0]->password))){
                 $user = [];
+            }else{
+                foreach($user as $ser){
+                    if(!(is_null($ser->imagen))){
+                        $pos = strpos($ser->imagen, ',');
+                        $nuevo = substr($ser->imagen,$pos+1,strlen($ser->imagen)-1);
+                        $ser->imagen = $nuevo;
+                    }
+                }
             }
         }
                
