@@ -19,3 +19,4 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::get('loguear', 'UsuarioMovilController@loguear');
 Route::get('usuario/registrar', 'UsuarioMovilController@registrar');
 Route::get('servicio/listar', 'ServicioMovilController@listar');
+Route::get('solicitud/listar', 'SolicitudMovilController@misolicitud');
