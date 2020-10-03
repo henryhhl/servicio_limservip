@@ -20,6 +20,7 @@ class ServicioMovilController extends Controller
         }else{
             foreach($servicio as $ser){
                 if(!(is_null($ser->imagen))){
+                    //$ser->descripcion = $ser->imagen;
                     $pos = strpos($ser->imagen, ',');
                     $nuevo = substr($ser->imagen,$pos+1,strlen($ser->imagen)-1);
                     $ser->imagen = $nuevo;
