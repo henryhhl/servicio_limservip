@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Informacion;
+use App\Solicitud;
+use App\SolicitudDetalle;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -32,12 +36,13 @@ class SolicitudController extends Controller
                 $data = DB::table('solicitud as sol')
                     ->leftJoin('users as user', 'sol.idusuario', '=', 'user.id')
                     ->leftJoin('cliente as cli', 'sol.idcliente', '=', 'cli.id')
+                    ->leftJoin('users as usercli', 'cli.idusuario', '=', 'usercli.id')
                     ->leftJoin('informacion as info', 'sol.id', '=', 'info.idsolicitud')
                     ->select( 'sol.id', 'sol.montototal', 'sol.estadoproceso', 'sol.fecha', 'sol.hora', 'sol.nota',
                         'user.nombre as usuario', 'user.apellido as apellidouser',
-                        'cli.nombre as cliente', 'cli.apellido as apellidocliente',
-                        'info.nombre', 'info.apellido', 'info.pais', 'info.ciudad', 'info.direccion', 'info.calle',
-                        'info.numero', 'info.telefono', 'info.email'
+                        'usercli.nombre as cliente', 'usercli.apellido as apellidocliente',
+                        'info.nombre', 'info.apellido', 'info.pais', 'info.ciudad', 'info.direccion', 'info.direccioncompleto',
+                        'info.telefono', 'info.email'
                     )
                     ->where('sol.estado', '=', 'A')
                     ->whereNull('sol.deleted_at')
@@ -47,12 +52,13 @@ class SolicitudController extends Controller
                 $data = DB::table('solicitud as sol')
                     ->leftJoin('users as user', 'sol.idusuario', '=', 'user.id')
                     ->leftJoin('cliente as cli', 'sol.idcliente', '=', 'cli.id')
+                    ->leftJoin('users as usercli', 'cli.idusuario', '=', 'usercli.id')
                     ->leftJoin('informacion as info', 'sol.id', '=', 'info.idsolicitud')
                     ->select( 'sol.id', 'sol.montototal', 'sol.estadoproceso', 'sol.fecha', 'sol.hora', 'sol.nota',
                         'user.nombre as usuario', 'user.apellido as apellidouser',
-                        'cli.nombre as cliente', 'cli.apellido as apellidocliente',
-                        'info.nombre', 'info.apellido', 'info.pais', 'info.ciudad', 'info.direccion', 'info.calle',
-                        'info.numero', 'info.telefono', 'info.email'
+                        'usercli.nombre as cliente', 'usercli.apellido as apellidocliente',
+                        'info.nombre', 'info.apellido', 'info.pais', 'info.ciudad', 'info.direccion', 'info.direccioncompleto',
+                        'info.telefono', 'info.email'
                     )
                     ->where(function ($query) use ($search) {
                         return $query
@@ -149,7 +155,81 @@ class SolicitudController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {
+
+            DB::beginTransaction();
+
+            $nombre = $request->input('nombre');
+            $apellido = $request->input('apellido');
+            $email = $request->input('email');
+            $telefono = $request->input('telefono');
+            $direccion = $request->input('direccion');
+            $ciudad = $request->input('ciudad');
+            $zona = $request->input('zona');
+            $pais = $request->input('pais');
+            
+            $direccioncompleto = $request->input('direccioncompleto');
+            $montototal = $request->input('montototal');
+
+            $latitud = $request->input('latitud');
+            $longitud = $request->input('longitud');
+
+            $array_servicio = json_decode($request->input('array_servicio', '[]'));
+
+            $servicio = new Solicitud();
+            $servicio->idusuario = Auth::user()->id;
+            $servicio->montototal = $montototal;
+            $mytime = Carbon::now('America/La_paz');
+            $servicio->fecha = $mytime->toDateString();
+            $servicio->hora = $mytime->toTimeString();
+            $servicio->save();
+
+            $informacion = new Informacion();
+            $informacion->idsolicitud = $servicio->id;
+            $informacion->nombre = $nombre;
+            $informacion->apellido = $apellido;
+            $informacion->pais = $pais;
+            $informacion->ciudad = $ciudad;
+            $informacion->direccion = $direccion;
+            $informacion->telefono = $telefono;
+            $informacion->email = $email;
+            $informacion->zona = $zona;
+
+            $informacion->direccioncompleto = $direccioncompleto;
+
+            $informacion->latitud = $latitud;
+            $informacion->longitud = $longitud;
+
+            $informacion->save();
+
+            foreach ($array_servicio as $data) {
+                $detalle = new SolicitudDetalle();
+                $detalle->idsolicitud = $servicio->id;
+                $detalle->idservicio = $data->id;
+                $detalle->cantidad = $data->cantidad;
+                $detalle->precio = $data->precio;
+                $detalle->descuento = 0;
+                $detalle->save();
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'response'  => 1,
+            ]);
+
+        }catch(\Exception $th) {
+            DB::rollBack();
+            return response()->json([
+                'response' => 0,
+                'message' => 'Error al procesar la solicitud',
+                'error' => [
+                    'file'    => $th->getFile(),
+                    'line'    => $th->getLine(),
+                    'message' => $th->getMessage()
+                ]
+            ]);
+        }
     }
 
     /**
@@ -160,7 +240,60 @@ class SolicitudController extends Controller
      */
     public function show($id)
     {
-        //
+        try {
+
+            $sesion = Auth::guest();
+
+            if ($sesion) {
+                return response()->json([
+                    'response' => -3,
+                    'sesion'   => $sesion,
+                ]);
+            }
+
+            $solicitud = DB::table('solicitud as sol')
+                ->leftJoin('users as user', 'sol.idusuario', '=', 'user.id')
+                ->select('sol.id', 'sol.montototal', 'sol.nota', 'sol.estadoproceso', 'sol.fecha', 'sol.hora', 
+                    'user.nombre', 'user.apellido'
+                )
+                ->where('sol.id', '=', $id)
+                ->first();
+
+
+            $informacion = DB::table('informacion')
+                ->select('latitud', 'longitud', 'nombre', 'apellido', 'pais', 'ciudad', 'direccion', 'direccioncompleto', 
+                    'zona', 'telefono', 'email'
+                )
+                ->where('idsolicitud', '=', $id)
+                ->first();
+
+            $detalle = DB::table('solicituddetalle as det')
+                ->leftJoin('servicio as serv', 'det.idservicio', '=', 'serv.id')
+                ->leftJoin('categoria as cat', 'serv.idcategoria', '=', 'cat.id')
+                ->select('serv.id', 'serv.nombre as servicio', 'serv.descripcion', 'serv.imagen', 'cat.descripcion as categoria', 
+                    'det.cantidad', 'det.precio', 'det.nota', 'det.estadoproceso'
+                )
+                ->where('det.idsolicitud', '=', $id)
+                ->get();
+
+            return response()->json([
+                'response'  => 1,
+                'solicitud' => $solicitud,
+                'informacion' => $informacion,
+                'detalle' => $detalle,
+            ]);
+
+        }catch(\Exception $th) {
+            return response()->json([
+                'response' => 0,
+                'message' => 'Error al procesar la solicitud',
+                'error' => [
+                    'file'    => $th->getFile(),
+                    'line'    => $th->getLine(),
+                    'message' => $th->getMessage()
+                ]
+            ]);
+        }
     }
 
     /**

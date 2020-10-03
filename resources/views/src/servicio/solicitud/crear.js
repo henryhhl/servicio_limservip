@@ -64,6 +64,7 @@ class CreateSolicitud extends Component {
             search_servicio: '',
             active_servicio: 'active',
             error_servicio: '',
+            error_email: '',
 
             mapPosition: {
                 lat: 0,
@@ -80,7 +81,6 @@ class CreateSolicitud extends Component {
         }
     }
     componentDidMount() {
-        console.log(new Date())
         this.props.get_link('solicitud', true);
         this.getLocationActual();
         this.get_data();
@@ -432,36 +432,53 @@ class CreateSolicitud extends Component {
         this.props.history.goBack();
     }
     onValidar() {
-        if ( this.state.nombre.toString().trim().length > 0 && this.state.usuario.toString().trim().length > 0 &&
-                this.state.password.toString().trim().length > 0
-            ) {
-            this.onSesion();
-        }else {
-            if (this.state.nombre.toString().trim().length == 0) {
-                notification.error({
-                    message: 'ERROR',
-                    description: 'NOMBRE REQUERIDO.',
-                });
-                this.setState({ error_nombre: 'error', });
-                return;
+        var cantidad = 0;
+        for (let index = 0; index < this.state.selected_servicio.length; index++) {
+            var data = this.state.selected_servicio[index];
+            if (data.id == null) {
+                cantidad++;
             }
-            if (this.state.usuario.toString().trim().length == 0) {
+            if (data.id != null && data.cantidad < 1) {
+                this.state.selected_servicio[index].error = 'error';
+                this.setState({ selected_servicio: this.state.selected_servicio, });
                 notification.error({
-                    message: 'ERROR',
-                    description: 'USUARIO REQUERIDO.',
+                    description: 'LA CANTIDAD DEL ' + data.descripcion.toUpperCase() + ' DEBE SER MAYOR A CERO',
                 });
-                this.setState({ error_usuario: 'error', });
-                return;
-            }
-            if (this.state.password.toString().trim().length == 0) {
-                notification.error({
-                    message: 'ERROR',
-                    description: 'PASSWORD REQUERIDO.',
-                });
-                this.setState({ error_password: 'error', });
                 return;
             }
         }
+        if (cantidad == this.state.selected_servicio.length) {
+            this.setState({
+                error_servicio: 'error',
+            });
+            notification.error({
+                description: 'FAVOR DE SELECCIONAR AL MENOS UN PRODUCTO O SERVICIO',
+            });
+            return;
+        }
+        if (this.state.email.toString().length > 0) {
+            var email = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            if (!email.test(this.state.email)) {
+                notification.error({
+                    description: 'EMAIL INCORRECTO.',
+                });
+                this.setState({ error_email: 'error', });
+                return;
+            }
+        }
+        // if ( this.state.nombre.toString().trim().length > 0
+        //     ) {
+            this.onSesion();
+        // }else {
+        //     if (this.state.nombre.toString().trim().length == 0) {
+        //         notification.error({
+        //             message: 'ERROR',
+        //             description: 'NOMBRE REQUERIDO.',
+        //         });
+        //         this.setState({ error_nombre: 'error', });
+        //         return;
+        //     }
+        // }
     }
     onSesion() {
         this.setState({ loading: true, });
@@ -494,18 +511,25 @@ class CreateSolicitud extends Component {
         var formdata = new FormData();
         formdata.append('nombre', this.state.nombre);
         formdata.append('apellido', this.state.apellido);
-        formdata.append('nit', this.state.nit);
         formdata.append('email', this.state.email);
-        formdata.append('contacto', this.state.contacto);
-        formdata.append('imagen', this.state.imagen);
-        formdata.append('foto', this.state.foto);
-        formdata.append('usuario', this.state.usuario);
-        formdata.append('password', this.state.password);
+        formdata.append('telefono', this.state.telefono);
+        formdata.append('direccion', this.state.direccion);
+        formdata.append('imagen', this.state.ciudad);
+        formdata.append('zona', this.state.zona);
+        formdata.append('pais', this.state.pais);
+
+        formdata.append('direccioncompleto', this.state.direccioncompleto);
+
+        formdata.append('latitud', this.state.markerPosition.lat);
+        formdata.append('longitud', this.state.markerPosition.lng);
+
+        formdata.append('array_servicio', JSON.stringify(this.state.selected_servicio));
+        formdata.append('montototal', this.state.montototal);
 
         axios(
             {
                 method: 'post',
-                url: web.servidor + '/cliente/store',
+                url: web.servidor + '/solicitud/store',
                 data: formdata,
                 headers: {
                     'Content-Type': 'multipart/form-data',
@@ -516,12 +540,13 @@ class CreateSolicitud extends Component {
         ).then(
             response => {
                 this.setState({ loading: false, });
+                console.log(response.data)
                 if (response.data.response == 1) {
                     notification.success({
-                        message: 'SUCCESS',
-                        description: 'CLIENTE CREADO EXITOSAMENTE',
+                        description: 'SOLICITUD CREADO EXITOSAMENTE',
                     });
                     this.props.history.goBack();
+                    console.log(response.data)
                     return;
                 }
                 if (response.data.response == -1) {
@@ -538,6 +563,7 @@ class CreateSolicitud extends Component {
                 });
             }
         ).catch( error => {
+            console.log(error)
             this.setState({ loading: false, });
             notification.error({
                 message: 'ERROR',
@@ -547,6 +573,7 @@ class CreateSolicitud extends Component {
     }
 
     onMarkerDragEnd(event) {
+        console.log(34)
         let newLat = event.latLng.lat(),
             newLng = event.latLng.lng();
 
@@ -766,82 +793,34 @@ class CreateSolicitud extends Component {
                                                             fontWeight: 'bold', color: '#1890ff', 
                                                         }}>
                                                             <label className='cols_show'>CANTIDAD: </label>
-                                                            <Popover placement='top' trigger='click'
-                                                                visible={data.visible_cantidad}
-                                                                onVisibleChange={() => {
-                                                                    data.visible_cantidad = !data.visible_cantidad;
-                                                                    this.setState({
-                                                                        selected_servicio: this.state.selected_servicio,
-                                                                    });
-                                                                }}
-                                                                content={
-                                                                    <div>
-                                                                        <div style={{textAlign: 'center', paddingBottom: 5,}}>
-                                                                            <div className='inputs-groups' style={{width: 150, }}>
-                                                                                <input type='text' placeholder=''
-                                                                                    className={`forms-control`} 
-                                                                                    style={{paddingRight: 25, color: '#1890ff', textAlign: 'center', }}
-                                                                                    value={data.cantidad}
-                                                                                    onChange={(event) => {
-                                                                                        var cantidad = event.target.value == '' ? 0 : event.target.value;
-                                                                                        if (!isNaN(cantidad)) {
-                                                                                            if (parseInt(cantidad) >= 0) {
-                                                                                                data.cantidad = cantidad;
-                                                                                                this.setState({
-                                                                                                    search_servicio: this.state.selected_servicio,
-                                                                                                }, () => this.onGenerarTotal() );
-                                                                                            }
-                                                                                        }
-                                                                                    }}
-                                                                                />
-                                                                                <i className='fa fa-plus blue_hover' 
-                                                                                    style={{fontSize: 14, position: 'absolute', top: 10, bottom: 10, right: 5, cursor: 'pointer',
-                                                                                        padding: 0, paddingLeft: 4, paddingRight: 3, display: 'flex', justifyContent: 'center', alignItems: 'center'
-                                                                                    }}
-                                                                                    onClick={ () => {
-                                                                                        data.cantidad = data.cantidad == '' ? 0 : data.cantidad;
-                                                                                        data.cantidad++;;
-                                                                                        this.setState({
-                                                                                            selected_servicio: this.state.selected_servicio,
-                                                                                        }, () => this.onGenerarTotal() );
-                                                                                    }}
-                                                                                ></i>
-                                                                                <i className='fa fa-minus blue_hover' 
-                                                                                    style={{fontSize: 14, position: 'absolute', top: 10, bottom: 10, left: 5, cursor: 'pointer',
-                                                                                        padding: 0, paddingLeft: 4, paddingRight: 3, display: 'flex', justifyContent: 'center', alignItems: 'center'
-                                                                                    }}
-                                                                                    onClick={ () => {
-                                                                                        data.cantidad = data.cantidad == '' ? 0 : data.cantidad;
-                                                                                        if (parseFloat(data.cantidad) > 0) {
-                                                                                            data.cantidad--;
-                                                                                            this.setState({
-                                                                                                selected_servicio: this.state.selected_servicio,
-                                                                                            }, () => this.onGenerarTotal() );
-                                                                                        }
-                                                                                    }}
-                                                                                ></i>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div style={{textAlign: 'center', }}>
-                                                                            <Button size='small'
-                                                                                onClick={() => {
-                                                                                    data.visible_cantidad = !data.visible_cantidad;
-                                                                                    this.setState({
-                                                                                        selected_servicio: this.state.selected_servicio,
-                                                                                    });
-                                                                                }}
-                                                                            >
-                                                                                ACEPTAR
-                                                                            </Button> &nbsp;
-                                                                        </div>
-                                                                    </div>
-                                                                } 
-                                                                title='CANTIDAD'
-                                                            >
-                                                                <a style={{color: 'blue', fontSize: 12, paddingLeft: 4, paddingRight: 4, border: '1px dashed blue' ,}}>
-                                                                    {data.cantidad}
-                                                                </a>
-                                                            </Popover>
+                                                            
+                                                            <a style={{ paddingLeft: 4, paddingRight: 4, }}>
+                                                                <i className='fa fa-minus blue_hover' 
+                                                                    style={{fontSize: 14, cursor: 'pointer', padding: 3, }}
+                                                                    onClick={ () => {
+                                                                        data.cantidad = data.cantidad == '' ? 0 : data.cantidad;
+                                                                        if (parseFloat(data.cantidad) > 0) {
+                                                                            data.cantidad--;
+                                                                            data.error == null;
+                                                                            this.setState({
+                                                                                selected_servicio: this.state.selected_servicio,
+                                                                            }, () => this.onGenerarTotal() );
+                                                                        }
+                                                                    }}
+                                                                ></i>
+                                                                <label style={{paddingLeft: 3, paddingRight: 3,}}>{data.cantidad}</label>
+                                                                <i className='fa fa-plus blue_hover' 
+                                                                    style={{fontSize: 14, cursor: 'pointer', padding: 3, }}
+                                                                    onClick={ () => {
+                                                                        data.cantidad = data.cantidad == '' ? 0 : data.cantidad;
+                                                                        data.cantidad++;;
+                                                                        data.error == null;
+                                                                        this.setState({
+                                                                            selected_servicio: this.state.selected_servicio,
+                                                                        }, () => this.onGenerarTotal() );
+                                                                    }}
+                                                                ></i>
+                                                            </a>
                                                         </td>
                                                         <td style={{cursor: 'default', textAlign: 'left', paddingLeft: 10, 
                                                             fontWeight: 'bold', color: '#1890ff', 
@@ -970,7 +949,7 @@ class CreateSolicitud extends Component {
                                             <div className='inputs-groups'>
                                                 <label>Email*</label>
                                                 <input type='text'
-                                                    className={`forms-control`}
+                                                    className={`forms-control ${this.state.error_email}`}
                                                     style={{ textAlign: 'left', paddingLeft: 10, paddingRight: 24, }}
                                                     value={this.state.email}
                                                     placeholder='INGRESAR EMAIL...'
@@ -1025,7 +1004,7 @@ class CreateSolicitud extends Component {
                                                     className={`forms-control`}
                                                     style={{ textAlign: 'left', paddingLeft: 10, paddingRight: 24, }}
                                                     value={this.state.ciudad}
-                                                    placeholder='INGRESAR NOMBRE...'
+                                                    placeholder='INGRESAR CIUDAD...'
                                                     onChange={ (event) => this.setState({
                                                         ciudad: event.target.value,
                                                     }) } 

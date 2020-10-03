@@ -4,7 +4,7 @@ import axios from 'axios';
 import {withRouter, Redirect} from 'react-router-dom';
 import PropTypes from 'prop-types';
 
-import { Pagination, notification, Modal  } from 'antd';
+import { Pagination, notification, Modal, Tag } from 'antd';
 import 'antd/dist/antd.css';
 import web from '../../utils/services';
 import { isPermission } from '../../utils/functions';
@@ -158,9 +158,9 @@ class IndexPersonal extends Component {
                                         <td>ID</td>
                                         <td>Nombre</td>
                                         <td>Ci</td>
-                                        <td>Direccion</td>
                                         <td>Usuario</td>
                                         <td>Email</td>
+                                        <td>Cargo</td>
                                         <td>Opcion</td>
                                     </tr>
                                 </thead>
@@ -181,16 +181,18 @@ class IndexPersonal extends Component {
                                                         {data.ci} &nbsp;
                                                 </td>
                                                 <td>
-                                                    <label className='cols_show'>Direccion: </label>
-                                                        {data.direccion == null ? 'S/Direccion' : data.direccion} &nbsp;
-                                                </td>
-                                                <td>
                                                     <label className='cols_show'>Usuario: </label>
                                                     {data.usuario}
                                                 </td>
                                                 <td>
                                                     <label className='cols_show'>Email: </label>
                                                         { data.email == null ? ' S/Email ' : data.email }
+                                                </td>
+                                                <td>
+                                                    <label className='cols_show'>Cargo: </label>
+                                                        <Tag color="processing">
+                                                            {data.cargo == null ? '-' : data.cargo}
+                                                        </Tag>
                                                 </td>
                                                 <td>
                                                 { isPermission(this.props.permisos_habilitados, permissions.personalshow) ?

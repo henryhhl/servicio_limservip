@@ -125,7 +125,7 @@ export default class Sidebar extends Component {
                             }
 
                             { isPermission(this.props.permisos_habilitados, permissions.paqueteadministracion) ?
-                                <li className={this.props.menu_active.seguridad}>
+                                <li className={this.props.menu_active.administracion}>
                                     <a href="#">
                                         <i className="fa fa-clone pe-7s-rocket"></i>
                                             <label className={this.props.sizetext}> ADMINISTRACION </label>
@@ -139,6 +139,16 @@ export default class Sidebar extends Component {
                                                 >
                                                     <i className="metismenu-icon">
                                                     </i> Personal
+                                                </Link>
+                                            </li> : null 
+                                        }
+                                        { isPermission(this.props.permisos_habilitados, permissions.asignartrabajo) ?
+                                            <li>
+                                                <Link to={ web.serv_link + '/asignar_trabajo'} onClick={this.props.init} 
+                                                    className={this.props.link_active.asignar_trabajo + ' ' + this.props.sizetext}
+                                                >
+                                                    <i className="metismenu-icon">
+                                                    </i> Asignar Trabajo
                                                 </Link>
                                             </li> : null 
                                         }
@@ -235,6 +245,7 @@ Sidebar.defaultProps = {
         dashboards: '',
         seguridad: '',
         servicio: '',
+        administracion: '',
     },
     link_active: {
         home: '',
@@ -253,6 +264,7 @@ Sidebar.defaultProps = {
         solicitud: '',
 
         personal: '',
+        asignar_trabajo: '',
     },
     sidebarcolor: '',
     sizetext: '',

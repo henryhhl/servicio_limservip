@@ -16,6 +16,7 @@ class CreateInformacionTable extends Migration
         Schema::create('informacion', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('idsolicitud')->unsigned();
+            
             $table->text('latitud')->nullable();
             $table->text('longitud')->nullable();
 
@@ -24,8 +25,8 @@ class CreateInformacionTable extends Migration
             $table->text('pais')->nullable();
             $table->text('ciudad')->nullable();
             $table->text('direccion')->nullable(); //nro casa y nombre de la calle
-            $table->text('calle')->nullable();
-            $table->text('numero')->nullable();
+            $table->text('direccioncompleto')->nullable();
+            $table->text('zona')->nullable();
             $table->text('telefono')->nullable();
             $table->text('email')->nullable();
 

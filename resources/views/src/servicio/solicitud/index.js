@@ -88,9 +88,9 @@ class IndexSolicitud extends Component {
 
         return day + '/' + month + '/' + year;
     }
-    onEdit(data, event) {
+    onShow(data, event) {
         event.preventDefault();
-        this.props.history.push( web.serv_link + '/solicitud_pedido/editar/' + data.id);
+        this.props.history.push( web.serv_link + '/solicitud_pedido/show/' + data.id);
     }
     onDelete(data) {
         this.props.onModalActive(data, 'solicitud');
@@ -114,7 +114,7 @@ class IndexSolicitud extends Component {
     }
     render() {
         var color = this.props.buttoncolor == '' ? 'outline-focus' : this.props.buttoncolor;
-        var optioneditar = this.props.buttoncolor == '' ? 'primary' : 'outline-' + this.props.buttoncolor;
+        var optionshow = this.props.buttoncolor == '' ? 'success' : 'outline-' + this.props.buttoncolor;
         var optiondelete = this.props.buttoncolor == '' ? 'danger' : 'outline-' + this.props.buttoncolor;
         return (
             <div className="rows">
@@ -188,18 +188,11 @@ class IndexSolicitud extends Component {
                                                     {data.montototal}
                                                 </td>
                                                 <td>
-                                                { isPermission(this.props.permisos_habilitados, permissions.promocioneditar) ?
-                                                    <button className={"mb-2 mr-2 btn-hover-shine btn btn-xs btn-" + optioneditar }
-                                                        onClick={this.onEdit.bind(this, data)}
+                                                { isPermission(this.props.permisos_habilitados, permissions.solicitudshow) ?
+                                                    <button className={"mb-2 mr-2 btn-hover-shine btn btn-xs btn-" + optionshow }
+                                                        onClick={this.onShow.bind(this, data)}
                                                     >
-                                                        <i className='fa fa-edit'></i>
-                                                    </button> : null 
-                                                }
-                                                { isPermission(this.props.permisos_habilitados, permissions.promociondelete) ?
-                                                    <button className={"mb-2 mr-2 btn-hover-shine btn btn-xs btn-" + optiondelete}
-                                                        onClick={this.onDelete.bind(this, data)}
-                                                    >
-                                                        <i className='fa fa-trash'></i>
+                                                        <i className='fa fa-eye'></i>
                                                     </button> : null 
                                                 }
                                                 </td>
