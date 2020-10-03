@@ -19,7 +19,7 @@ class CreateSolicitudTable extends Migration
             $table->integer('idusuario')->unsigned()->nullable();
             $table->decimal('montototal', 12, 2);
             $table->text('nota')->nullable();
-            $table->enum('estadoproceso', ['R', 'P', 'E', 'F'])->default('F');
+            $table->enum('estadoproceso', ['R', 'P', 'E', 'F'])->default('P');
             $table->enum('estado', ['A', 'N'])->default('A');
             $table->date('fecha')->nullable();
             $table->time('hora')->nullable();
