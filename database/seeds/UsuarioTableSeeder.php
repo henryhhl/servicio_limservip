@@ -44,6 +44,31 @@ class UsuarioTableSeeder extends Seeder
                 'usuario'     => 'rebeka',
                 'password'    => bcrypt('123123'),
             ], //4
+
+            [
+                'nombre'      => 'Jandira',
+                'apellido'    => 'Vargas Rojas',
+                'usuario'     => 'jandi',
+                'password'    => bcrypt('123123'),
+            ], //5
+            [
+                'nombre'      => 'Brayan Vera',
+                'apellido'    => 'Vera Laime',
+                'usuario'     => 'brayan',
+                'password'    => bcrypt('123123'),
+            ], //6
+            [
+                'nombre'      => 'Ruben',
+                'apellido'    => 'Aguirre Lazarte',
+                'usuario'     => 'ruben',
+                'password'    => bcrypt('123123'),
+            ], //7
+            [
+                'nombre'      => 'Rolando',
+                'apellido'    => 'Mendez Cruz',
+                'usuario'     => 'rolando',
+                'password'    => bcrypt('123123'),
+            ], //8
         ];
     }
 

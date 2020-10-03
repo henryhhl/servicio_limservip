@@ -21,73 +21,137 @@ class AsignarPermisoTableSeeder extends Seeder
             $detalle->estado = 'A';
             $detalle->save();
         }
-        // $vendedor = $this->permisos_vendedor();
-        // foreach($vendedor as $v){
-        //     PermisoDetalle::create($v);
-        // }
+         $cliente = $this->permisos_cliente();
+         foreach($cliente as $v){
+             PermisoDetalle::create($v);
+         }
+         $supervisor = $this->permisos_supervisor();
+         foreach($supervisor as $v){
+             PermisoDetalle::create($v);
+         }
     }
-    // public function permisos_vendedor(){
-    //     return [
-    //         [
-    //             'idpermiso'   => 13,
-    //             'idrol'       => 2,
-    //             'estado'      => 'A',
-    //         ], //1
-    //         [
-    //             'idpermiso'   => 32,
-    //             'idrol'       => 2,
-    //             'estado'      => 'A',
-    //         ], //2
-    //         [
-    //             'idpermiso'   => 33,
-    //             'idrol'       => 2,
-    //             'estado'      => 'A',
-    //         ], //3
-    //         [
-    //             'idpermiso'   => 34,
-    //             'idrol'       => 2,
-    //             'estado'      => 'A',
-    //         ], //4
-    //         [
-    //             'idpermiso'   => 37,
-    //             'idrol'       => 2,
-    //             'estado'      => 'A',
-    //         ], //5
-    //         [
-    //             'idpermiso'   => 38,
-    //             'idrol'       => 2,
-    //             'estado'      => 'A',
-    //         ], //6
-    //         [
-    //             'idpermiso'   => 39,
-    //             'idrol'       => 2,
-    //             'estado'      => 'A',
-    //         ], //7
-    //         [
-    //             'idpermiso'   => 41,
-    //             'idrol'       => 2,
-    //             'estado'      => 'A',
-    //         ], //8
-    //         [
-    //             'idpermiso'   => 62,
-    //             'idrol'       => 2,
-    //             'estado'      => 'A',
-    //         ], //9
-    //         [
-    //             'idpermiso'   => 63,
-    //             'idrol'       => 2,
-    //             'estado'      => 'A',
-    //         ], //10
-    //         [
-    //             'idpermiso'   => 64,
-    //             'idrol'       => 2,
-    //             'estado'      => 'A',
-    //         ], //11
-    //         [
-    //             'idpermiso'   => 66,
-    //             'idrol'       => 2,
-    //             'estado'      => 'A',
-    //         ], //12
-    //     ];
-    // }
+     public function permisos_cliente(){
+         return [
+             [
+                 'idpermiso'   => 1,
+                 'idrol'       => 3,
+                 'estado'      => 'A',
+             ], //1
+             [
+                'idpermiso'   => 10,
+                'idrol'       => 3,
+                'estado'      => 'A',
+            ], //1
+            [
+                'idpermiso'   => 11,
+                'idrol'       => 3,
+                'estado'      => 'A',
+            ], //1
+            [
+                'idpermiso'   => 12,
+                'idrol'       => 3,
+                'estado'      => 'A',
+            ], //1
+            [
+                'idpermiso'   => 23,
+                'idrol'       => 3,
+                'estado'      => 'A',
+            ], //1
+            [
+                'idpermiso'   => 24,
+                'idrol'       => 3,
+                'estado'      => 'A',
+            ], //1
+            [
+                'idpermiso'   => 26,
+                'idrol'       => 3,
+                'estado'      => 'A',
+            ], //1
+            [
+                'idpermiso'   => 27,
+                'idrol'       => 3,
+                'estado'      => 'A',
+            ], //1
+    
+         ];
+    }
+    public function permisos_supervisor(){
+        return [
+            [
+                'idpermiso'   => 1,
+                'idrol'       => 2,
+                'estado'      => 'A',
+            ], //1
+            [
+                'idpermiso'   => 7,
+                'idrol'       => 2,
+                'estado'      => 'A',
+            ], //1
+            [
+                'idpermiso'   => 8,
+                'idrol'       => 2,
+                'estado'      => 'A',
+            ], //1
+            [
+                'idpermiso'   => 9,
+                'idrol'       => 2,
+                'estado'      => 'A',
+            ], //1
+            [
+                'idpermiso'   => 10,
+                'idrol'       => 2,
+                'estado'      => 'A',
+            ], //1
+            [
+                'idpermiso'   => 11,
+                'idrol'       => 2,
+                'estado'      => 'A',
+            ], //1
+            [
+                'idpermiso'   => 12,
+                'idrol'       => 2,
+                'estado'      => 'A',
+            ], //1
+            [
+                'idpermiso'   => 13,
+                'idrol'       => 2,
+                'estado'      => 'A',
+            ], //1
+            [
+                'idpermiso'   => 17,
+                'idrol'       => 2,
+                'estado'      => 'A',
+            ], //1
+            [
+                'idpermiso'   => 18,
+                'idrol'       => 2,
+                'estado'      => 'A',
+            ], //1
+            [
+                'idpermiso'   => 22,
+                'idrol'       => 2,
+                'estado'      => 'A',
+            ], //1
+            [
+                'idpermiso'   => 23,
+                'idrol'       => 2,
+                'estado'      => 'A',
+            ], //1
+            [
+                'idpermiso'   => 27,
+                'idrol'       => 2,
+                'estado'      => 'A',
+            ], //1
+            [
+                'idpermiso'   => 28,
+                'idrol'       => 2,
+                'estado'      => 'A',
+            ], //1
+            [
+                'idpermiso'   => 29,
+                'idrol'       => 2,
+                'estado'      => 'A',
+            ], //1
+        ];
+    }
 }

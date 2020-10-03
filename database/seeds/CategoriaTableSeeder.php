@@ -1,9 +1,9 @@
 <?php
 
 use Illuminate\Database\Seeder;
-use App\Cliente;
+use App\Categoria;
 
-class ClienteTableSeeder extends Seeder
+class CategoriaTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -14,7 +14,7 @@ class ClienteTableSeeder extends Seeder
     {
         $data = $this->_get_data();
         foreach ($data as $d) {
-            Cliente::create($d);
+            Categoria::create($d);
         }
     }
 
@@ -22,17 +22,17 @@ class ClienteTableSeeder extends Seeder
         return [
             [
                 
-                'idusuario'   => 3,
-                'nit' => '588315',
-                'contacto' => '63498300',
+                'descripcion'   => 'industrial',
                 'estado'      => 'A',
             ], //1
             [
-                'idusuario'   => 4,
-                'nit' => '624582',
-                'contacto' => '72189600',
+                'descripcion'   => 'domiciliaria',
                 'estado'      => 'A',
             ], //2
+            [
+                'descripcion'   => 'negocio',
+                'estado'      => 'A',
+            ], //3
                         
         ];
     }
