@@ -35,16 +35,15 @@ class SolicitudMovilController extends Controller
         $idsol = $request->solicitud;
 
         $detalles =  DB::table('solicituddetalle as soldet')
-                ->leftJoin('users as user', 'soldet.idservicio', '=', 'user.id')
-                ->join('informacion as info', 'info.idsolicitud', '=', 'sol.id')
-                ->select('sol.id', 'sol.montototal', 'sol.estadoproceso', 'sol.fecha', 'sol.hora', 
-                    'user.nombre', 'user.apellido', 'info.direccion', 'info.latitud' , 'info.longitud', 'info.pais', 'info.ciudad', 'info.zona'
+                ->join('servicio as ser', 'soldet.idservicio', '=', 'ser.id')
+                ->select('soldet.id as iddet', 'soldet.cantidad', 'soldet.precio', 'ser.nombre as nombreservicio', 
+                    'soldet.nota'
                 )
-                ->where('sol.idusuario', '=', $idcliente)
-                ->where('sol.estado', '=', 'A')
-                ->orderBy('sol.id', 'desc')
+                ->where('soldet.idsolicitud', '=', $idsol)
+                ->where('soldet.estado', '=', 'A')
+                ->orderBy('soldet.id', 'asc')
                 ->get();
-
+        
         if(count($detalles) == 0){
             $detalles = [];
         }
