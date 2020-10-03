@@ -129,6 +129,9 @@ Route::get( $servidor . '/solicitud/show/{id}', 'SolicitudController@show');
 Route::post( $servidor . '/solicitud/update', 'SolicitudController@update');
 Route::post( $servidor . '/solicitud/delete', 'SolicitudController@destroy');
 
+Route::get( $servidor . '/solicitud/get_solicitudpendiente', 'SolicitudController@get_solicitudpendiente');
+
+
 
 Route::get( $local . '/personal', 'HomeController@index');
 Route::get( $local . '/personal/create', 'HomeController@index');
@@ -147,6 +150,7 @@ Route::post( $servidor . '/personal/delete', 'PersonalController@destroy');
 Route::get( $local . '/asignar_trabajo', 'HomeController@index');
 
 Route::get( $servidor . '/asignar_trabajo/index', 'AsignarTrabajoController@index');
+Route::get( $servidor . '/asignar_trabajo/get_personal', 'AsignarTrabajoController@get_personal');
 
 
 Route::get( $local . '/promocion', 'HomeController@index');

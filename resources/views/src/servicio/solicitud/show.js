@@ -464,8 +464,8 @@ class ShowSolicitud extends Component {
         ) );
 
         var estado = this.state.estadoproceso;
-        estado = (estado == 'E') ? 'PENDIENTE' : (estado == 'P') ? 'PROCESO' : 'FINALIZADO';
-        var color = (estado == 'E') ? 'warning' : (estado == 'P') ? 'processing' : 'success';
+        estado = (estado == 'P') ? 'PENDIENTE' : (estado == 'E') ? 'EN PROCESO' : 'FINALIZADO';
+        var color = (estado == 'P') ? 'warning' : (estado == 'E') ? 'processing' : 'success';
 
         return (
             <div className="rows">

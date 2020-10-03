@@ -21,7 +21,7 @@ class CreateSolicituddetalleTable extends Migration
             $table->decimal('precio', 12, 2);
             $table->decimal('descuento', 12, 2);
             $table->text('nota')->nullable();
-            $table->enum('estadoproceso', ['R', 'P', 'E', 'F'])->default('F');
+            $table->enum('estadoproceso', ['P', 'E', 'F'])->default('F');
             $table->enum('estado', ['A', 'N'])->default('A');
             $table->softDeletes();
             $table->timestamps();

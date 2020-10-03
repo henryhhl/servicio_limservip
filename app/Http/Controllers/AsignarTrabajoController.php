@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class AsignarTrabajoController extends Controller
 {
@@ -81,4 +83,52 @@ class AsignarTrabajoController extends Controller
     {
         //
     }
+
+    public function get_personal(Request $request)
+    {
+        try {
+
+            $sesion = Auth::guest();
+
+            if ($sesion) {
+                return response()->json([
+                    'response' => -3,
+                    'sesion'   => $sesion,
+                ]);
+            }
+
+            $data = DB::table('personal as pers')
+                ->leftJoin('users as user', 'pers.idusuario', '=', 'user.id')
+                ->leftJoin('detalle_rol as rol', 'user.id', '=', 'rol.idusuario')
+                ->select(
+                    'user.nombre', 'user.apellido', 'user.email', 'user.imagen', 'pers.id', 'pers.ci', 'pers.contacto',
+                    DB::raw(
+                        '(SELECT COUNT(*)  
+                        FROM asignardetalle as det 
+                        WHERE pers.id = det.idpersonal AND det.estadoproceso = "A") as cantidad'
+                    )
+                )
+                ->where('rol.idrol', '=', '4')
+                ->whereNull('pers.deleted_at')
+                ->get();
+
+
+            return response()->json([
+                'response'  => 1,
+                'data' => $data,
+            ]);
+
+        }catch(\Exception $th) {
+            return response()->json([
+                'response' => 0,
+                'message' => 'Error al procesar la solicitud',
+                'error' => [
+                    'file'    => $th->getFile(),
+                    'line'    => $th->getLine(),
+                    'message' => $th->getMessage()
+                ]
+            ]);
+        }
+    }
+
 }
