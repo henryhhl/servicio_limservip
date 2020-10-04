@@ -20,7 +20,7 @@ class CreateAsignartrabajoTable extends Migration
             $table->enum('estadoproceso', ['A', 'F'])->default('A');
             $table->date('fecha');
             $table->time('horainicio');
-            $table->time('horafin');
+            $table->time('horafin')->nullable();
             $table->enum('estado', ['A', 'N'])->default('A');
             $table->softDeletes();
             $table->timestamps();

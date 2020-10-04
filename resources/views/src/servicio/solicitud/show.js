@@ -117,6 +117,7 @@ class ShowSolicitud extends Component {
                                 id: data.id, servicio: data.servicio, descripcion: (data.descripcion == null) ? '' : data.descripcion, cantidad: data.cantidad, precio: data.precio, 
                                 nota: (data.nota == null) ? '' : data.nota, imagen: (data.imagen == null) ? '' : data.imagen, 
                                 visible_nota: false, categoria: (data.categoria == null) ? '' : data.categoria, estado: data.estadoproceso,
+                                personalasignado: data.personalasignado,
                             };
                             this.state.selected_servicio.push(object);
                         }
@@ -261,7 +262,7 @@ class ShowSolicitud extends Component {
                             <div className="card-header-tab card-header">
                                 <div className="card-header-title font-size-lg text-capitalize font-weight-normal">
                                     <i className="header-icon lnr-database icon-gradient bg-malibu-beach"> </i>
-                                    DATOS DE {this.state.productodetalle.servicio.toUpperCase()}
+                                    DETALLE DE SERVICIO
                                 </div>
                             </div>
 
@@ -465,7 +466,7 @@ class ShowSolicitud extends Component {
 
         var estado = this.state.estadoproceso;
         estado = (estado == 'P') ? 'PENDIENTE' : (estado == 'E') ? 'EN PROCESO' : 'FINALIZADO';
-        var color = (estado == 'P') ? 'warning' : (estado == 'E') ? 'processing' : 'success';
+        var color = (this.state.estadoproceso == 'P') ? 'warning' : (this.state.estadoproceso == 'E') ? 'processing' : 'success';
 
         return (
             <div className="rows">
@@ -552,12 +553,12 @@ class ShowSolicitud extends Component {
                                     <table className="tables-respons">
                                         <thead>
                                             <tr>
-                                                <td className={`title_form ${this.props.buttoncolor}`}>NRO</td>
                                                 <td className={`title_form ${this.props.buttoncolor}`}>SERVICIO</td>
                                                 <td className={`title_form ${this.props.buttoncolor}`}>CANTIDAD</td>
                                                 <td className={`title_form ${this.props.buttoncolor}`}>PRECIO</td>
                                                 <td className={`title_form ${this.props.buttoncolor}`}>NOTA</td>
                                                 <td className={`title_form ${this.props.buttoncolor}`}>SUBTOTAL</td>
+                                                <td className={`title_form ${this.props.buttoncolor}`}>PERSONAL ASIGNADO</td>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -575,10 +576,6 @@ class ShowSolicitud extends Component {
                                                 }
                                                 return (
                                                     <tr key={key}>
-                                                        <td style={{cursor: 'default', textAlign: 'left', paddingLeft: 10, }}>
-                                                            <label className='cols_show'>NRO: </label>
-                                                            {key + 1}
-                                                        </td>
                                                         <td style={{cursor: 'default', textAlign: 'left', paddingLeft: 10, 
                                                             fontWeight: 'bold', color: '#1890ff',  
                                                         }}>
@@ -656,6 +653,65 @@ class ShowSolicitud extends Component {
                                                         }}>
                                                             <label className='cols_show'>SUBTOTAL: </label>
                                                             {data.cantidad * data.precio}
+                                                        </td>
+                                                        <td style={{cursor: 'default', textAlign: 'left', paddingLeft: 10, 
+                                                            fontWeight: 'bold', color: '#1890ff', 
+                                                        }}>
+                                                            <label className='cols_show'>PERSONAL ASIGNADO: </label>
+                                                            <Popover placement='top' trigger='click'
+                                                                content={
+                                                                    <div className="card" style={{width: 320,}}>
+                                                                        <div>
+                                                                            <div className="bg-white">
+                                                                                <div className="table-responsive">
+                                                                                    <table className="text-nowrap table-lg mb-0 table table-hover">
+                                                                                        <tbody>
+                                                                                            {data.personalasignado.map( (personal, i) => {
+                                                                                                    return (
+                                                                                                    <tr key={i}>
+                                                                                                        <td className="text-center" style={{width: 30,}}>
+                                                                                                            <div className="custom-checkbox custom-control">
+                                                                                                                <input type="checkbox" 
+                                                                                                                    checked={true}
+                                                                                                                    className="custom-control-input" 
+                                                                                                                    readOnly
+                                                                                                                />
+                                                                                                                <label className="custom-control-label">&nbsp;</label>
+                                                                                                            </div>
+                                                                                                        </td>
+                                                                                                        <td>
+                                                                                                            <div className="widget-content p-0">
+                                                                                                                <div className="widget-content-wrapper">
+                                                                                                                    <div className="widget-content-left mr-3">
+                                                                                                                        {(personal.imagen == null || personal.imagen == '') ?
+                                                                                                                            <img width="42" className="rounded-circle" src="/images/anonimo.jpg" alt="" />:
+                                                                                                                            <img width="42" className="rounded-circle" src={personal.imagen} alt="" />
+                                                                                                                        }
+                                                                                                                    </div>
+                                                                                                                    <div className="widget-content-left">
+                                                                                                                        <div className="widget-heading">
+                                                                                                                            {personal.nombre} {personal.apellido}
+                                                                                                                        </div>
+                                                                                                                    </div>
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                        </td>
+                                                                                                    </tr>
+                                                                                                )}
+                                                                                            )}
+                                                                                        </tbody>
+                                                                                    </table>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                } 
+                                                                title='PERSONALES ASIGNADOS'
+                                                            >
+                                                                <a style={{color: 'blue', fontSize: 12, paddingLeft: 4, paddingRight: 4, border: '1px dashed blue' ,}}>
+                                                                    {'VER PERSONAL'}
+                                                                </a>
+                                                            </Popover>
                                                         </td>
                                                     </tr>
                                                 );

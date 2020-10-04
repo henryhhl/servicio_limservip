@@ -21,7 +21,7 @@ class CreateAsignardetalleTable extends Migration
             $table->enum('esencargado', ['V', 'F'])->default('F');
             $table->date('fecha');
             $table->time('horainicio');
-            $table->time('horafin');
+            $table->time('horafin')->nullable();
             $table->enum('estado', ['A', 'N'])->default('A');
             $table->softDeletes();
             $table->timestamps();

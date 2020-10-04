@@ -15,7 +15,7 @@ class SolicitudDetalle extends Model
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'idsolicitud', 'idservicio', 'cantidad', 'precio', 'descuento', 'nota', 'estadoproceso', 'estado',
+        
     ];
     
 }

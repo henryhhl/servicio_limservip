@@ -151,6 +151,7 @@ Route::get( $local . '/asignar_trabajo', 'HomeController@index');
 
 Route::get( $servidor . '/asignar_trabajo/index', 'AsignarTrabajoController@index');
 Route::get( $servidor . '/asignar_trabajo/get_personal', 'AsignarTrabajoController@get_personal');
+Route::post( $servidor . '/asignar_trabajo/asignar', 'AsignarTrabajoController@asignar');
 
 
 Route::get( $local . '/promocion', 'HomeController@index');

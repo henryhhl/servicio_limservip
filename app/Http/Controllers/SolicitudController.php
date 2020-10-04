@@ -272,10 +272,21 @@ class SolicitudController extends Controller
                 ->leftJoin('servicio as serv', 'det.idservicio', '=', 'serv.id')
                 ->leftJoin('categoria as cat', 'serv.idcategoria', '=', 'cat.id')
                 ->select('serv.id', 'serv.nombre as servicio', 'serv.descripcion', 'serv.imagen', 'cat.descripcion as categoria', 
-                    'det.cantidad', 'det.precio', 'det.nota', 'det.estadoproceso'
+                    'det.cantidad', 'det.precio', 'det.nota', 'det.estadoproceso', 'det.id as iddetalle'
                 )
                 ->where('det.idsolicitud', '=', $id)
                 ->get();
+
+            foreach ($detalle as $det) {
+                $det->personalasignado = DB::table('asignartrabajo as asignar')
+                    ->leftJoin('asignardetalle as det', 'asignar.id', '=', 'det.idasignartrabajo')
+                    ->leftJoin('personal as pers', 'det.idpersonal', '=', 'pers.id')
+                    ->leftJoin('users as user', 'pers.idusuario', '=', 'user.id')
+                    ->select('user.nombre', 'user.apellido', 'user.imagen')
+                    ->where('asignar.idsolicituddetalle', '=', $det->iddetalle)
+                    ->whereNull('asignar.deleted_at')
+                    ->get();
+            }
 
             return response()->json([
                 'response'  => 1,
@@ -367,7 +378,7 @@ class SolicitudController extends Controller
                     ->leftJoin('servicio as serv', 'det.idservicio', '=', 'serv.id')
                     ->leftJoin('categoria as cat', 'serv.idcategoria', '=', 'cat.id')
                     ->select('serv.id', 'serv.nombre as servicio', 'serv.descripcion', 'serv.imagen', 'cat.descripcion as categoria', 
-                        'det.cantidad', 'det.precio', 'det.nota', 'det.estadoproceso'
+                        'det.cantidad', 'det.precio', 'det.nota', 'det.estadoproceso', 'det.id as iddetalle'
                     )
                     ->where('det.estadoproceso', '=', 'P')
                     ->where('det.idsolicitud', '=', $obj->id)
