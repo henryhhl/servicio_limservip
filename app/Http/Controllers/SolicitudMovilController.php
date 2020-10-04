@@ -124,9 +124,9 @@ class SolicitudMovilController extends Controller
             }
 
             DB::commit();
-            $ultimoU=DB::table('solicitud')
+            /*$ultimoU=DB::table('solicitud')
             ->select('id', 'idcliente', 'montototal', 'estadoproceso', 'fecha', 'hora', 'estado' )
-            ->orderBy('id','desc')->first();
+            ->orderBy('id','desc')->first();*/
 
             return response()->json([
                 'data' => 'Insertado correctamente',
