@@ -83,7 +83,7 @@ class SolicitudMovilController extends Controller
             $latitud = $request->input('latitud');
             $longitud = $request->input('longitud');
 
-            $array_servicio = $request->input('array_servicio', '[]');
+            $array_servicio = json_decode($request->input('array_servicio', '[]'));
 
             $servicio = new Solicitud();
             $servicio->idusuario = $cliente;
@@ -111,7 +111,17 @@ class SolicitudMovilController extends Controller
             $informacion->longitud = $longitud;
 
             $informacion->save();
-
+            foreach ($array_servicio as $value) {
+                
+                $detalle = new SolicitudDetalle();
+                $detalle->idsolicitud = $servicio->id;
+                $detalle->idservicio = $value['id'];
+                $detalle->cantidad = $value['cantidad'];
+                $detalle->precio = $value['precio'];
+                $detalle->estadoproceso = 'P';
+                $detalle->descuento = 0;
+                $detalle->save();
+             }
            /* foreach ($array_servicio as $data) {
                 $detalle = new SolicitudDetalle();
                 $detalle->idsolicitud = $servicio->id;
