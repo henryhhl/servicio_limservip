@@ -94,7 +94,7 @@ class SolicitudMovilController extends Controller
             $servicio->hora = $mytime->toTimeString();
             $servicio->save();
 
-           /* $informacion = new Informacion();
+            $informacion = new Informacion();
             $informacion->idsolicitud = $servicio->id;
             $informacion->nombre = $nombre;
             $informacion->apellido = $apellido;
@@ -112,7 +112,7 @@ class SolicitudMovilController extends Controller
 
             $informacion->save();
 
-            foreach ($array_servicio as $data) {
+           /* foreach ($array_servicio as $data) {
                 $detalle = new SolicitudDetalle();
                 $detalle->idsolicitud = $servicio->id;
                 $detalle->idservicio = $data->id;
