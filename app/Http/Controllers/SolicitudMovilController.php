@@ -122,12 +122,12 @@ class SolicitudMovilController extends Controller
                 $detalle->descuento = 0;
                 $detalle->save();
             }
-
+            */
             DB::commit();
             /*$ultimoU=DB::table('solicitud')
             ->select('id', 'idcliente', 'montototal', 'estadoproceso', 'fecha', 'hora', 'estado' )
-            ->orderBy('id','desc')->first();*/
-
+            ->orderBy('id','desc')->first();
+            */
             return response()->json([
                 'data' => 'Insertado Correctamente',
             ]);
