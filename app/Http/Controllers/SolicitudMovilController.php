@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Informacion;
+use App\Solicitud;
+use App\SolicitudDetalle;
+use Carbon\Carbon;
 
 class SolicitudMovilController extends Controller
 {
@@ -71,6 +75,7 @@ class SolicitudMovilController extends Controller
             $ciudad = $request->input('ciudad');
             $zona = $request->input('zona');
             $pais = $request->input('pais');
+            $cliente = $request->input('cliente');
             
             $direccioncompleto = $request->input('direccioncompleto');
             $montototal = $request->input('montototal');
@@ -81,7 +86,7 @@ class SolicitudMovilController extends Controller
             $array_servicio = json_decode($request->input('array_servicio', '[]'));
 
             $servicio = new Solicitud();
-            $servicio->idusuario = Auth::user()->id;
+            $servicio->idusuario = $cliente;
             $servicio->montototal = $montototal;
             $mytime = Carbon::now('America/La_paz');
             $servicio->fecha = $mytime->toDateString();
