@@ -89,6 +89,7 @@ class SolicitudMovilController extends Controller
             $servicio->idusuario = $cliente;
             $servicio->montototal = $montototal;
             $mytime = Carbon::now('America/La_paz');
+            $servicio->estadoproceso = 'P';
             $servicio->fecha = $mytime->toDateString();
             $servicio->hora = $mytime->toTimeString();
             $servicio->save();
@@ -117,6 +118,7 @@ class SolicitudMovilController extends Controller
                 $detalle->idservicio = $data->id;
                 $detalle->cantidad = $data->cantidad;
                 $detalle->precio = $data->precio;
+                $detalle->estadoproceso = 'P';
                 $detalle->descuento = 0;
                 $detalle->save();
             }
