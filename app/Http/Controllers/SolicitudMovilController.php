@@ -85,7 +85,7 @@ class SolicitudMovilController extends Controller
 
             $array_servicio = json_decode($request->input('array_servicio', '[]'));
 
-            $servicio = new Solicitud();
+            /*$servicio = new Solicitud();
             $servicio->idusuario = $cliente;
             $servicio->montototal = $montototal;
             $mytime = Carbon::now('America/La_paz');
@@ -129,7 +129,7 @@ class SolicitudMovilController extends Controller
             ->orderBy('id','desc')->first();*/
 
             return response()->json([
-                'data' => 'Insertado correctamente',
+                'data' => $array_servicio,
             ]);
 
         }catch(\Exception $th) {
