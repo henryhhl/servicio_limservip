@@ -83,7 +83,7 @@ class SolicitudMovilController extends Controller
             $latitud = $request->input('latitud');
             $longitud = $request->input('longitud');
 
-            $array_servicio = $request->input('array_servicio', 'Vacio Array');
+            $array_servicio = json_decode($request->input('array_servicio', 'Vacio Array'));
 
             /*$servicio = new Solicitud();
             $servicio->idusuario = $cliente;
@@ -134,8 +134,9 @@ class SolicitudMovilController extends Controller
 
         }catch(\Exception $th) {
             DB::rollBack();
+            $array_servicio = json_decode($request->input('array_servicio', 'Vacio Array'));
             return response()->json([
-                'data' => [],
+                'data' => $array_servicio,
             ]);
         }
     }
