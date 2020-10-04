@@ -83,7 +83,7 @@ class SolicitudMovilController extends Controller
             $latitud = $request->input('latitud');
             $longitud = $request->input('longitud');
 
-            $array_servicio = json_decode($request->input('array_servicio', '[]'));
+            $array_servicio = json_decode($request->input('array_servicio', 'Vacio Array'));
 
             /*$servicio = new Solicitud();
             $servicio->idusuario = $cliente;
