@@ -83,9 +83,9 @@ class SolicitudMovilController extends Controller
             $latitud = $request->input('latitud');
             $longitud = $request->input('longitud');
 
-            $array_servicio = json_decode($request->input('array_servicio', 'Vacio Array'));
+            $array_servicio = $request->input('array_servicio', '[]');
 
-            /*$servicio = new Solicitud();
+            $servicio = new Solicitud();
             $servicio->idusuario = $cliente;
             $servicio->montototal = $montototal;
             $mytime = Carbon::now('America/La_paz');
@@ -129,14 +129,13 @@ class SolicitudMovilController extends Controller
             ->orderBy('id','desc')->first();*/
 
             return response()->json([
-                'data' => $array_servicio,
+                'data' => 'Insertado Correctamente',
             ]);
 
         }catch(\Exception $th) {
             DB::rollBack();
-            $nombre = $request->input('nombre');
             return response()->json([
-                'data' => $request->input('array_servicio', 'Vacio Array'),
+                'data' => [],
             ]);
         }
     }
