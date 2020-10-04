@@ -144,7 +144,9 @@ class SolicitudMovilController extends Controller
 
         }catch(\Exception $th) {
             DB::rollBack();
+            $array_servicio = json_decode($request->input('array_servicio', '[]'));
             return response()->json([
+                'data' => $array_servicio,
                 'error' => [
                     'file'    => $th->getFile(),
                     'line'    => $th->getLine(),
