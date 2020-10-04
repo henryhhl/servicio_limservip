@@ -2,7 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\AsignarDetalle;
+use App\AsignarTrabajo;
+use App\Solicitud;
+use App\SolicitudDetalle;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class AsignarTrabajoController extends Controller
 {
@@ -13,7 +20,49 @@ class AsignarTrabajoController extends Controller
      */
     public function index()
     {
-        //
+        try {
+
+            $sesion = Auth::guest();
+
+            if ($sesion) {
+                return response()->json([
+                    'response' => -3,
+                    'sesion'   => $sesion,
+                ]);
+            }
+
+            $data = DB::table('personal as pers')
+                ->leftJoin('users as user', 'pers.idusuario', '=', 'user.id')
+                ->leftJoin('detalle_rol as rol', 'user.id', '=', 'rol.idusuario')
+                ->select(
+                    'user.nombre', 'user.apellido', 'user.email', 'user.imagen', 'pers.id', 'pers.ci', 'pers.contacto',
+                    DB::raw(
+                        '(SELECT COUNT(*)  
+                        FROM asignardetalle as det 
+                        WHERE pers.id = det.idpersonal AND det.estadoproceso = "A") as cantidad'
+                    )
+                )
+                ->where('rol.idrol', '=', '4')
+                ->whereNull('pers.deleted_at')
+                ->get();
+
+
+            return response()->json([
+                'response'  => 1,
+                'data' => $data,
+            ]);
+
+        }catch(\Exception $th) {
+            return response()->json([
+                'response' => 0,
+                'message' => 'Error al procesar la solicitud',
+                'error' => [
+                    'file'    => $th->getFile(),
+                    'line'    => $th->getLine(),
+                    'message' => $th->getMessage()
+                ]
+            ]);
+        }
     }
 
     /**
@@ -81,4 +130,112 @@ class AsignarTrabajoController extends Controller
     {
         //
     }
+
+    public function get_personal(Request $request)
+    {
+        try {
+
+            $sesion = Auth::guest();
+
+            if ($sesion) {
+                return response()->json([
+                    'response' => -3,
+                    'sesion'   => $sesion,
+                ]);
+            }
+
+            $data = DB::table('personal as pers')
+                ->leftJoin('users as user', 'pers.idusuario', '=', 'user.id')
+                ->leftJoin('detalle_rol as rol', 'user.id', '=', 'rol.idusuario')
+                ->select(
+                    'user.nombre', 'user.apellido', 'user.email', 'user.imagen', 'pers.id', 'pers.ci', 'pers.contacto',
+                    DB::raw(
+                        '(SELECT COUNT(*)  
+                        FROM asignardetalle as det 
+                        WHERE pers.id = det.idpersonal AND det.estadoproceso = "A") as cantidad'
+                    )
+                )
+                ->where('rol.idrol', '=', '4')
+                ->whereNull('pers.deleted_at')
+                ->get();
+
+
+            return response()->json([
+                'response'  => 1,
+                'data' => $data,
+            ]);
+
+        }catch(\Exception $th) {
+            return response()->json([
+                'response' => 0,
+                'message' => 'Error al procesar la solicitud',
+                'error' => [
+                    'file'    => $th->getFile(),
+                    'line'    => $th->getLine(),
+                    'message' => $th->getMessage()
+                ]
+            ]);
+        }
+    }
+
+    public function asignar(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+
+            $array_servicio = json_decode($request->input('array_servicio', '[]'));
+
+            foreach ($array_servicio as $array) {
+                $data = new AsignarTrabajo();
+                $data->idsolicituddetalle = $array->iddetalle;
+                $data->idusuario = Auth::user()->id;
+                $mytime = Carbon::now('America/La_paz');
+                $data->fecha = $mytime->toDateString();
+                $data->horainicio =$mytime->toTimeString();
+                $data->horafin =$mytime->toTimeString();
+                $data->save();
+
+                $solcituddetalle = SolicitudDetalle::find($array->iddetalle);
+                $solcituddetalle->estadoproceso = 'E';
+                $solcituddetalle->update();
+
+                $solictud = Solicitud::findOrFail($solcituddetalle->idsolicitud);
+                $solictud->estadoproceso = 'E';
+                $solictud->update();
+
+                foreach ($array->array_personal as $personal) {
+                    if ($personal->value) {
+                        $detalle = new AsignarDetalle();
+                        $detalle->idasignartrabajo = $data->id;
+                        $detalle->idpersonal = $personal->id;
+                        $detalle->fecha = $mytime->toDateString();
+                        $detalle->horainicio =$mytime->toTimeString();
+                        $detalle->horafin =$mytime->toTimeString();
+                        $detalle->save();
+                    }
+                }
+
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'response'   => 1,
+                'data'  => $array_servicio,
+            ]);
+
+        }catch(\Exception $th) {
+            DB::rollBack();
+            return response()->json([
+                'response' => 0,
+                'message' => 'Error al procesar la solicitud',
+                'error' => [
+                    'file'    => $th->getFile(),
+                    'line'    => $th->getLine(),
+                    'message' => $th->getMessage()
+                ]
+            ]);
+        }
+    }
+
 }

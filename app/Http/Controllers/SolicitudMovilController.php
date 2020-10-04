@@ -117,21 +117,16 @@ class SolicitudMovilController extends Controller
             }
 
             DB::commit();
+            $ultimoU=DB::table('solicitud')->orderBy('id','desc')->first();
 
             return response()->json([
-                'response'  => 1,
+                'data' => [$ultimoU],
             ]);
 
         }catch(\Exception $th) {
             DB::rollBack();
             return response()->json([
-                'response' => 0,
-                'message' => 'Error al procesar la solicitud',
-                'error' => [
-                    'file'    => $th->getFile(),
-                    'line'    => $th->getLine(),
-                    'message' => $th->getMessage()
-                ]
+                'data' => [],
             ]);
         }
     }

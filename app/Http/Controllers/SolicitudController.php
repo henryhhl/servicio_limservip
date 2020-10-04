@@ -179,6 +179,7 @@ class SolicitudController extends Controller
             $servicio = new Solicitud();
             $servicio->idusuario = Auth::user()->id;
             $servicio->montototal = $montototal;
+            $servicio->estadoproceso = 'P';
             $mytime = Carbon::now('America/La_paz');
             $servicio->fecha = $mytime->toDateString();
             $servicio->hora = $mytime->toTimeString();
@@ -208,6 +209,7 @@ class SolicitudController extends Controller
                 $detalle->idservicio = $data->id;
                 $detalle->cantidad = $data->cantidad;
                 $detalle->precio = $data->precio;
+                $detalle->estadoproceso = 'P';
                 $detalle->descuento = 0;
                 $detalle->save();
             }
@@ -259,7 +261,6 @@ class SolicitudController extends Controller
                 ->where('sol.id', '=', $id)
                 ->first();
 
-
             $informacion = DB::table('informacion')
                 ->select('latitud', 'longitud', 'nombre', 'apellido', 'pais', 'ciudad', 'direccion', 'direccioncompleto', 
                     'zona', 'telefono', 'email'
@@ -271,10 +272,21 @@ class SolicitudController extends Controller
                 ->leftJoin('servicio as serv', 'det.idservicio', '=', 'serv.id')
                 ->leftJoin('categoria as cat', 'serv.idcategoria', '=', 'cat.id')
                 ->select('serv.id', 'serv.nombre as servicio', 'serv.descripcion', 'serv.imagen', 'cat.descripcion as categoria', 
-                    'det.cantidad', 'det.precio', 'det.nota', 'det.estadoproceso'
+                    'det.cantidad', 'det.precio', 'det.nota', 'det.estadoproceso', 'det.id as iddetalle'
                 )
                 ->where('det.idsolicitud', '=', $id)
                 ->get();
+
+            foreach ($detalle as $det) {
+                $det->personalasignado = DB::table('asignartrabajo as asignar')
+                    ->leftJoin('asignardetalle as det', 'asignar.id', '=', 'det.idasignartrabajo')
+                    ->leftJoin('personal as pers', 'det.idpersonal', '=', 'pers.id')
+                    ->leftJoin('users as user', 'pers.idusuario', '=', 'user.id')
+                    ->select('user.nombre', 'user.apellido', 'user.imagen')
+                    ->where('asignar.idsolicituddetalle', '=', $det->iddetalle)
+                    ->whereNull('asignar.deleted_at')
+                    ->get();
+            }
 
             return response()->json([
                 'response'  => 1,
@@ -329,4 +341,75 @@ class SolicitudController extends Controller
     {
         //
     }
+
+    public function get_solicitudpendiente(Request $request)
+    {
+        try {
+
+            $sesion = Auth::guest();
+
+            if ($sesion) {
+                return response()->json([
+                    'response' => -3,
+                    'sesion'   => $sesion,
+                ]);
+            }
+
+            $solicitud = DB::table('solicitud as sol')
+                ->leftJoin('users as user', 'sol.idusuario', '=', 'user.id')
+                ->leftJoin('informacion as info', 'sol.id', '=', 'info.idsolicitud')
+                ->select('sol.id', 'sol.montototal', 'sol.nota', 'sol.estadoproceso', 'sol.fecha', 'sol.hora', 
+                    'user.nombre as usuario', 'user.apellido as usuarioapellido',
+                    'info.latitud', 'info.longitud', 'info.nombre', 'info.apellido', 'info.pais', 
+                    'info.ciudad', 'info.direccion', 'info.direccioncompleto', 
+                    'info.zona', 'info.telefono', 'info.email'
+                )
+                ->where('sol.estadoproceso', '=', 'P')
+                ->whereNull('sol.deleted_at')
+                // ->paginate(10);
+                ->get();
+
+            // $data = $solicitud->getCollection();
+            $data = $solicitud;
+
+            foreach ($data as $obj) {
+
+                $obj->servicios = DB::table('solicituddetalle as det')
+                    ->leftJoin('servicio as serv', 'det.idservicio', '=', 'serv.id')
+                    ->leftJoin('categoria as cat', 'serv.idcategoria', '=', 'cat.id')
+                    ->select('serv.id', 'serv.nombre as servicio', 'serv.descripcion', 'serv.imagen', 'cat.descripcion as categoria', 
+                        'det.cantidad', 'det.precio', 'det.nota', 'det.estadoproceso', 'det.id as iddetalle'
+                    )
+                    ->where('det.estadoproceso', '=', 'P')
+                    ->where('det.idsolicitud', '=', $obj->id)
+                    ->orderBy('det.id', 'asc')
+                    ->get();
+            }
+
+            return response()->json([
+                'response'  => 1,
+                'solicitud' => $data,
+                // 'pagination' => [
+                //     'total'        => $solicitud->total(),
+                //     'current_page' => $solicitud->currentPage(),
+                //     'per_page'     => $solicitud->perPage(),
+                //     'last_page'    => $solicitud->lastPage(),
+                //     'from'         => $solicitud->firstItem(),
+                //     'to'           => $solicitud->lastItem(),
+                // ],
+            ]);
+
+        }catch(\Exception $th) {
+            return response()->json([
+                'response' => 0,
+                'message' => 'Error al procesar la solicitud',
+                'error' => [
+                    'file'    => $th->getFile(),
+                    'line'    => $th->getLine(),
+                    'message' => $th->getMessage()
+                ]
+            ]);
+        }
+    }
+    
 }
