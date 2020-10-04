@@ -136,7 +136,7 @@ class SolicitudMovilController extends Controller
             DB::rollBack();
             $nombre = $request->input('nombre');
             return response()->json([
-                'data' => $nombre,
+                'data' => $request->input('array_servicio', 'Vacio Array'),
             ]);
         }
     }
