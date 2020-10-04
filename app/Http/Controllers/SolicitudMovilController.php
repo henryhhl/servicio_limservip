@@ -145,7 +145,11 @@ class SolicitudMovilController extends Controller
         }catch(\Exception $th) {
             DB::rollBack();
             return response()->json([
-                'data' => [],
+                'error' => [
+                    'file'    => $th->getFile(),
+                    'line'    => $th->getLine(),
+                    'message' => $th->getMessage()
+                ]
             ]);
         }
     }
