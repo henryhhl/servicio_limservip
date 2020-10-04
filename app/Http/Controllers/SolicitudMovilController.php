@@ -94,7 +94,7 @@ class SolicitudMovilController extends Controller
             $servicio->hora = $mytime->toTimeString();
             $servicio->save();
 
-            $informacion = new Informacion();
+           /* $informacion = new Informacion();
             $informacion->idsolicitud = $servicio->id;
             $informacion->nombre = $nombre;
             $informacion->apellido = $apellido;
