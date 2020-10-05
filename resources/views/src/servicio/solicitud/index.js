@@ -4,7 +4,7 @@ import axios from 'axios';
 import {withRouter, Redirect} from 'react-router-dom';
 import PropTypes from 'prop-types';
 
-import { Pagination, notification, Modal  } from 'antd';
+import { Pagination, notification, Modal, Tag  } from 'antd';
 import 'antd/dist/antd.css';
 import web from '../../utils/services';
 import { isPermission } from '../../utils/functions';
@@ -150,12 +150,13 @@ class IndexSolicitud extends Component {
                             <table className="tables-respons">
                                 <thead>
                                     <tr>
-                                        <td>ID</td>
+                                        <td>NRO</td>
                                         <td>Cliente</td>
                                         <td>Direccion</td>
                                         <td>Email</td>
                                         <td>Telefono</td>
-                                        <td>Monto Total</td>
+                                        <td>Monto</td>
+                                        <td>Estado</td>
                                         <td>Opcion</td>
                                     </tr>
                                 </thead>
@@ -164,8 +165,8 @@ class IndexSolicitud extends Component {
                                         (data, key) => (
                                             <tr key={key}>
                                                 <td>
-                                                    <label className='cols_show'>ID: </label>
-                                                    {data.id}
+                                                    <label className='cols_show'>NRO: </label>
+                                                    {key + 1}
                                                 </td>
                                                 <td>
                                                     <label className='cols_show'>Cliente: </label>
@@ -184,8 +185,14 @@ class IndexSolicitud extends Component {
                                                     {data.telefono == null ? '' : data.telefono}
                                                 </td>
                                                 <td>
-                                                    <label className='cols_show'>Monto Total: </label>
+                                                    <label className='cols_show'>Monto: </label>
                                                     {data.montototal}
+                                                </td>
+                                                <td>
+                                                    <label className='cols_show'>Estado: </label>
+                                                    <Tag color={(data.estadoproceso == 'P') ? 'warning' : (data.estadoproceso == 'E') ? 'processing' : 'success'}>
+                                                        {(data.estadoproceso == 'P') ? 'PENDIENTE' : (data.estadoproceso == 'E') ? 'EN PROCESO' : 'FINALIZADO'}
+                                                    </Tag>
                                                 </td>
                                                 <td>
                                                 { isPermission(this.props.permisos_habilitados, permissions.solicitudshow) ?

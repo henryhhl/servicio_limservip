@@ -152,6 +152,16 @@ export default class Sidebar extends Component {
                                                 </Link>
                                             </li> : null 
                                         }
+                                        { isPermission(this.props.permisos_habilitados, permissions.seguimientoshow) ?
+                                            <li>
+                                                <Link to={ web.serv_link + '/visualizar_seguimiento'} onClick={this.props.init} 
+                                                    className={this.props.link_active.visualizar_seguimiento + ' ' + this.props.sizetext}
+                                                >
+                                                    <i className="metismenu-icon">
+                                                    </i> Seguimiento
+                                                </Link>
+                                            </li> : null 
+                                        }
                                     </ul>
                                 </li> : null 
                             }
@@ -209,6 +219,17 @@ export default class Sidebar extends Component {
                                                 </Link>
                                             </li> : null 
                                         }
+
+                                        { isPermission(this.props.permisos_habilitados, permissions.generarreporte) ?
+                                            <li>
+                                                <Link to={ web.serv_link + '/generar_reporte'} onClick={this.props.init} 
+                                                    className={this.props.link_active.generar_reporte + ' ' + this.props.sizetext}
+                                                >
+                                                    <i className="metismenu-icon">
+                                                    </i> Reporte
+                                                </Link>
+                                            </li> : null 
+                                        }
                                         
                                     </ul>
                                 </li> : null 
@@ -262,9 +283,11 @@ Sidebar.defaultProps = {
         categoria: '',
         servicio: '',
         solicitud: '',
+        generar_reporte: '',
 
         personal: '',
         asignar_trabajo: '',
+        visualizar_seguimiento: '',
     },
     sidebarcolor: '',
     sizetext: '',

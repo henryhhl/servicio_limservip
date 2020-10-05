@@ -63,14 +63,8 @@ class SolicitudController extends Controller
                     ->where(function ($query) use ($search) {
                         return $query
                             ->orWhere(DB::raw("CONCAT(info.nombre, ' ',info.apellido)"), 'LIKE', "%".$search."%")
-                            ->orWhere(DB::raw("CONCAT(cli.nombre, ' ',cli.apellido)"), 'LIKE', "%".$search."%")
-                            ->orWhere(DB::raw("CONCAT(user.nombre, ' ',user.apellido)"), 'LIKE', "%".$search."%")
-                            ->orWhere('user.nombre', 'LIKE', '%'.$search.'%')
-                            ->orWhere('user.apellido', 'LIKE', '%'.$search.'%')
                             ->orWhere('info.nombre', 'LIKE', '%'.$search.'%')
                             ->orWhere('info.apellido', 'LIKE', '%'.$search.'%')
-                            ->orWhere('cli.nombre', 'LIKE', '%'.$search.'%')
-                            ->orWhere('cli.apellido', 'LIKE', '%'.$search.'%')
                             ->orWhere('info.email', 'LIKE', '%'.$search.'%')
                             ->orWhere('info.telefono', 'LIKE', '%'.$search.'%');
                     })
@@ -132,6 +126,7 @@ class SolicitudController extends Controller
             return response()->json([
                 'response'  => 1,
                 'nro' => sizeof($nro) + 1,
+                'usuario' => Auth::user(),
             ]);
 
         }catch(\Exception $th) {

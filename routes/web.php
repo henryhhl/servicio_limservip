@@ -154,6 +154,20 @@ Route::get( $servidor . '/asignar_trabajo/get_personal', 'AsignarTrabajoControll
 Route::post( $servidor . '/asignar_trabajo/asignar', 'AsignarTrabajoController@asignar');
 
 
+Route::get( $local . '/visualizar_seguimiento', 'HomeController@index');
+
+Route::get( $servidor . '/visualizar_seguimiento/create', 'SeguimientoController@create');
+
+
+
+Route::get( $local . '/generar_reporte', 'HomeController@index');
+
+Route::get( $servidor . '/generar_reporte/create', 'ReporteController@create');
+Route::post( $servidor . '/generar_reporte/generar', 'ReporteController@generar');
+
+
+
+
 Route::get( $local . '/promocion', 'HomeController@index');
 Route::get( $local . '/promocion/create', 'HomeController@index');
 Route::get( $local . '/promocion/editar/{id}', 'HomeController@index');
