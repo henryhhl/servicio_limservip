@@ -53,6 +53,7 @@ class AsignarTrabajo extends Component {
     get_data() {
         axios.get( web.servidor + '/asignar_trabajo/index').then(
             (response) => {
+                console.log(response.data)
                 if (response.status == 200) {
                     if (response.data.response == -3) {
                         this.props.logout();
