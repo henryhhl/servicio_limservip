@@ -37,7 +37,7 @@ class SolicitudMovilController extends Controller
         $detalles =  DB::table('solicituddetalle as soldet')
                 ->join('servicio as ser', 'soldet.idservicio', '=', 'ser.id')
                 ->select('soldet.id as iddet', 'soldet.cantidad', 'soldet.precio', 'ser.nombre as nombreservicio', 
-                    'soldet.nota'
+                    'soldet.nota', 'ser.imagen'
                 )
                 ->where('soldet.idsolicitud', '=', $idsol)
                 ->where('soldet.estado', '=', 'A')
@@ -55,5 +55,79 @@ class SolicitudMovilController extends Controller
 
     public function personalAsignado(){
 
+    }
+
+    public function store(){
+        
+        try {
+
+            DB::beginTransaction();
+
+            $nombre = $request->input('nombre');
+            $apellido = $request->input('apellido');
+            $email = $request->input('email');
+            $telefono = $request->input('telefono');
+            $direccion = $request->input('direccion');
+            $ciudad = $request->input('ciudad');
+            $zona = $request->input('zona');
+            $pais = $request->input('pais');
+            
+            $direccioncompleto = $request->input('direccioncompleto');
+            $montototal = $request->input('montototal');
+
+            $latitud = $request->input('latitud');
+            $longitud = $request->input('longitud');
+
+            $array_servicio = json_decode($request->input('array_servicio', '[]'));
+
+            $servicio = new Solicitud();
+            $servicio->idusuario = Auth::user()->id;
+            $servicio->montototal = $montototal;
+            $mytime = Carbon::now('America/La_paz');
+            $servicio->fecha = $mytime->toDateString();
+            $servicio->hora = $mytime->toTimeString();
+            $servicio->save();
+
+            $informacion = new Informacion();
+            $informacion->idsolicitud = $servicio->id;
+            $informacion->nombre = $nombre;
+            $informacion->apellido = $apellido;
+            $informacion->pais = $pais;
+            $informacion->ciudad = $ciudad;
+            $informacion->direccion = $direccion;
+            $informacion->telefono = $telefono;
+            $informacion->email = $email;
+            $informacion->zona = $zona;
+
+            $informacion->direccioncompleto = $direccioncompleto;
+
+            $informacion->latitud = $latitud;
+            $informacion->longitud = $longitud;
+
+            $informacion->save();
+
+            foreach ($array_servicio as $data) {
+                $detalle = new SolicitudDetalle();
+                $detalle->idsolicitud = $servicio->id;
+                $detalle->idservicio = $data->id;
+                $detalle->cantidad = $data->cantidad;
+                $detalle->precio = $data->precio;
+                $detalle->descuento = 0;
+                $detalle->save();
+            }
+
+            DB::commit();
+            $ultimoU=DB::table('solicitud')->orderBy('id','desc')->first();
+
+            return response()->json([
+                'data' => [$ultimoU],
+            ]);
+
+        }catch(\Exception $th) {
+            DB::rollBack();
+            return response()->json([
+                'data' => [],
+            ]);
+        }
     }
 }
