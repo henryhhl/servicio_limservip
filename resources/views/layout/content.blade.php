@@ -30,7 +30,7 @@
             <li class="nav-item"><a href="#about-section" class="nav-link"><span>Quienes Somos</span></a></li>
             <li class="nav-item"><a href="#blog-section" class="nav-link"><span>Servicios</span></a></li>
             <li class="nav-item"><a href="#contact-section" class="nav-link"><span>Contactanos</span></a></li>
-            <li class="nav-item mr-md-2" style="background-color: #76448A; border-radius: 10%"><a href="#" class="nav-link">Sign In</a></li>
+            <li class="nav-item mr-md-2" style="background-color: #76448A; border-radius: 10%"><a href="/login" class="nav-link">Sign In</a></li>
         </ul>
         </div>
     </div>
