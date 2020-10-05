@@ -24,8 +24,8 @@ $local = '/limservip';  // local
 
 
 Route::get('/', function () {
-    //return redirect('/login');
-   return view('welcome2');
+    return redirect('/login');
+   //return view('welcome2');
 });
 
 Auth::routes();
