@@ -17,7 +17,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 Route::get('loguear', 'UsuarioMovilController@loguear');
-Route::get('usuario/registrar', 'UsuarioMovilController@registrar');
+Route::post('usuario/registrar', 'UsuarioMovilController@registrar');
 Route::get('servicio/listar', 'ServicioMovilController@listar');
 Route::get('solicitud/listar', 'SolicitudMovilController@misolicitud');
 Route::get('solicitud/detalle', 'SolicitudMovilController@detalleSolicitud');

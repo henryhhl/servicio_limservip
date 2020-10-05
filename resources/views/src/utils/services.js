@@ -8,7 +8,7 @@ const web = {
     img_servidor: '',                                                                   // local
 
     // serv_link: '/grupo10sc/taller_mecanico',                                               //servidor
-    serv_link: '/taller_mecanico',                                                      //local
+    serv_link: '/limservip',                                                      //local
 
     // home: '/grupo10sc/taller_mecanico',                                                    //servidor
     home: '',                                                                           //local
