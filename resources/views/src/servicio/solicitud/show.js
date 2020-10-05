@@ -3,8 +3,10 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import {withRouter, Redirect} from 'react-router-dom';
 
-import { notification, Card, Modal, Popover, Button, Tag } from 'antd';
+import { notification, Card, Modal, Popover, Button, Tag, Select } from 'antd';
 import 'antd/dist/antd.css';
+
+const { Option } = Select;
 
 import Lightbox from 'react-image-lightbox';
 import 'react-image-lightbox/style.css';
@@ -58,6 +60,7 @@ class ShowSolicitud extends Component {
             fecha: '',
             hora: '',
             estadoproceso: '',
+            proceso: '',
 
             search_servicio: '',
             active_servicio: 'active',
@@ -142,6 +145,7 @@ class ShowSolicitud extends Component {
                             montototal: response.data.solicitud.montototal,
                             nropedido: response.data.solicitud.id,
                             estadoproceso: response.data.solicitud.estadoproceso,
+                            proceso: response.data.solicitud.estadoproceso,
 
                             hora: response.data.solicitud.hora,
                             fecha: this.formato(response.data.solicitud.fecha),
@@ -465,8 +469,10 @@ class ShowSolicitud extends Component {
         ) );
 
         var estado = this.state.estadoproceso;
-        estado = (estado == 'P') ? 'PENDIENTE' : (estado == 'E') ? 'EN PROCESO' : 'FINALIZADO';
-        var color = (this.state.estadoproceso == 'P') ? 'warning' : (this.state.estadoproceso == 'E') ? 'processing' : 'success';
+        estado = (estado == 'P') ? 'PENDIENTE' : (estado == 'E') ? 'EN PROCESO' : (estado == 'C') ? 'CANCELADO' : (estado == 'N') ? 'FALLIDO' : 'FINALIZADO';
+        
+        var color = (this.state.estadoproceso == 'P') ? 'warning' : (this.state.estadoproceso == 'E') ? 'processing' : 
+                (this.state.estadoproceso == 'C') ? 'red' : (this.state.estadoproceso == 'N') ? 'red' : 'success';
 
         return (
             <div className="rows">

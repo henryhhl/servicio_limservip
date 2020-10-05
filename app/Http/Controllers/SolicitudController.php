@@ -204,6 +204,7 @@ class SolicitudController extends Controller
                 $detalle->idservicio = $data->id;
                 $detalle->cantidad = $data->cantidad;
                 $detalle->precio = $data->precio;
+                $detalle->nota = $data->nota;
                 $detalle->estadoproceso = 'P';
                 $detalle->descuento = 0;
                 $detalle->save();
@@ -392,6 +393,35 @@ class SolicitudController extends Controller
                 //     'from'         => $solicitud->firstItem(),
                 //     'to'           => $solicitud->lastItem(),
                 // ],
+            ]);
+
+        }catch(\Exception $th) {
+            return response()->json([
+                'response' => 0,
+                'message' => 'Error al procesar la solicitud',
+                'error' => [
+                    'file'    => $th->getFile(),
+                    'line'    => $th->getLine(),
+                    'message' => $th->getMessage()
+                ]
+            ]);
+        }
+    }
+
+
+    public function update_estado(Request $request)
+    {
+        try {
+
+            $estado = $request->input('proceso');
+            $id = $request->input('id');
+
+            $data = Solicitud::findOrFail($id);
+            $data->estadoproceso = $estado;
+            $data->update();
+
+            return response()->json([
+                'response'  => 1,
             ]);
 
         }catch(\Exception $th) {

@@ -190,8 +190,13 @@ class IndexSolicitud extends Component {
                                                 </td>
                                                 <td>
                                                     <label className='cols_show'>Estado: </label>
-                                                    <Tag color={(data.estadoproceso == 'P') ? 'warning' : (data.estadoproceso == 'E') ? 'processing' : 'success'}>
-                                                        {(data.estadoproceso == 'P') ? 'PENDIENTE' : (data.estadoproceso == 'E') ? 'EN PROCESO' : 'FINALIZADO'}
+                                                    <Tag color={(data.estadoproceso == 'P') ? 'warning' : (data.estadoproceso == 'E') ? 'processing' : 
+                                                            (data.estadoproceso == 'C') ? 'red' : (data.estadoproceso == 'N') ? 'red' : 'success'
+                                                        }
+                                                    >
+                                                        {(data.estadoproceso == 'P') ? 'PENDIENTE' : (data.estadoproceso == 'E') ? 'EN PROCESO' : 
+                                                            (data.estadoproceso == 'C') ? 'CANCELADO' : (data.estadoproceso == 'N') ? 'FALLIDO' : 'FINALIZADO'
+                                                        }
                                                     </Tag>
                                                 </td>
                                                 <td>

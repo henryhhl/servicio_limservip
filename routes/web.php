@@ -130,8 +130,26 @@ Route::get( $servidor . '/solicitud/show/{id}', 'SolicitudController@show');
 Route::post( $servidor . '/solicitud/update', 'SolicitudController@update');
 Route::post( $servidor . '/solicitud/delete', 'SolicitudController@destroy');
 
+Route::post( $servidor . '/solicitud/update_estado', 'SolicitudController@update_estado');
+
 Route::get( $servidor . '/solicitud/get_solicitudpendiente', 'SolicitudController@get_solicitudpendiente');
 
+Route::get( $local . '/mysolicitud_pedido', 'HomeController@index');
+Route::get( $local . '/mysolicitud_pedido/create', 'HomeController@index');
+Route::get( $local . '/mysolicitud_pedido/show/{id}', 'HomeController@index');
+
+Route::get( $servidor . '/mysolicitud_pedido/index', 'MySolicitudPedidoController@index');
+Route::get( $servidor . '/mysolicitud_pedido/create', 'MySolicitudPedidoController@create');
+Route::post( $servidor . '/mysolicitud_pedido/store', 'MySolicitudPedidoController@store');
+Route::get( $servidor . '/mysolicitud_pedido/show/{id}', 'MySolicitudPedidoController@show');
+
+
+Route::get( $local . '/mysolicitud_asignado', 'HomeController@index');
+Route::get( $local . '/mysolicitud_asignado/show/{id}', 'HomeController@index');
+
+
+Route::get( $servidor . '/mysolicitud_asignado/index', 'MySolicitudAsignadoController@index');
+Route::get( $servidor . '/mysolicitud_asignado/show/{id}', 'MySolicitudAsignadoController@show');
 
 
 Route::get( $local . '/personal', 'HomeController@index');

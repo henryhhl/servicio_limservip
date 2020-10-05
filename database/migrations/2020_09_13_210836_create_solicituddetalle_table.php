@@ -21,12 +21,17 @@ class CreateSolicituddetalleTable extends Migration
             $table->decimal('precio', 12, 2);
             $table->decimal('descuento', 12, 2);
             $table->text('nota')->nullable();
-            $table->enum('estadoproceso', ['P', 'E', 'F'])->default('F');
+            $table->enum('estadoproceso', ['P', 'E', 'F', 'C', 'N'])->default('P');
             $table->enum('estado', ['A', 'N'])->default('A');
             $table->softDeletes();
             $table->timestamps();
             $table->foreign('idsolicitud')->references('id')->on('solicitud')->ondelete('cascade');
             $table->foreign('idservicio')->references('id')->on('servicio')->ondelete('cascade');
+            // P = pendiente
+            // E = En Proceso
+            // F = Finalizado
+            // C = Cancelado
+            // N = Fallido
         });
     }
 

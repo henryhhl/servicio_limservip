@@ -235,15 +235,23 @@ export default class Sidebar extends Component {
                                 </li> : null 
                             }
 
-                        { isPermission(this.props.permisos_habilitados, permissions.generarreporte) ?
                             <li>
-                                <Link to={ web.serv_link + '/reporte_general'} onClick={this.props.init} 
-                                    className={this.props.link_active.reporte + ' ' + this.props.sizetext}
+                                <Link to={ web.serv_link + '/mysolicitud_pedido'} onClick={this.props.init} 
+                                    className={this.props.link_active.mysolicitud_pedido + ' ' + this.props.sizetext}
                                 >
-                                    <i className="fa fa-clipboard"></i> REPORTE
+                                    <i className="metismenu-icon">
+                                    </i> Mi Solicitud Pedido
                                 </Link>
-                            </li> : null 
-                        }
+                            </li>
+
+                            <li>
+                                <Link to={ web.serv_link + '/mysolicitud_asignado'} onClick={this.props.init} 
+                                    className={this.props.link_active.mysolicitud_asignado + ' ' + this.props.sizetext}
+                                >
+                                    <i className="metismenu-icon">
+                                    </i> Mi Solicitud Asignado
+                                </Link>
+                            </li>
 
                         </ul>
                     </div>
@@ -284,6 +292,9 @@ Sidebar.defaultProps = {
         servicio: '',
         solicitud: '',
         generar_reporte: '',
+
+        mysolicitud_pedido: '',
+        mysolicitud_asignado: '',
 
         personal: '',
         asignar_trabajo: '',

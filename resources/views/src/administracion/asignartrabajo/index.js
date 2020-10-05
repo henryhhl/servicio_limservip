@@ -719,6 +719,8 @@ class AsignarTrabajo extends Component {
                                                                                         <tbody>
                                                                                             {this.state.array_personal.map(
                                                                                                 (personal, i) => {
+                                                                                                    if (personal.cantidad * 1 > 0) return null;
+
                                                                                                     if (typeof this.state.select_solicitud[key].array_personal[i] == 'undefined') {
                                                                                                         this.state.select_solicitud[key].array_personal[i] = {
                                                                                                             value: false, id: personal.id,

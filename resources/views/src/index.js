@@ -47,6 +47,13 @@ import IndexSolicitud from './servicio/solicitud';
 import CreateSolicitud from './servicio/solicitud/crear';
 import ShowSolicitud from './servicio/solicitud/show';
 
+import IndexMySolicitud from './pedido';
+import CreateMySolicitud from './pedido/crear';
+import ShowMySolicitud from './pedido/show';
+
+import IndexMySolicitudAsignado from './solicitudasignado';
+import ShowMySolicitudAsignado from './solicitudasignado/show';
+
 import GenerarReporte from './servicio/reporte';
 
 import IndexPersonal from './administracion/personal';
@@ -151,6 +158,8 @@ export default class Index extends Component {
                 servicio: '',
                 solicitud: '',
                 generar_reporte: '',
+                mysolicitud_pedido: '',
+                mysolicitud_asignado: '',
 
                 personal: '',
                 asignar_trabajo: '',
@@ -679,6 +688,8 @@ export default class Index extends Component {
         this.state.link.asignar_permiso = '';
         this.state.link.asignar_trabajo = '';
         this.state.link.generar_reporte = '';
+        this.state.link.mysolicitud_asignado = '';
+        this.state.link.mysolicitud_pedido = '';
 
         if (link == 'home') {
             this.state.menu.dashboards = 'mm-active';
@@ -743,6 +754,12 @@ export default class Index extends Component {
         if (link == 'visualizar_seguimiento') {
             this.state.menu.administracion = 'mm-active';
             this.state.link.visualizar_seguimiento = 'mm-active';
+        }
+        if (link == 'mysolicitud_pedido') {
+            this.state.link.mysolicitud_pedido = 'mm-active';
+        }
+        if (link == 'mysolicitud_asignado') {
+            this.state.link.mysolicitud_asignado = 'mm-active';
         }
         this.setState({
             menu: this.state.menu,
@@ -1121,6 +1138,67 @@ export default class Index extends Component {
                                     <Route exact path={ web.serv_link + '/solicitud_pedido/show/:id'} 
                                         render={props => 
                                         <ShowSolicitud get_link={this.get_link.bind(this)} { ...props} 
+                                            logout={this.onLogout.bind(this)}
+                                            loadingservice={this.loadingservice.bind(this)}
+                                            buttoncolor={this.state.layoutoption.buttoncolor}
+                                        />} 
+                                    />
+
+
+                                    <Route exact path={ web.serv_link + '/mysolicitud_pedido'} render={props => 
+                                        <IndexMySolicitud { ...props} 
+                                            getsolicitud={this.getsolicitud.bind(this)}
+                                            solicitud={this.state.array_solicitud}
+                                            onModalActive={this.onModalActive.bind(this)} { ...props}
+                                            pagination= {this.state.pagination}
+                                            paginate= {this.state.paginate}
+
+                                            get_link={this.get_link.bind(this)}
+                                            logout={this.onLogout.bind(this)}
+
+                                            buttoncolor={this.state.layoutoption.buttoncolor}
+                                            permisos_habilitados={this.state.permisos_habilitados}
+
+                                        />} 
+                                    />
+                                    <Route exact path={ web.serv_link + '/mysolicitud_pedido/create'} 
+                                        render={props => 
+                                        <CreateMySolicitud get_link={this.get_link.bind(this)} { ...props} 
+                                            logout={this.onLogout.bind(this)}
+                                            loadingservice={this.loadingservice.bind(this)}
+                                            buttoncolor={this.state.layoutoption.buttoncolor}
+                                        />} 
+                                    />
+                                    <Route exact path={ web.serv_link + '/mysolicitud_pedido/show/:id'} 
+                                        render={props => 
+                                        <ShowMySolicitud get_link={this.get_link.bind(this)} { ...props} 
+                                            logout={this.onLogout.bind(this)}
+                                            loadingservice={this.loadingservice.bind(this)}
+                                            buttoncolor={this.state.layoutoption.buttoncolor}
+                                        />} 
+                                    />
+
+
+
+                                    <Route exact path={ web.serv_link + '/mysolicitud_asignado'} render={props => 
+                                        <IndexMySolicitudAsignado { ...props} 
+                                            getsolicitud={this.getsolicitud.bind(this)}
+                                            solicitud={this.state.array_solicitud}
+                                            onModalActive={this.onModalActive.bind(this)} { ...props}
+                                            pagination= {this.state.pagination}
+                                            paginate= {this.state.paginate}
+
+                                            get_link={this.get_link.bind(this)}
+                                            logout={this.onLogout.bind(this)}
+
+                                            buttoncolor={this.state.layoutoption.buttoncolor}
+                                            permisos_habilitados={this.state.permisos_habilitados}
+
+                                        />} 
+                                    />
+                                    <Route exact path={ web.serv_link + '/mysolicitud_asignado/show/:id'} 
+                                        render={props => 
+                                        <ShowMySolicitudAsignado get_link={this.get_link.bind(this)} { ...props} 
                                             logout={this.onLogout.bind(this)}
                                             loadingservice={this.loadingservice.bind(this)}
                                             buttoncolor={this.state.layoutoption.buttoncolor}
