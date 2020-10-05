@@ -42,7 +42,7 @@ class SeguimientoController extends Controller
                 ->select(
                     'user.nombre', 'user.apellido', 'user.email', 'user.imagen', 'pers.id', 'pers.ci', 'pers.contacto', 'pers.direccion', 'pers.ciudad'
                 )
-                ->where(DB::raw('(SELECT COUNT(*) 
+                ->where(DB::raw('(SELECT COUNT(*) as cantidad 
                         FROM asignardetalle as det 
                         WHERE det.idpersonal = pers.id and det.estadoproceso = "A")'), '>', '0'
                 )
@@ -56,7 +56,7 @@ class SeguimientoController extends Controller
                 ->select(
                     'user.nombre', 'user.apellido', 'user.email', 'user.imagen', 'pers.id', 'pers.ci', 'pers.contacto', 'pers.direccion', 'pers.ciudad'
                 )
-                ->where(DB::raw('(SELECT COUNT(*) 
+                ->where(DB::raw('(SELECT COUNT(*) as cantidad 
                         FROM asignardetalle as det 
                         WHERE det.idpersonal = pers.id and det.estadoproceso = "A")'), '=', '0'
                 )

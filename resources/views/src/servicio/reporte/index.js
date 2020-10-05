@@ -8,8 +8,133 @@ import 'antd/dist/antd.css';
 import web from '../../utils/services';
 
 import PropTypes from 'prop-types';
-
 import moment from 'moment';
+
+import ReactToPrint, { PrintContextConsumer } from "react-to-print";
+
+class ComponentToPrint extends React.Component {
+    render() {
+        var head = {padding: 8,  font: '500 12px Roboto',};
+        var body = { paddingLeft: 7, 
+            paddingTop: 8, paddingRight: 3, paddingBottom: 5, font: '300 13px Roboto'
+        };
+        return (
+            <table style={{width: '100%', paddingTop: 40, paddingBottom: 40,  }}>
+                <tbody>
+                    <tr>
+                        <th colSpan='6' style={{fontSize: 15, textAlign: 'center', fontWeight: 'bold', paddingBottom: 10,}}>
+                            REPORTE DE SOLICITUD DE PEDIDO
+                        </th>
+                    </tr>
+                </tbody>
+                <tbody>
+                    <tr>
+                        <th style={head}> ID </th>
+                        <th style={head}> VENDEDOR </th>
+                        <th style={head}> CLIENTE </th>
+                        <th style={head}> PLACA VEH. </th>
+                        <th style={head}> DESC </th>
+                        <th style={head}> MONTO </th>
+                    </tr>
+                </tbody>
+                <tbody>
+                    
+                    {this.props.array_resultado.map(
+                        (data, key) => (
+                            <tbody key={key}>
+                                <tr>
+                                    <td style={body}>
+                                        Cliente: 
+                                    </td>
+                                    <td style={body}>
+                                        {data.usuario == null ? '- ' : 
+                                            data.apellidouser == null ? data.usuario : data.usuario + ' ' + data.apellidouser
+                                        }
+                                    </td>
+                                    <td style={body}>
+                                        Email: 
+                                    </td>
+                                    <td style={body}>
+                                        {data.email == null ? '-' : data.email}
+                                    </td>
+                                    <td style={body}>
+                                        Fecha: 
+                                    </td>
+                                    <td style={body}>
+                                        {data.fecha + ' ' + data.hora }
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style={body}>
+                                        Direccion: 
+                                    </td>
+                                    <td style={body} colSpan="3">
+                                        {data.direccion == null ? '-' : data.direccion} 
+                                    </td>
+                                    <td style={body}>
+                                        Estado: 
+                                    </td>
+                                    <td style={body}>
+                                        {data.estadoproceso == 'P' ? 'PENDIENTE' : data.estadoproceso == 'E' ? 'EN PROCESO' : 'FINALIZADO'}
+                                    </td>
+                                    <td style={body}>
+                                        Fecha: 
+                                    </td>
+                                    <td style={body}>
+                                        {data.fecha }
+                                    </td>
+                                </tr>
+                                { (data.servicios.length == 0) ? null :  
+                                    <tr>
+                                        <th style={head}> ID </th>
+                                        <th style={head}> SERVICIO </th>
+                                        <th style={head}> CATEGORIA </th>
+                                        <th style={head}> CANTIDAD </th>
+                                        <th style={head}> PRECIO </th>
+                                        <th style={head}> SUBTOTAL </th>
+                                    </tr>
+                                }
+                                {data.servicios.map(
+                                    (value, i) => {
+                                        return (
+                                            <tr key={i}>
+                                                <th style={body}>
+                                                    {value.id}
+                                                </th>
+                                                <th style={body}>
+                                                    {value.servicio}
+                                                </th>
+                                                <th style={body}>
+                                                    {value.categoria == null ? '' : value.categoria}
+                                                </th>
+                                                <th style={body}>
+                                                    {value.cantidad}
+                                                </th>
+                                                <th style={body}>
+                                                    {value.precio}
+                                                </th>
+                                                <th style={body}>
+                                                    {value.cantidad * value.precio}
+                                                </th>
+                                            </tr>
+                                        )
+                                    }
+                                )}
+                                <tr>
+                                    <th colSpan='6' style={{ padding: 3, color: 'black', fontSize: 8,textAlign: 'right', paddingRight: 5, }}>
+                                        {  'TOTAL: ' + parseFloat( data.montototal ).toFixed(2)} 
+                                    </th>
+                                </tr>
+                                
+                            </tbody>
+                        )
+                    )}
+                
+                </tbody>
+            </table>
+        );
+    }
+}
 
 class GenerarReporte extends Component {
 
@@ -29,6 +154,8 @@ class GenerarReporte extends Component {
             montoinicio: '',
             montofinal: '',
             opcion: '<',
+
+            array_resultado: [],
             
             descripcion: '',
             error_descripcion: '',
@@ -176,6 +303,15 @@ class GenerarReporte extends Component {
                         message: 'SUCCESS',
                         description: 'REPORTE ANALIZADO EXITOSAMENTE',
                     });
+                    if (this.state.imprimirpdf) {
+
+                    }else {
+                        this.setState({ visible_loading: false, array_resultado: response.data.data, }, () => {
+                            setTimeout(() => {
+                                document.getElementById('generate_print').click();
+                            }, 1000);
+                        });
+                    }
                     return;
                 }
                 notification.error({
@@ -213,6 +349,21 @@ class GenerarReporte extends Component {
                         <p style={{ textAlign: 'center', }}>LOADING...</p>
                     </div>
                 </Modal>
+
+                <ReactToPrint bodyClass={'mt_30'} pageStyle={'pt_20'} 
+                    onBeforePrint={() => this.setState({visible_reporte: false, })} 
+                    content={() => this.componentRef}
+                >
+                    <PrintContextConsumer >
+                        {({ handlePrint }) => (
+                            <a style={{display: 'none',}} onClick={handlePrint} id="generate_print">Generar</a>
+                        )}
+                    </PrintContextConsumer>
+                </ReactToPrint>
+                <div style={{display: 'none'}}>
+                    <ComponentToPrint array_resultado={this.state.array_resultado} ref={el => (this.componentRef = el)} />
+                </div>
+
                 <div className="cards">
                     <div className='forms-groups'>
                         <Card
