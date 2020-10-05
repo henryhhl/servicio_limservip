@@ -61,7 +61,7 @@ class UsuarioMovilController extends Controller
             if (sizeof($value) > 0) {
                 DB::rollBack();
                 return response()->json([
-                    'data' => [],
+                    [],
                 ]);
             }
 
@@ -92,6 +92,15 @@ class UsuarioMovilController extends Controller
             ->where( 'user.id', '=', $user->id )
             ->get();
             
+            foreach($ultimoU as $ser){
+                if(!(is_null($ser->imagen))){
+                    $pos = strpos($ser->imagen, ',');
+                    $nuevo = substr($ser->imagen,$pos+1,strlen($ser->imagen)-1);
+                    $ser->imagen = $nuevo;
+                }
+            }
+            
+            
             //dd($ultimoU);
             return response()->json([
                 $ultimoU[0],
@@ -100,7 +109,7 @@ class UsuarioMovilController extends Controller
         }catch(\Exception $th) {
             DB::rollBack();
             return response()->json([
-                'data' => [],
+                [],
             ]);
         }
     }

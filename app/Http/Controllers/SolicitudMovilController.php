@@ -69,6 +69,16 @@ class SolicitudMovilController extends Controller
             ->get();
         if(count($personal) == 0){
             $personal = [];
+        }else{
+            
+            foreach($personal as $ser){
+                if(!(is_null($ser->imagen))){
+                    $pos = strpos($ser->imagen, ',');
+                    $nuevo = substr($ser->imagen,$pos+1,strlen($ser->imagen)-1);
+                    $ser->imagen = $nuevo;
+                }
+            }
+            
         }
 
         return response()->json([
