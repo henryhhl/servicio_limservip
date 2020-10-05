@@ -122,22 +122,8 @@ class SolicitudMovilController extends Controller
                 $detalle->descuento = 0;
                 $detalle->save();
              }
-            /*foreach ($array_servicio as $data) {
-                $detalle = new SolicitudDetalle();
-                $detalle->idsolicitud = $servicio->id;
-                $detalle->idservicio = $data->id;
-                $detalle->cantidad = $data->cantidad;
-                $detalle->precio = $data->precio;
-                $detalle->estadoproceso = 'P';
-                $detalle->descuento = 0;
-                $detalle->save();
-            }
-            */
+            
             DB::commit();
-            /*$ultimoU=DB::table('solicitud')
-            ->select('id', 'idcliente', 'montototal', 'estadoproceso', 'fecha', 'hora', 'estado' )
-            ->orderBy('id','desc')->first();
-            */
             return response()->json([
                 'data' => 'Insertado Correctamente',
             ]);
