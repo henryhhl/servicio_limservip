@@ -19,7 +19,18 @@ class CreateCategoria extends Component {
             
             descripcion: '',
             error_descripcion: '',
+
+            loadingcargando: false,
+            cargando: this.cargando(),
         }
+    }
+    cargando() {
+        setInterval(() => {
+            if (this.state.loadingcargando) {
+                this.get_data();
+                console.log(345345)
+            }
+        }, 2000);
     }
     componentDidMount() {
         this.props.get_link('categoria', true);
@@ -35,7 +46,9 @@ class CreateCategoria extends Component {
                     }
                     if (response.data.response == 1) {
                         this.props.loadingservice(false, '');
-                        this.setState({ });
+                        this.setState({
+                            loadingcargando: true,
+                        });
                         return;
                     }
                 }

@@ -46,7 +46,7 @@
 						<span class="focus-input100" data-placeholder="Usuario"></span>
 						@if ($errors->has('usuario'))
 							<strong style="position: absolute; color: red;
-								bottom: -25px; left: 10px; font-size: 15px;">
+								bottom: -25px; left: 10px; font-size: 12px;">
 								ERROR. EL CAMPO USUARIO REQUERIDO 
 							</strong>
                         @endif
@@ -60,7 +60,7 @@
 						<span class="focus-input100" data-placeholder="Clave"></span>
 						@if ($errors->has('password'))
 							<strong style="position: absolute; color: red;
-								bottom: -25px; left: 10px; font-size: 15px;">
+								bottom: -25px; left: 10px; font-size: 12px;">
 								ERROR. EL CAMPO CONTRASEÑA REQUERIDO
 							</strong>
                         @endif

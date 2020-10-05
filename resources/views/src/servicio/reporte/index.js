@@ -10,13 +10,14 @@ import web from '../../utils/services';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 
+import { Page, Text, StyleSheet, View, Document, Image, PDFDownloadLink } from '@react-pdf/renderer';
 import ReactToPrint, { PrintContextConsumer } from "react-to-print";
 
 class ComponentToPrint extends React.Component {
     render() {
-        var head = {padding: 8,  font: '500 12px Roboto',};
-        var body = { paddingLeft: 7, 
-            paddingTop: 8, paddingRight: 3, paddingBottom: 5, font: '300 13px Roboto'
+        var head = {padding: 8,  font: '500 10px Roboto', border: '1px solid #e8e8e8', };
+        var body = { paddingLeft: 7,  border: '1px solid #e8e8e8', 
+            paddingTop: 8, paddingRight: 3, paddingBottom: 5, font: '300 11px Roboto'
         };
         return (
             <table style={{width: '100%', paddingTop: 40, paddingBottom: 40,  }}>
@@ -28,23 +29,13 @@ class ComponentToPrint extends React.Component {
                     </tr>
                 </tbody>
                 <tbody>
-                    <tr>
-                        <th style={head}> ID </th>
-                        <th style={head}> VENDEDOR </th>
-                        <th style={head}> CLIENTE </th>
-                        <th style={head}> PLACA VEH. </th>
-                        <th style={head}> DESC </th>
-                        <th style={head}> MONTO </th>
-                    </tr>
-                </tbody>
-                <tbody>
                     
                     {this.props.array_resultado.map(
                         (data, key) => (
                             <tbody key={key}>
                                 <tr>
                                     <td style={body}>
-                                        Cliente: 
+                                        <strong>Cliente: </strong>
                                     </td>
                                     <td style={body}>
                                         {data.usuario == null ? '- ' : 
@@ -52,36 +43,30 @@ class ComponentToPrint extends React.Component {
                                         }
                                     </td>
                                     <td style={body}>
-                                        Email: 
+                                        <strong>Email: </strong>
                                     </td>
                                     <td style={body}>
                                         {data.email == null ? '-' : data.email}
                                     </td>
                                     <td style={body}>
-                                        Fecha: 
+                                        <strong>Fecha: </strong>
                                     </td>
                                     <td style={body}>
-                                        {data.fecha + ' ' + data.hora }
+                                        {data.fecha }
                                     </td>
                                 </tr>
                                 <tr>
                                     <td style={body}>
-                                        Direccion: 
+                                        <strong>Direccion: </strong>
                                     </td>
                                     <td style={body} colSpan="3">
                                         {data.direccion == null ? '-' : data.direccion} 
                                     </td>
                                     <td style={body}>
-                                        Estado: 
+                                        <strong>Estado: </strong>
                                     </td>
                                     <td style={body}>
                                         {data.estadoproceso == 'P' ? 'PENDIENTE' : data.estadoproceso == 'E' ? 'EN PROCESO' : 'FINALIZADO'}
-                                    </td>
-                                    <td style={body}>
-                                        Fecha: 
-                                    </td>
-                                    <td style={body}>
-                                        {data.fecha }
                                     </td>
                                 </tr>
                                 { (data.servicios.length == 0) ? null :  
@@ -160,6 +145,8 @@ class GenerarReporte extends Component {
             descripcion: '',
             error_descripcion: '',
             errormontofinal: '',
+
+            cargando: true,
         }
     }
     componentDidMount() {
@@ -176,7 +163,9 @@ class GenerarReporte extends Component {
                     }
                     if (response.data.response == 1) {
                         this.props.loadingservice(false, '');
-                        this.setState({ });
+                        this.setState({
+                            cargando: false,
+                        });
                         return;
                     }
                 }
@@ -304,7 +293,11 @@ class GenerarReporte extends Component {
                         description: 'REPORTE ANALIZADO EXITOSAMENTE',
                     });
                     if (this.state.imprimirpdf) {
-
+                        this.setState({ array_resultado: response.data.data, }, () => {
+                            setTimeout(() => {
+                                document.getElementById('pdf_render').click();
+                            }, 1000);
+                        });
                     }else {
                         this.setState({ visible_loading: false, array_resultado: response.data.data, }, () => {
                             setTimeout(() => {
@@ -326,9 +319,209 @@ class GenerarReporte extends Component {
         } );
     }
     render() {
+
+        if (this.state.cargando) return null;
+
         var colorsuccess = this.props.buttoncolor == '' ? 'primary' : this.props.buttoncolor;
         var colordanger = this.props.buttoncolor == '' ? 'danger' : 'outline-' + this.props.buttoncolor;
         var colorback = this.props.buttoncolor == '' ? 'focus' : this.props.buttoncolor;
+
+
+        const styles = StyleSheet.create({
+            body: {
+                paddingTop: 35, paddingBottom: 40,
+                paddingHorizontal: 20,
+            },
+            tile: {
+                fontWeight: 'bold',
+            },
+            section: {
+                margin: 10, padding: 10, flexGrow: 1,
+            },
+            head: {
+                width: '100%', height: 'auto',
+                display: 'flex', flexDirection: 'row',
+            },
+            thead: {
+                color: 'black', fontWeight: 'bold', fontSize: 10,
+            },
+            tbody: {
+                color: 'black', fontSize: 8, height: 'auto',
+            },
+            borderwidth: {
+                borderLeftWidth: 1, borderLeftColor: '#e8e8e8',
+                borderRightWidth: 1, borderRightColor: '#e8e8e8',
+                borderBottomWidth: 1, borderBottomColor: '#e8e8e8',
+            },
+        });
+
+        const MyDoc = (
+            <Document title={'REPORTE DE SOLICITUD DE PEDIDO'}>
+                <Page size="A4" style={styles.body}>
+                    <View style={{width: '100%', textAlign: 'center', paddingBottom: 15,}}>
+                        <Text style={[styles.title, {fontSize: 12,}]}>
+                            {'REPORTE DE SOLICITUD DE PEDIDO'}
+                        </Text>
+                    </View>
+
+                    {this.state.array_resultado.map(
+                        (data, key) => (
+                            <View style={{width: '100%'}} key={key}>
+                                <View style={ [styles.head, {borderWidth: 1, borderColor: '#e8e8e8', backgroundColor: '#f5f5f5'}] }>
+                                    <View style={{width: '10%', padding: 3, }}>
+                                        <Text style={[ {color: 'black', fontWeight: 'bold', fontSize: 8,} ]}>
+                                            CLIENTE: 
+                                        </Text>
+                                    </View>
+                                    <View style={{width: '30%', padding: 3, }}>
+                                        <Text style={[ {color: 'black', fontWeight: 'bold', fontSize: 8,} ]}>
+                                            {data.usuario == null ? '- ' : 
+                                                data.apellidouser == null ? data.usuario : data.usuario + ' ' + data.apellidouser
+                                            }
+                                        </Text>
+                                    </View>
+                                    <View style={{width: '10%', padding: 3, }}>
+                                        <Text style={[ {color: 'black', fontWeight: 'bold', fontSize: 8,} ]}>
+                                            Email: 
+                                        </Text>
+                                    </View>
+                                    <View style={{width: '20%', padding: 3, }}>
+                                        <Text style={[ {color: 'black', fontWeight: 'bold', fontSize: 8,} ]}>
+                                            {data.email == null ? '-' : data.email}
+                                        </Text>
+                                    </View>
+                                    <View style={{width: '10%', padding: 3, }}>
+                                        <Text style={[ {color: 'black', fontWeight: 'bold', fontSize: 8,} ]}>
+                                            FECHA
+                                        </Text>
+                                    </View>
+                                    <View style={{width: '20%', padding: 3, }}>
+                                        <Text style={[ {color: 'black', fontWeight: 'bold', fontSize: 8,} ]}>
+                                            {data.fecha}
+                                        </Text>
+                                    </View>
+                                </View>
+
+                                <View style={ [styles.head, {borderWidth: 1, borderColor: '#e8e8e8', backgroundColor: '#f5f5f5'}] }>
+                                    <View style={{width: '10%', padding: 3, }}>
+                                        <Text style={[ {color: 'black', fontWeight: 'bold', fontSize: 8,} ]}>
+                                            DIRECCION: 
+                                        </Text>
+                                    </View>
+                                    <View style={{width: '60%', padding: 3, }}>
+                                        <Text style={[ {color: 'black', fontWeight: 'bold', fontSize: 8,} ]}>
+                                            {data.direccion == null ? '-' : data.direccion}
+                                        </Text>
+                                    </View>
+                                    <View style={{width: '10%', padding: 3, }}>
+                                        <Text style={[ {color: 'black', fontWeight: 'bold', fontSize: 8,} ]}>
+                                            Estado: 
+                                        </Text>
+                                    </View>
+                                    <View style={{width: '20%', padding: 3, }}>
+                                        <Text style={[ {color: 'black', fontWeight: 'bold', fontSize: 8,} ]}>
+                                            {data.estadoproceso == 'P' ? 'PENDIENTE' : data.estadoproceso == 'E' ? 'EN PROCESO' : 'FINALIZADO'}
+                                        </Text>
+                                    </View>
+                                </View>
+
+                                {data.servicios.length == 0 ? null :
+
+                                    <View style={ [styles.head, {borderRightWidth: 1, borderColor: '#e8e8e8'}] }>
+                                        <View style={{width: '5%', padding: 3, }}>
+                                            <Text style={[ {color: 'black', fontWeight: 'bold', fontSize: 8,} ]}>
+                                                ID
+                                            </Text>
+                                        </View>
+                                        <View style={{width: '40%', padding: 3, }}>
+                                            <Text style={[ {color: 'black', fontWeight: 'bold', fontSize: 8,} ]}>
+                                                SERVICIO
+                                            </Text>
+                                        </View>
+                                        <View style={{width: '25%', padding: 3, }}>
+                                            <Text style={[ {color: 'black', fontWeight: 'bold', fontSize: 8,} ]}>
+                                                CATEGORIA
+                                            </Text>
+                                        </View>
+                                        <View style={{width: '10%', padding: 3, }}>
+                                            <Text style={[ {color: 'black', fontWeight: 'bold', fontSize: 8,} ]}>
+                                                CANTIDAD
+                                            </Text>
+                                        </View>
+                                        <View style={{width: '10%', padding: 3, }}>
+                                            <Text style={[ {color: 'black', fontWeight: 'bold', fontSize: 8,} ]}>
+                                                PRECIO
+                                            </Text>
+                                        </View>
+                                        <View style={{width: '10%', padding: 3, }}>
+                                            <Text style={[ {color: 'black', fontWeight: 'bold', fontSize: 8,} ]}>
+                                                SUBTOTAL
+                                            </Text>
+                                        </View>
+                                    </View> 
+                                }
+
+                                {data.servicios.map(
+                                    (value, i) => (
+                                        <View key={i} style={ [styles.head, {borderRightWidth: 1, borderColor: '#e8e8e8'}] }>
+                                            <View style={{width: '5%', padding: 3, }}>
+                                                <Text style={[ {color: 'black', fontWeight: 'bold', fontSize: 8,} ]}>
+                                                    {value.id}
+                                                </Text>
+                                            </View>
+                                            <View style={{width: '40%', padding: 3, }}>
+                                                <Text style={[ {color: 'black', fontWeight: 'bold', fontSize: 8,} ]}>
+                                                    {value.servicio}
+                                                </Text>
+                                            </View>
+                                            <View style={{width: '25%', padding: 3, }}>
+                                                <Text style={[ {color: 'black', fontWeight: 'bold', fontSize: 8,} ]}>
+                                                    {value.categoria}
+                                                </Text>
+                                            </View>
+                                            <View style={{width: '10%', padding: 3, }}>
+                                                <Text style={[ {color: 'black', fontWeight: 'bold', fontSize: 8,} ]}>
+                                                    {value.cantidad}
+                                                </Text>
+                                            </View>
+                                            <View style={{width: '10%', padding: 3, }}>
+                                                <Text style={[ {color: 'black', fontWeight: 'bold', fontSize: 8,} ]}>
+                                                    {value.precio}
+                                                </Text>
+                                            </View>
+                                            <View style={{width: '10%', padding: 3, }}>
+                                                <Text style={[ {color: 'black', fontWeight: 'bold', fontSize: 8,} ]}>
+                                                    {value.cantidad * value.precio}
+                                                </Text>
+                                            </View>
+                                        </View> 
+                                    )
+                                )}
+
+                                <View style={ [styles.head, {borderWidth: 1, borderColor: '#e8e8e8', backgroundColor: '#f5f5f5'}] }>
+                                    <View style={{width: '100%', padding: 3, }}>
+                                        <Text style={[ {color: 'black', fontWeight: 'bold', fontSize: 8,textAlign: 'right', paddingRight: 15,} ]}>
+                                           TOTAL:  {parseFloat(data.montototal).toFixed(2)}
+                                        </Text>
+                                    </View>
+                                </View>
+
+                            </View>
+                        )
+                    )}
+                    
+                    <Text style={{left: 0, right: 25, color: 'grey', bottom: 15, 
+                            position: 'absolute', textAlign: 'right', fontSize: 10, 
+                        }}
+                        render={ ({ pageNumber, totalPages }) => (
+                            `${pageNumber} / ${totalPages}`
+                        )} fixed
+                    />
+                </Page>
+            </Document>
+        );
+
+
         return (
             <div className="rows">
                 <Modal
@@ -349,6 +542,13 @@ class GenerarReporte extends Component {
                         <p style={{ textAlign: 'center', }}>LOADING...</p>
                     </div>
                 </Modal>
+
+                <PDFDownloadLink document={ MyDoc } fileName='mantenimiento.pdf' >
+                    { ( {blob, url, loading, error} ) => 
+                        // ( loading ? 'LOADING DOCUMENT...' : <button style={{display: 'none'}} id='pdf_render'>insertar</button> ) 
+                        ( loading ? 'LOADING DOCUMENT...' : <a href={url} id='pdf_render' style={{display: 'none'}} target='_blank'>insertar</a> ) 
+                    }
+                </PDFDownloadLink>
 
                 <ReactToPrint bodyClass={'mt_30'} pageStyle={'pt_20'} 
                     onBeforePrint={() => this.setState({visible_reporte: false, })} 

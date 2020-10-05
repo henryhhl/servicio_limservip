@@ -19,7 +19,7 @@ class CreateSolicitudTable extends Migration
             $table->integer('idusuario')->unsigned()->nullable();
             $table->decimal('montototal', 12, 2);
             $table->text('nota')->nullable();
-            $table->enum('estadoproceso', ['P', 'E', 'F'])->default('P');
+            $table->enum('estadoproceso', ['P', 'E', 'F', 'C', 'N'])->default('P');
             $table->enum('estado', ['A', 'N'])->default('A');
             $table->date('fecha')->nullable();
             $table->time('hora')->nullable();
@@ -27,6 +27,11 @@ class CreateSolicitudTable extends Migration
             $table->timestamps();
             $table->foreign('idcliente')->references('id')->on('cliente')->ondelete('cascade');
             $table->foreign('idusuario')->references('id')->on('users')->ondelete('cascade');
+            // P = pendiente  *
+            // E = En Proceso *
+            // F = Finalizado
+            // C = Cancelar ? Mientras no haya sido seleccionado el personal Cliente
+            // N = Fallido
         });
     }
 
