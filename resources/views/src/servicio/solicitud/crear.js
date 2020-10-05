@@ -66,6 +66,13 @@ class CreateSolicitud extends Component {
             error_servicio: '',
             error_email: '',
 
+            error_nombre: '',
+            error_apellido: '',
+            error_telefono: '',
+            error_direccion: '',
+            error_ciudad: '',
+            error_pais: '',
+
             mapPosition: {
                 lat: 0,
                 lng: 0,
@@ -186,6 +193,9 @@ class CreateSolicitud extends Component {
                         this.setState({
                             nropedido: response.data.nro,
                             loadingcomponent: true,
+                            nombre: response.data.usuario.nombre,
+                            apellido: response.data.usuario.apellido == null ? '' : response.data.usuario.apellido,
+                            email: response.data.usuario.email == null ? '' : response.data.usuario.email,
                         });
                         return;
                     }
@@ -456,6 +466,33 @@ class CreateSolicitud extends Component {
             });
             return;
         }
+        if (this.state.nombre.toString().trim().length == 0) {
+            this.setState({
+                error_nombre: 'error',
+            });
+            notification.error({
+                description: 'EL CAMPO NOMBRE ES REQUERIDO',
+            });
+            return;
+        }
+        if (this.state.apellido.toString().trim().length == 0) {
+            this.setState({
+                error_apellido: 'error',
+            });
+            notification.error({
+                description: 'EL CAMPO APELLIDO ES REQUERIDO',
+            });
+            return;
+        }
+        if (this.state.email.toString().trim().length == 0) {
+            this.setState({
+                error_email: 'error',
+            });
+            notification.error({
+                description: 'EL CAMPO NOMBRE ES REQUERIDO',
+            });
+            return;
+        }
         if (this.state.email.toString().length > 0) {
             var email = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
             if (!email.test(this.state.email)) {
@@ -466,6 +503,43 @@ class CreateSolicitud extends Component {
                 return;
             }
         }
+        if (this.state.telefono.toString().trim().length == 0) {
+            this.setState({
+                error_telefono: 'error',
+            });
+            notification.error({
+                description: 'EL CAMPO TELEFONO ES REQUERIDO',
+            });
+            return;
+        }
+        if (this.state.direccion.toString().trim().length == 0) {
+            this.setState({
+                error_direccion: 'error',
+            });
+            notification.error({
+                description: 'EL CAMPO DIRECCION ES REQUERIDO',
+            });
+            return;
+        }
+        if (this.state.ciudad.toString().trim().length == 0) {
+            this.setState({
+                error_ciudad: 'error',
+            });
+            notification.error({
+                description: 'EL CAMPO CIUDAD ES REQUERIDO',
+            });
+            return;
+        }
+        if (this.state.pais.toString().trim().length == 0) {
+            this.setState({
+                error_pais: 'error',
+            });
+            notification.error({
+                description: 'EL CAMPO PAIS ES REQUERIDO',
+            });
+            return;
+        }
+
         // if ( this.state.nombre.toString().trim().length > 0
         //     ) {
             this.onSesion();
@@ -918,12 +992,12 @@ class CreateSolicitud extends Component {
                                             <div className='inputs-groups'>
                                                 <label>Nombre*</label>
                                                 <input type='text'
-                                                    className={`forms-control`}
+                                                    className={`forms-control ${this.state.error_nombre}`}
                                                     style={{ textAlign: 'left', paddingLeft: 10, paddingRight: 24, }}
                                                     value={this.state.nombre}
                                                     placeholder='INGRESAR NOMBRE...'
                                                     onChange={ (event) => this.setState({
-                                                        nombre: event.target.value,
+                                                        nombre: event.target.value, error_nombre: '',
                                                     }) }
                                                 />
                                             </div>
@@ -932,12 +1006,12 @@ class CreateSolicitud extends Component {
                                             <div className='inputs-groups'>
                                                 <label>Apellido*</label>
                                                 <input type='text'
-                                                    className={`forms-control`}
+                                                    className={`forms-control ${this.state.error_apellido}`}
                                                     style={{ textAlign: 'left', paddingLeft: 10, paddingRight: 24, }}
                                                     value={this.state.apellido}
                                                     placeholder='INGRESAR APELLIDO...'
                                                     onChange={ (event) => this.setState({
-                                                        apellido: event.target.value,
+                                                        apellido: event.target.value, error_apellido: '',
                                                     }) }
                                                 />
                                             </div>
@@ -954,7 +1028,7 @@ class CreateSolicitud extends Component {
                                                     value={this.state.email}
                                                     placeholder='INGRESAR EMAIL...'
                                                     onChange={ (event) => this.setState({
-                                                        email: event.target.value,
+                                                        email: event.target.value, error_email: '',
                                                     }) }
                                                 />
                                             </div>
@@ -963,7 +1037,7 @@ class CreateSolicitud extends Component {
                                             <div className='inputs-groups'>
                                                 <label>Telefono*</label>
                                                 <input type='text'
-                                                    className={`forms-control`}
+                                                    className={`forms-control ${this.state.error_telefono}`}
                                                     style={{ textAlign: 'left', paddingLeft: 10, paddingRight: 24, }}
                                                     value={this.state.telefono}
                                                     placeholder='INGRESAR TELEFONO...'
@@ -971,6 +1045,7 @@ class CreateSolicitud extends Component {
                                                         if (!isNaN(event.target.value)) {
                                                             this.setState({
                                                                 telefono: event.target.value,
+                                                                error_telefono: '',
                                                             });
                                                         }
                                                     } }
@@ -984,12 +1059,13 @@ class CreateSolicitud extends Component {
                                             <div className='inputs-groups'>
                                                 <label>Direccion*</label>
                                                 <input type='text'
-                                                    className={`forms-control`}
+                                                    className={`forms-control ${this.state.error_direccion}`}
                                                     style={{ textAlign: 'left', paddingLeft: 10, paddingRight: 24, }}
                                                     value={this.state.direccion}
                                                     placeholder='INGRESAR DIRECCION...'
                                                     onChange={ (event) => this.setState({
                                                         direccion: event.target.value,
+                                                        error_direccion: '',
                                                     }) }
                                                 />
                                             </div>
@@ -1001,12 +1077,13 @@ class CreateSolicitud extends Component {
                                             <div className='inputs-groups'>
                                                 <label>Ciudad*</label>
                                                 <input type='text'
-                                                    className={`forms-control`}
+                                                    className={`forms-control ${this.state.error_ciudad}`}
                                                     style={{ textAlign: 'left', paddingLeft: 10, paddingRight: 24, }}
                                                     value={this.state.ciudad}
                                                     placeholder='INGRESAR CIUDAD...'
                                                     onChange={ (event) => this.setState({
                                                         ciudad: event.target.value,
+                                                        error_ciudad: '',
                                                     }) } 
                                                     // readOnly
                                                 />
@@ -1033,12 +1110,13 @@ class CreateSolicitud extends Component {
                                             <div className='inputs-groups'>
                                                 <label>Pais*</label>
                                                 <input type='text'
-                                                    className={`forms-control`}
+                                                    className={`forms-control ${this.state.error_pais}`}
                                                     style={{ textAlign: 'left', paddingLeft: 10, paddingRight: 24, }}
                                                     value={this.state.pais}
                                                     placeholder='INGRESAR PAIS...'
                                                     onChange={ (event) => this.setState({
                                                         pais: event.target.value,
+                                                        error_pais: '',
                                                     }) } 
                                                     // readOnly
                                                 />

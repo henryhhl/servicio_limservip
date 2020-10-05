@@ -308,7 +308,6 @@ class AsignarTrabajo extends Component {
         );
     }
     onSelectSolicitud(data) {
-        console.log(data)
         this.setState({
             select_solicitud: data.servicios,
             select_informacion: data,
@@ -857,6 +856,9 @@ class AsignarTrabajo extends Component {
                                                     value={this.state.select_informacion.direccioncompleto}
                                                     readOnly
                                                 />
+                                                {/* <i className='fa fa-map-marker-alt delete_icon'
+                                                    onClick={() => this.setState({ descripcion: '', }) }
+                                                ></i>  */}
                                             </div>
                                         </div>
                                     </div>

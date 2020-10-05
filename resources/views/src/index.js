@@ -47,12 +47,16 @@ import IndexSolicitud from './servicio/solicitud';
 import CreateSolicitud from './servicio/solicitud/crear';
 import ShowSolicitud from './servicio/solicitud/show';
 
+import GenerarReporte from './servicio/reporte';
+
 import IndexPersonal from './administracion/personal';
 import CreatePersonal from './administracion/personal/crear';
 import EditarPersonal from './administracion/personal/editar';
 import ShowPersonal from './administracion/personal/show';
 
 import AsignarTrabajo from './administracion/asignartrabajo';
+
+import VisualizarSeguimiento from './administracion/seguimiento';
 
 import Reporte from './reporte';
 
@@ -146,9 +150,11 @@ export default class Index extends Component {
                 categoria: '',
                 servicio: '',
                 solicitud: '',
+                generar_reporte: '',
 
                 personal: '',
                 asignar_trabajo: '',
+                visualizar_seguimiento: '',
             },
 
         }
@@ -672,6 +678,7 @@ export default class Index extends Component {
         this.state.link.solicitud = '';
         this.state.link.asignar_permiso = '';
         this.state.link.asignar_trabajo = '';
+        this.state.link.generar_reporte = '';
 
         if (link == 'home') {
             this.state.menu.dashboards = 'mm-active';
@@ -721,6 +728,10 @@ export default class Index extends Component {
             this.state.menu.servicio = 'mm-active';
             this.state.link.solicitud = 'mm-active';
         }
+        if (link == 'generar_reporte') {
+            this.state.menu.servicio = 'mm-active';
+            this.state.link.generar_reporte = 'mm-active';
+        }
         if (link == 'personal') {
             this.state.menu.administracion = 'mm-active';
             this.state.link.personal = 'mm-active';
@@ -728,6 +739,10 @@ export default class Index extends Component {
         if (link == 'asignar_trabajo') {
             this.state.menu.administracion = 'mm-active';
             this.state.link.asignar_trabajo = 'mm-active';
+        }
+        if (link == 'visualizar_seguimiento') {
+            this.state.menu.administracion = 'mm-active';
+            this.state.link.visualizar_seguimiento = 'mm-active';
         }
         this.setState({
             menu: this.state.menu,
@@ -1113,6 +1128,16 @@ export default class Index extends Component {
                                     />
 
 
+                                    <Route exact path={ web.serv_link + '/generar_reporte'} 
+                                        render={props => 
+                                        <GenerarReporte get_link={this.get_link.bind(this)} { ...props} 
+                                            logout={this.onLogout.bind(this)}
+                                            loadingservice={this.loadingservice.bind(this)}
+                                            buttoncolor={this.state.layoutoption.buttoncolor}
+                                        />} 
+                                    />
+
+
 
                                     <Route exact path={ web.serv_link + '/personal'} render={props => 
                                         <IndexPersonal { ...props} 
@@ -1159,6 +1184,17 @@ export default class Index extends Component {
 
                                     <Route exact path={ web.serv_link + '/asignar_trabajo'} render={props => 
                                         <AsignarTrabajo { ...props} 
+                                            get_link={this.get_link.bind(this)}
+                                            logout={this.onLogout.bind(this)}
+                                            loadingservice={this.loadingservice.bind(this)}
+                                            buttoncolor={this.state.layoutoption.buttoncolor}
+
+                                        />} 
+                                    />
+
+
+                                    <Route exact path={ web.serv_link + '/visualizar_seguimiento'} render={props => 
+                                        <VisualizarSeguimiento { ...props} 
                                             get_link={this.get_link.bind(this)}
                                             logout={this.onLogout.bind(this)}
                                             loadingservice={this.loadingservice.bind(this)}
