@@ -83,10 +83,18 @@ class UsuarioMovilController extends Controller
 
             DB::commit();
             
-            $ultimoU=DB::table('users')->orderBy('id','desc')->first();
+            $ultimoU=DB::table('cliente as cli')
+            ->leftJoin('users as user', 'cli.idusuario', '=', 'user.id')
+            ->select('user.id', 'user.nombre', 'user.apellido', 'user.nacimiento','user.usuario' ,'cli.nit', 'cli.contacto', 
+                'user.imagen', 'user.email', 'user.password','cli.estado', 'user.tipo', 'user.genero'
+            )
+            ->where('cli.estado', '=', 'A')
+            ->where( 'user.id', '=', $user->id )
+            ->get();
+            
             //dd($ultimoU);
             return response()->json([
-                'data'      => [$ultimoU],
+                'data'      => $ultimoU,
             ]);
 
         }catch(\Exception $th) {

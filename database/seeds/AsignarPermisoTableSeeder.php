@@ -52,11 +52,7 @@ class AsignarPermisoTableSeeder extends Seeder
                 'idrol'       => 3,
                 'estado'      => 'A',
             ], //1
-            [
-                'idpermiso'   => 23,
-                'idrol'       => 3,
-                'estado'      => 'A',
-            ], //1
+            
             [
                 'idpermiso'   => 24,
                 'idrol'       => 3,
@@ -69,6 +65,11 @@ class AsignarPermisoTableSeeder extends Seeder
             ], //1
             [
                 'idpermiso'   => 27,
+                'idrol'       => 3,
+                'estado'      => 'A',
+            ], //1
+            [
+                'idpermiso'   => 47,
                 'idrol'       => 3,
                 'estado'      => 'A',
             ], //1

@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Informacion;
+use App\Solicitud;
+use App\SolicitudDetalle;
+use Carbon\Carbon;
 
 class SolicitudMovilController extends Controller
 {
@@ -53,11 +57,26 @@ class SolicitudMovilController extends Controller
         ]);
     }
 
-    public function personalAsignado(){
+    public function personalAsignado(Request $request){
+        $iddet = $request->iddet;
+        $personal = DB::table('solicituddetalle as soldet')
+            ->join('asignartrabajo as at', 'soldet.id', '=', 'at.idsolicituddetalle')
+            ->join('asignardetalle as ad', 'at.id', '=', 'ad.idasignartrabajo')
+            ->join('personal as per','per.id','=','ad.idpersonal')
+            ->join('users as user','user.id','=','per.idusuario')
+            ->select('user.nombre','user.imagen','per.ci','per.contacto')
+            ->where('soldet.id', '=', $iddet)
+            ->get();
+        if(count($personal) == 0){
+            $personal = [];
+        }
 
+        return response()->json([
+            'data'   => $personal
+        ]);
     }
 
-    public function store(){
+    public function store(Request $request){
         
         try {
 
@@ -71,6 +90,7 @@ class SolicitudMovilController extends Controller
             $ciudad = $request->input('ciudad');
             $zona = $request->input('zona');
             $pais = $request->input('pais');
+            $cliente = $request->input('cliente');
             
             $direccioncompleto = $request->input('direccioncompleto');
             $montototal = $request->input('montototal');
@@ -78,12 +98,13 @@ class SolicitudMovilController extends Controller
             $latitud = $request->input('latitud');
             $longitud = $request->input('longitud');
 
-            $array_servicio = json_decode($request->input('array_servicio', '[]'));
+            $array_servicio = $request->get('array_servicio', '[]');
 
             $servicio = new Solicitud();
-            $servicio->idusuario = Auth::user()->id;
+            $servicio->idusuario = $cliente;
             $servicio->montototal = $montototal;
             $mytime = Carbon::now('America/La_paz');
+            $servicio->estadoproceso = 'P';
             $servicio->fecha = $mytime->toDateString();
             $servicio->hora = $mytime->toTimeString();
             $servicio->save();
@@ -105,28 +126,33 @@ class SolicitudMovilController extends Controller
             $informacion->longitud = $longitud;
 
             $informacion->save();
-
-            foreach ($array_servicio as $data) {
+            foreach ($array_servicio as $value) {
+                
                 $detalle = new SolicitudDetalle();
                 $detalle->idsolicitud = $servicio->id;
-                $detalle->idservicio = $data->id;
-                $detalle->cantidad = $data->cantidad;
-                $detalle->precio = $data->precio;
+                $detalle->idservicio = $value['id'];
+                $detalle->cantidad = $value['cantidad'];
+                $detalle->precio = $value['precio'];
+                $detalle->estadoproceso = 'P';
                 $detalle->descuento = 0;
                 $detalle->save();
-            }
-
+             }
+            
             DB::commit();
-            $ultimoU=DB::table('solicitud')->orderBy('id','desc')->first();
-
             return response()->json([
-                'data' => [$ultimoU],
+                'data' => 'Insertado Correctamente',
             ]);
 
         }catch(\Exception $th) {
             DB::rollBack();
+            $array_servicio = $request->get('array_servicio', '[]');
             return response()->json([
-                'data' => [],
+                'data' => $array_servicio,
+                'error' => [
+                    'file'    => $th->getFile(),
+                    'line'    => $th->getLine(),
+                    'message' => $th->getMessage()
+                ]
             ]);
         }
     }

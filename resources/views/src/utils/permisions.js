@@ -63,7 +63,8 @@ const permissions = {
     categoriacreate: 44,
     categoriaeditar: 45,
     categoriadelete: 46,
-       
+    
+    mysolicitud_pedido: 47,
 
     
 }

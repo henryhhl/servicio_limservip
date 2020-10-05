@@ -21,4 +21,5 @@ Route::post('usuario/registrar', 'UsuarioMovilController@registrar');
 Route::get('servicio/listar', 'ServicioMovilController@listar');
 Route::get('solicitud/listar', 'SolicitudMovilController@misolicitud');
 Route::get('solicitud/detalle', 'SolicitudMovilController@detalleSolicitud');
+Route::get('solicitud/personal', 'SolicitudMovilController@personalAsignado');
 Route::post('solicitud/registrar', 'SolicitudMovilController@store');

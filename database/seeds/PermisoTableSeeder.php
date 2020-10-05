@@ -169,6 +169,9 @@ class PermisoTableSeeder extends Seeder
             [
                 'nombre'    => 'delete-categoria',
             ], //46
+            [
+                'nombre'    => 'mysolicitud_pedido',
+            ], //47
         ];
     }
 }

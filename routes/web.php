@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Auth;
 // $servidor = '/servidor/api';     //servidor
 $servidor = '';               //local
 
-$local = '/taller_mecanico';  // local
+$local = '/limservip';  // local
 // $local = '';                     // servidor
 
 
