@@ -111,7 +111,7 @@ class SolicitudMovilController extends Controller
             $informacion->longitud = $longitud;
 
             $informacion->save();
-            /*foreach ($array_servicio as $value) {
+            foreach ($array_servicio as $value) {
                 
                 $detalle = new SolicitudDetalle();
                 $detalle->idsolicitud = $servicio->id;
@@ -121,8 +121,8 @@ class SolicitudMovilController extends Controller
                 $detalle->estadoproceso = 'P';
                 $detalle->descuento = 0;
                 $detalle->save();
-             }*/
-            foreach ($array_servicio as $data) {
+             }
+            /*foreach ($array_servicio as $data) {
                 $detalle = new SolicitudDetalle();
                 $detalle->idsolicitud = $servicio->id;
                 $detalle->idservicio = $data->id;
@@ -132,7 +132,7 @@ class SolicitudMovilController extends Controller
                 $detalle->descuento = 0;
                 $detalle->save();
             }
-            
+            */
             DB::commit();
             /*$ultimoU=DB::table('solicitud')
             ->select('id', 'idcliente', 'montototal', 'estadoproceso', 'fecha', 'hora', 'estado' )
