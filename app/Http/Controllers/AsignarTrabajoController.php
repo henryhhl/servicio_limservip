@@ -37,9 +37,9 @@ class AsignarTrabajoController extends Controller
                 ->select(
                     'user.nombre', 'user.apellido', 'user.email', 'user.imagen', 'pers.id', 'pers.ci', 'pers.contacto',
                     DB::raw(
-                        '(SELECT COUNT(*)  
+                        "(SELECT COUNT(*)  
                         FROM asignardetalle as det 
-                        WHERE pers.id = det.idpersonal AND det.estadoproceso = "A") as cantidad'
+                        WHERE pers.id = det.idpersonal AND det.estadoproceso = 'A') as cantidad"
                     )
                 )
                 ->where('rol.idrol', '=', '4')
