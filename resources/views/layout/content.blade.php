@@ -73,6 +73,66 @@
         </div>
     </div>
 </section>
+<section class="ftco-section bg-light" id="blog-section">
+      <div class="container">
+        <div class="row justify-content-center mb-5 pb-5">
+          <div class="col-md-10 heading-section text-center ftco-animate">
+            <h2 class="mb-4">Servicios</h2>
+           
+          </div>
+        </div>
+        <div class="row d-flex">
+          <div class="col-md-4 ftco-animate">
+            <div class="blog-entry">
+              <a href="blog-single.html" class="block-20" style="background-image: url('plantilla/images/vidrios.jpg');">
+              </a>
+              <div class="text d-block">
+              	<div class="meta mb-12">
+                  <div>Marzo 9, 2020</a></div>
+                  
+                </div>
+                <h3 class="heading"><a href="#">LIMPIEZA DE VIDRIOS</a></h3>
+                <p>Limpieza de todo tipo de vidrios con insumos y productos importados que no dejan rastros ni residuos.</p>                
+              </div>
+            </div>
+        	</div>
+
+        	<div class="col-md-4 ftco-animate">
+            <div class="blog-entry">
+              <a href="blog-single.html" class="block-20" style="background-image: url('plantilla/images/alfombra.jpg');">
+              </a>
+              <div class="text d-block">
+              	<div class="meta mb-12">
+                  <div>Marzo 15, 2019</div>
+                </div>
+                <h3 class="heading"><a href="#">LAVADO DE ALFOMBRAS</a></h3>
+                  <p>Limpieza a presión con agua y extracción inmediata que lava las fibras desde su base, recomendado por la mayoría de fabricantes de alfombras.</p>                
+              </div>
+            </div>
+        	</div>
+
+        	<div class="col-md-4 ftco-animate">
+            <div class="blog-entry">
+              <a href="blog-single.html" class="block-20" style="background-image: url('plantilla/images/bano.jpg');">
+              </a>
+              <div class="text d-block">
+              	<div class="meta mb-12">
+                  <div>Mayo 17, 2019</div>
+                </div>
+                <h3 class="heading"><a href="#">DESINFECTADO Y SANITIZADO DE BAÑOS</a></h3>
+                <p>Limpieza profunda del inodoro, tina, lavamanos, espejo, paredes y piso, dejando el cuarto de baño desinfectado y sanitizado con productos especiales.</p>                
+              </div>
+            </div>
+        	</div>
+
+        	
+
+        	
+
+        	
+        </div>
+      </div>
+    </section>
 
 <section class="ftco-section contact-section" id="contact-section">
       <div class="container">
@@ -86,7 +146,7 @@
           <div class="col-md-6 col-lg-3 d-flex ftco-animate">
           	<div class="align-self-stretch box p-4 text-center bg-light">
           		<div class="icon d-flex align-items-center justify-content-center">
-          			<span class="icon-map-signs"></span>
+          			<span class="icon-map-signs" style="color: #884EA0"></span>
           		</div>
           		<h3 class="mb-4">Direccion</h3>
 	            <p>AUTOBAHN SANTA CRUZ, Avenida Santa Cruz Nro. 50 2nd. Ring, Santa Cruz de la Sierra</p>
@@ -95,7 +155,7 @@
           <div class="col-md-6 col-lg-3 d-flex ftco-animate">
           	<div class="align-self-stretch box p-4 text-center bg-light">
           		<div class="icon d-flex align-items-center justify-content-center">
-          			<span class="icon-phone2"></span>
+          			<span class="icon-phone2" style="color: #884EA0"></span>
           		</div>
           		<h3 class="mb-4">Telefono</h3>
 	            <p><a href="https://api.whatsapp.com/send?phone=+59163486561">+591 63486561</a></p>
@@ -104,7 +164,7 @@
           <div class="col-md-6 col-lg-3 d-flex ftco-animate">
           	<div class="align-self-stretch box p-4 text-center bg-light">
           		<div class="icon d-flex align-items-center justify-content-center">
-          			<span class="icon-paper-plane"></span>
+          			<span class="icon-paper-plane" style="color: #884EA0"></span>
           		</div>
           		<h3 class="mb-4">Correo Electronico</h3>
 	            <p><a href="mailto:limservip365@gmail.com">limservip365@gmail.com</a></p>
@@ -113,7 +173,7 @@
           <div class="col-md-6 col-lg-3 d-flex ftco-animate">
           	<div class="align-self-stretch box p-4 text-center bg-light">
           		<div class="icon d-flex align-items-center justify-content-center">
-          			<span class="icon-globe"></span>
+          			<span class="icon-globe" style="color: #884EA0"></span>
           		</div>
           		<h3 class="mb-4">Sitio web</h3>
 	            <p><a href="https://limservip.herokuapp.com">limservip.herokuapp.com</a></p>
@@ -122,9 +182,51 @@
         </div>
         
 
-          <div class="col-md-6 d-flex">
-          	<div id="map" class="bg-white"></div>
+          <div class="col-md-12 d-flex">
+            <iframe src="https://maps.google.com/?ll=-17.775404,-63.165923&z=15&t=m&q=-17.775404,%20-63.165923+(Limservip)&output=embed" frameborder="0" style="border:0; width: 100%; height: 290px;" allowfullscreen></iframe>
+              
           </div>
         </div>
       </div>
 </section>
+
+<footer class="ftco-footer ftco-section img" style="background-image: url(plantilla/images/negociosdelimpieza.jpg);">
+    	<div class="overlay"></div>
+      <div class="container-fluid px-md-5">
+        <div class="row mb-5">
+          <div class="col-md">
+            <div class="ftco-footer-widget mb-6">
+              <h2 class="ftco-heading-2">Limservip</h2>
+              
+              <ul class="ftco-footer-social list-unstyled mt-5" style="color: #884EA0">
+                <li class="ftco-animate"><a href="https://api.whatsapp.com/send?phone=+59163486561"><span class="icon-whatsapp" style="color: #884EA0"></span></a></li>
+                <li class="ftco-animate"><a href="https://www.facebook.com/Limservip-servicios-de-limpieza-104359337874573/?ref=page_internal"><span class="icon-facebook" style="color: #884EA0"></span></a></li>
+              </ul>
+            </div>
+          </div>
+          
+          
+          
+          <div class="col-md">
+            <div class="ftco-footer-widget mb-6">
+            	<h2 class="ftco-heading-2">Tienes preguntas?</h2>
+            	<div class="block-23 mb-3">
+	              <ul>
+	                
+	                <li><a href="https://api.whatsapp.com/send?phone=+59163486561"><span class="icon icon-phone" style="color: #884EA0"></span><span class="text" style="color: #884EA0">+591 63486561</span></a></li>
+	                <li><a href="https://limservip.herokuapp.com"><span class="icon icon-envelope pr-4" style="color: #884EA0"></span><span class="text" style="color: #884EA0">limservip.herokuapp.com</span></a></li>
+	              </ul>
+	            </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12 text-center">
+	
+            <p><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+  Copyright &copy;<script>document.write(new Date().getFullYear());</script> Todos los derechos reservados | Esta plantillas esta hecha por <a href="https://elevatorsoft.herokuapp.com" target="_blank" style="color: #884EA0"><b>ElevatorSoft<b></a>
+  <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></p>
+          </div>
+        </div>
+      </div>
+    </footer>
