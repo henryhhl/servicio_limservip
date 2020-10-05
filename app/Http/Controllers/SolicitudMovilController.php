@@ -57,8 +57,23 @@ class SolicitudMovilController extends Controller
         ]);
     }
 
-    public function personalAsignado(){
+    public function personalAsignado(Request $request){
+        $iddet = $request->iddet;
+        $personal = DB::table('solicituddetalle as soldet')
+            ->join('asignartrabajo as at', 'soldet.id', '=', 'at.idsolicituddetalle')
+            ->join('asignardetalle as ad', 'at.id', '=', 'ad.idasignartrabajo')
+            ->join('personal as per','per.id','=','ad.idpersonal')
+            ->join('users as user','user.id','=','per.idusuario')
+            ->select('user.nombre','user.imagen','per.ci','per.contacto')
+            ->where('soldet.id', '=', $iddet)
+            ->get();
+        if(count($personal) == 0){
+            $personal = [];
+        }
 
+        return response()->json([
+            'data'   => $personal
+        ]);
     }
 
     public function store(Request $request){
