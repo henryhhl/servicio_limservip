@@ -9,6 +9,8 @@ import web from '../../utils/services';
 
 import PropTypes from 'prop-types';
 
+import moment from 'moment';
+
 class GenerarReporte extends Component {
 
     constructor(props) {
