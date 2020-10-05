@@ -94,7 +94,7 @@ class UsuarioMovilController extends Controller
             
             //dd($ultimoU);
             return response()->json([
-                'data'      => $ultimoU,
+                'data'      => $ultimoU[0],
             ]);
 
         }catch(\Exception $th) {
