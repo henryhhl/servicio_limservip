@@ -41,7 +41,7 @@ class SolicitudMovilController extends Controller
         $detalles =  DB::table('solicituddetalle as soldet')
                 ->join('servicio as ser', 'soldet.idservicio', '=', 'ser.id')
                 ->select('soldet.id as iddet', 'soldet.cantidad', 'soldet.precio', 'ser.nombre as nombreservicio', 
-                    'soldet.nota', 'ser.imagen'
+                    'soldet.nota', 'ser.imagen', 'ser.nota as personal'
                 )
                 ->where('soldet.idsolicitud', '=', $idsol)
                 ->where('soldet.estado', '=', 'A')
@@ -58,9 +58,38 @@ class SolicitudMovilController extends Controller
                     $nuevo = substr($ser->imagen,$pos+1,strlen($ser->imagen)-1);
                     $ser->imagen = $nuevo;
                 }
+
+               // $iddet = $request->iddet;
+                $personal = DB::table('solicituddetalle as soldet')
+                    ->join('asignartrabajo as at', 'soldet.id', '=', 'at.idsolicituddetalle')
+                    ->join('asignardetalle as ad', 'at.id', '=', 'ad.idasignartrabajo')
+                    ->join('personal as per','per.id','=','ad.idpersonal')
+                    ->join('users as user','user.id','=','per.idusuario')
+                    ->select('user.nombre','user.imagen','per.ci','per.contacto')
+                    ->where('soldet.id', '=', $ser->id)
+                    ->get();
+                if(count($personal) == 0){
+                    $personal = [];
+                }else{
+                    
+                    foreach($personal as $serv){
+                        if(!(is_null($serv->imagen))){
+                            $pos = strpos($serv->imagen, ',');
+                            $nuevo = substr($serv->imagen,$pos+1,strlen($serv->imagen)-1);
+                            $serv->imagen = $nuevo;
+                        }
+                    }
+                    
+                }
+                $ser->personal = $personal;
+
             }
+
             
         }
+
+
+        
 
         return response()->json([
             'data'   => $detalles
