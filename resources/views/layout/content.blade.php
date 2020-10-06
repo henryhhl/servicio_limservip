@@ -176,7 +176,7 @@
           			<span class="icon-globe" style="color: #884EA0"></span>
           		</div>
           		<h3 class="mb-4">Sitio web</h3>
-	            <p><a href="https://limservip.herokuapp.com">limservip.herokuapp.com</a></p>
+	            <p><a href="https://limservip.herokuapp.com" target="_blank">limservip.herokuapp.com</a></p>
 	          </div>
           </div>
         </div>
@@ -214,7 +214,11 @@
 	              <ul>
 	                
 	                <li><a href="https://api.whatsapp.com/send?phone=+59163486561" target="_blank"><span class="icon icon-phone" style="color: #884EA0"></span><span class="text" style="color: #884EA0">+591 63486561</span></a></li>
+<<<<<<< HEAD
 	                <li><a href="https://limservip.herokuapp.com"><span class="icon icon-envelope pr-4" style="color: #884EA0"></span><span class="text" style="color: #884EA0">limservip.herokuapp.com</span></a></li>
+=======
+	                <li><a href="https://limservip.herokuapp.com" target="_blank"><span class="icon icon-envelope pr-4" style="color: #884EA0"></span><span class="text" style="color: #884EA0">limservip.herokuapp.com</span></a></li>
+>>>>>>> 641c5897409b58672b401596d2e919b3359ff7cd
 	              </ul>
 	            </div>
             </div>
