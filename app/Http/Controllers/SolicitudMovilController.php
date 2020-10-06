@@ -41,7 +41,7 @@ class SolicitudMovilController extends Controller
         $detalles =  DB::table('solicituddetalle as soldet')
                 ->join('servicio as ser', 'soldet.idservicio', '=', 'ser.id')
                 ->select('soldet.id as iddet', 'soldet.cantidad', 'soldet.precio', 'ser.nombre as nombreservicio', 
-                    'soldet.nota', 'ser.imagen', 'ser.nota as personal'
+                    'soldet.nota', 'ser.imagen', 'soldet.nota as personal'
                 )
                 ->where('soldet.idsolicitud', '=', $idsol)
                 ->where('soldet.estado', '=', 'A')
@@ -66,7 +66,7 @@ class SolicitudMovilController extends Controller
                     ->join('personal as per','per.id','=','ad.idpersonal')
                     ->join('users as user','user.id','=','per.idusuario')
                     ->select('user.nombre','user.imagen','per.ci','per.contacto')
-                    ->where('soldet.id', '=', $ser->id)
+                    ->where('soldet.id', '=', $ser->iddet)
                     ->get();
                 if(count($personal) == 0){
                     $personal = [];
