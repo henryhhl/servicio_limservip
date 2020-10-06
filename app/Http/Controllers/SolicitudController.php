@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\AsignarDetalle;
 use App\Informacion;
+use App\Notificacion;
 use App\Solicitud;
 use App\SolicitudDetalle;
 use Carbon\Carbon;
@@ -210,6 +212,11 @@ class SolicitudController extends Controller
                 $detalle->save();
             }
 
+            $idusuario = Auth::user()->id;
+
+            $notificacion = new Notificacion();
+            $notificacion->insertarNotificacion($servicio->id, $nombre, $apellido, $idusuario);
+
             DB::commit();
 
             return response()->json([
@@ -413,6 +420,8 @@ class SolicitudController extends Controller
     {
         try {
 
+            DB::beginTransaction();
+
             $estado = $request->input('proceso');
             $id = $request->input('id');
 
@@ -420,11 +429,35 @@ class SolicitudController extends Controller
             $data->estadoproceso = $estado;
             $data->update();
 
+            if ($estado != 'E') {
+                
+                $detalle = DB::table('solicituddetalle as det')
+                    ->leftJoin('asignartrabajo as asignar', 'det.id', '=', 'asignar.idsolicituddetalle')
+                    ->leftJoin('asignardetalle as asig', 'asignar.id', '=', 'asig.idasignartrabajo')
+                    ->select('asig.idpersonal', 'asig.id')
+                    ->where('det.idsolicitud', '=', $id)
+                    ->get();
+
+                foreach ($detalle as $det) {
+                    $asignar = AsignarDetalle::findOrFail($det->id);
+                    $asignar->estadoproceso = 'F';
+                    $asignar->update();
+                }
+    
+                $idusuario = Auth::user()->id;
+            }
+
+            $notificacion = new Notificacion();
+            $notificacion->updateestado($data->id, $estado, $idusuario);
+
+            DB::commit();
+
             return response()->json([
                 'response'  => 1,
             ]);
 
         }catch(\Exception $th) {
+            DB::rollBack();
             return response()->json([
                 'response' => 0,
                 'message' => 'Error al procesar la solicitud',

@@ -166,6 +166,10 @@ export default class Index extends Component {
                 visualizar_seguimiento: '',
             },
 
+            array_notificacion: [],
+
+            cargando: this.get_notificacion(),
+
         }
     }
     componentDidMount() {
@@ -174,6 +178,7 @@ export default class Index extends Component {
     get_data() {
         axios.get( web.servidor + '/usuario/get_information').then(
             (response) => {
+                console.log(response.data)
                 if (response.data.response == -3) {
                     this.onLogout();
                     return;
@@ -193,6 +198,7 @@ export default class Index extends Component {
                         sesion: true,
                         permisos_habilitados: response.data.permiso,
                         loading_page: true,
+                        array_notificacion: response.data.notificacion,
                     });
                 }
             }
@@ -216,6 +222,32 @@ export default class Index extends Component {
                 centered: true,
             });
         } );
+    }
+    get_notificacion() {
+        setInterval(() => {
+            if (this.state.loading_page) {
+                axios.get( web.servidor + '/usuario/get_notificacion/' + this.state.usuario.usuario ).then(
+                    (response) => {
+                        if (response.data.response == -3) {
+                            this.onLogout();
+                            return;
+                        } 
+                        if (response.data.response == 1) {
+                            if (response.data.notificacion.length > 0) {
+                                this.setState({
+                                    array_notificacion: response.data.notificacion,
+                                });
+                            }
+                        }
+                    }
+                ).catch( error => {
+                    notification.error({
+                        description: 'HUBO UN ERROR AL SOLICITAR SERVICIO FAVOR DE REVISAR CONEXION.',
+                        zIndex: 1200,
+                    });
+                } );
+            }
+        }, 4000);
     }
     updatePerfil(data) {
         this.setState({
@@ -807,6 +839,11 @@ export default class Index extends Component {
         this.state.layoutoption.sizetext = data;
         this.setState({ layoutoption: this.state.layoutoption });
     }
+    desactivarnotificacion(data) {
+        this.setState({
+            array_notificacion: data,
+        });
+    }
     render() {
         if (!this.state.sesion) {
             return (
@@ -834,6 +871,8 @@ export default class Index extends Component {
                     <Header 
                         usuario={this.state.usuario} token={this.state.token}
                         headercolor={this.state.layoutoption.headercolor} 
+                        notificacion={this.state.array_notificacion}
+                        desactivarnotificacion={this.desactivarnotificacion.bind(this)}
                     />
 
                     <div className="app-main">
@@ -1391,7 +1430,7 @@ export default class Index extends Component {
                         </div>
                         <div className="avatar-icon-wrapper avatar-icon-xl btn-hover-shine">
                             <div className="avatar-icon rounded logo_img">
-                                <img src={ web.img_servidor + '/img/limservip.png'} alt="Avatar 5" />
+                                <img src={ web.img_servidor + '/img/limservip.PNG'} alt="Avatar 5" />
                             </div>
                         </div>
                     </Drawer>

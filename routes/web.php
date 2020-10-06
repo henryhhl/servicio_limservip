@@ -38,6 +38,9 @@ Route::get( $servidor . '/usuario/inicio', 'UsuarioController@inicio');
 
 Route::get( $servidor . '/usuario/get_information', 'UsuarioController@get_information');
 
+Route::get( $servidor . '/usuario/get_notificacion/{usuario}', 'UsuarioController@get_notificacion');
+Route::get( $servidor . '/usuario/update_notificacion/{id}', 'UsuarioController@update_notificacion');
+
 Route::get( $servidor . '/home/sesion', 'HomeController@sesion');
 
 

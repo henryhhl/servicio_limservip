@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Ajuste;
+use App\Events\NotificacionEvent;
 use App\GrupoUsuarioDetalle;
 use App\GrupoUsuario;
+use App\Notificacion;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -126,6 +128,67 @@ class UsuarioController extends Controller
         }
     }
 
+    public function get_notificacion($usuario) {
+
+        try {
+
+            $sesion = Auth::guest();
+
+            if ($sesion) {
+                return response()->json([
+                    'response' => -3,
+                    'sesion'   => $sesion,
+                ]);
+            }
+
+            $bandera = '';
+
+            if (file_exists( public_path() . '/notificacion/' . $usuario . '.txt' )) {
+
+                $archivo = fopen(public_path() . '/notificacion/' . $usuario . '.txt', 'r');
+                while ($linea = fgets($archivo)) {
+                    $bandera .= $linea;
+                }
+                $bandera = preg_replace("/[\r\n|\n|\r]+/", "", $bandera);
+                fclose($archivo);
+
+            } else {
+                $archivo = fopen( public_path() . '/notificacion/' . $usuario . '.txt', 'w+');
+                if ( fwrite( $archivo, '' ) ) {
+                    fclose( $archivo );
+                }
+            }
+            $bandera = $bandera == '' ? [] : json_decode($bandera);
+
+            $archivo = fopen( public_path() . '/notificacion/' . $usuario . '.txt', 'w+');
+            if ( fwrite( $archivo, '' ) ) {
+                fclose( $archivo );
+            }
+
+            $notificacion = [];
+            if (sizeof($bandera) > 0) {
+                $obj = new Notificacion();
+                $notificacion = $obj->get_notificacion(Auth::user()->id);
+            }
+
+            return response()->json([
+                'response' => 1,
+                'bandera' => $bandera,
+                'notificacion' => $notificacion,
+            ]);
+        } catch(\Exception $th) {
+            return response()->json([
+                'response' => 0,
+                'message' => 'Error al procesar la solicitud',
+                'error' => [
+                    'file'    => $th->getFile(),
+                    'line'    => $th->getLine(),
+                    'message' => $th->getMessage()
+                ]
+            ]);
+        } 
+    }
+
     public function get_information() {
 
         try {
@@ -170,12 +233,18 @@ class UsuarioController extends Controller
                 ->where('user.id', '=', Auth::user()->id)
                 ->first();
 
+            // event (new NotificacionEvent('mensaje', $usuario));
+
+            $obj = new Notificacion();
+            $notificacion = $obj->get_notificacion($usuario->id);
+
             return response()->json([
                 'response' => 1,
                 'token'    => $token,
                 'usuario'  => $usuario,
                 'ajuste'   => $data,
                 'permiso'   => $permisos,
+                'notificacion'   => $notificacion,
             ]);
         } catch(\Exception $th) {
             return response()->json([
@@ -188,6 +257,42 @@ class UsuarioController extends Controller
                 ]
             ]);
         } 
+    }
+
+    public function update_notificacion($id) {
+        try {
+
+            $sesion = Auth::guest();
+
+            if ($sesion) {
+                return response()->json([
+                    'response' => -3,
+                    'sesion'   => $sesion,
+                ]);
+            }
+
+            $obj = new Notificacion();
+            $data = $obj->desactivar($id);
+
+            $idusuario = Auth::user()->id;
+
+            $notificacion = $obj->get_notificacion($idusuario);
+
+            return response()->json([
+                'response' => 1,
+                'notificacion'  => $notificacion,
+            ]);
+        } catch(\Exception $th) {
+            return response()->json([
+                'response' => 0,
+                'message' => 'Error al procesar la solicitud',
+                'error' => [
+                    'file'    => $th->getFile(),
+                    'line'    => $th->getLine(),
+                    'message' => $th->getMessage()
+                ]
+            ]);
+        }
     }
     
     public function index(Request $request)

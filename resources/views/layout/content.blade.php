@@ -62,7 +62,7 @@
                     <div class="row justify-content-start pb-3">
                         <div class="col-md-12 heading-section ftco-animate p-4 p-lg-5">
                         <h2 class="mb-4">Nosotros somos <span style="color: #884EA0">Limservip</span> una Empresa de Limpieza</h2>
-                        <p>Estamos conformador por personal responsable y eficiente que te brinda la mejor experiencia en
+                        <p>Estamos conformados por personal responsable y eficiente que te brinda la mejor experiencia en
                          servicio de limpieza de condominio, oficinas administrativa,
                          centros educativos, centros comerciales, casas y departamentos.</p>
                         
@@ -84,7 +84,7 @@
         <div class="row d-flex">
           <div class="col-md-4 ftco-animate">
             <div class="blog-entry">
-              <a href="blog-single.html" class="block-20" style="background-image: url('plantilla/images/vidrios.jpg');">
+              <a href="#" class="block-20" style="background-image: url('plantilla/images/vidrios.jpg');">
               </a>
               <div class="text d-block">
               	<div class="meta mb-12">
@@ -99,7 +99,7 @@
 
         	<div class="col-md-4 ftco-animate">
             <div class="blog-entry">
-              <a href="blog-single.html" class="block-20" style="background-image: url('plantilla/images/alfombra.jpg');">
+              <a href="#" class="block-20" style="background-image: url('plantilla/images/alfombra.jpg');">
               </a>
               <div class="text d-block">
               	<div class="meta mb-12">
@@ -113,7 +113,7 @@
 
         	<div class="col-md-4 ftco-animate">
             <div class="blog-entry">
-              <a href="blog-single.html" class="block-20" style="background-image: url('plantilla/images/bano.jpg');">
+              <a href="#" class="block-20" style="background-image: url('plantilla/images/bano.jpg');">
               </a>
               <div class="text d-block">
               	<div class="meta mb-12">
@@ -158,7 +158,7 @@
           			<span class="icon-phone2" style="color: #884EA0"></span>
           		</div>
           		<h3 class="mb-4">Telefono</h3>
-	            <p><a href="https://api.whatsapp.com/send?phone=+59163486561">+591 63486561</a></p>
+	            <p><a href="https://api.whatsapp.com/send?phone=+59163486561" target="_blank">+591 63486561</a></p>
 	          </div>
           </div>
           <div class="col-md-6 col-lg-3 d-flex ftco-animate">
@@ -199,8 +199,8 @@
               <h2 class="ftco-heading-2">Limservip</h2>
               
               <ul class="ftco-footer-social list-unstyled mt-5" style="color: #884EA0">
-                <li class="ftco-animate"><a href="https://api.whatsapp.com/send?phone=+59163486561"><span class="icon-whatsapp" style="color: #884EA0"></span></a></li>
-                <li class="ftco-animate"><a href="https://www.facebook.com/Limservip-servicios-de-limpieza-104359337874573/?ref=page_internal"><span class="icon-facebook" style="color: #884EA0"></span></a></li>
+                <li class="ftco-animate"><a href="https://api.whatsapp.com/send?phone=+59163486561" target="_blank"><span class="icon-whatsapp" style="color: #884EA0"></span></a></li>
+                <li class="ftco-animate"><a href="https://www.facebook.com/Limservip-servicios-de-limpieza-104359337874573/?ref=page_internal" target="_blank"><span class="icon-facebook" style="color: #884EA0"></span></a></li>
               </ul>
             </div>
           </div>
@@ -213,7 +213,7 @@
             	<div class="block-23 mb-3">
 	              <ul>
 	                
-	                <li><a href="https://api.whatsapp.com/send?phone=+59163486561"><span class="icon icon-phone" style="color: #884EA0"></span><span class="text" style="color: #884EA0">+591 63486561</span></a></li>
+	                <li><a href="https://api.whatsapp.com/send?phone=+59163486561" target="_blank"><span class="icon icon-phone" style="color: #884EA0"></span><span class="text" style="color: #884EA0">+591 63486561</span></a></li>
 	                <li><a href="https://limservip.herokuapp.com"><span class="icon icon-envelope pr-4" style="color: #884EA0"></span><span class="text" style="color: #884EA0">limservip.herokuapp.com</span></a></li>
 	              </ul>
 	            </div>

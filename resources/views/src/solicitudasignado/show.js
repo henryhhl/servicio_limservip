@@ -488,6 +488,7 @@ class ShowMySolicitudAsignado extends Component {
         ).then(
             response => {
                 this.setState({ loading: false, });
+                console.log(response.data)
                 if (response.data.response == 1) {
                     notification.success({
                         description: 'ESTADO PROCESO ACTUALIZADO EXITOSAMENTE',

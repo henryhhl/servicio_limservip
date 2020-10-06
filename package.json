@@ -31,6 +31,8 @@
         "antd": "^4.4.2",
         "chart.js": "^2.9.3",
         "firebase": "^7.22.0",
+        "laravel-echo": "^1.8.1",
+        "pusher-js": "^7.0.0",
         "react-chartjs-2": "^2.10.0",
         "react-geocode": "^0.2.1",
         "react-google-autocomplete": "^1.2.6",

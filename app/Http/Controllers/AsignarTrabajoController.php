@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\AsignarDetalle;
 use App\AsignarTrabajo;
+use App\Notificacion;
+use App\Personal;
 use App\Solicitud;
 use App\SolicitudDetalle;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -212,6 +215,101 @@ class AsignarTrabajoController extends Controller
                         $detalle->horainicio =$mytime->toTimeString();
                         $detalle->horafin =$mytime->toTimeString();
                         $detalle->save();
+
+                        $objpersonal = Personal::findOrFail($personal->id);
+
+                        $notificacion = new Notificacion();
+                        $notificacion->idsolicitud = $solictud->id;
+                        $notificacion->idusuarioenviado = Auth::user()->id;
+                        $notificacion->idusuariorecibido = $objpersonal->idusuario;
+                        $notificacion->idasignartrabajo = $data->id;
+                        $notificacion->mensaje = 'SE HA ASIGNADO UNA NUEVA SOLICITUD';
+                        $notificacion->tipo = 'A';
+                        $notificacion->fecha = $mytime->toDateString();
+                        $notificacion->hora = $mytime->toTimeString();
+                        $notificacion->save();
+
+                        $user = User::findOrFail($objpersonal->idusuario);
+
+                        if (file_exists( public_path() . '/notificacion/' . $user->usuario . '.txt' )) {
+
+                            $archivo = fopen(public_path() . '/notificacion/' . $user->usuario . '.txt', 'r');
+                            $array = '';
+                            while ($linea = fgets($archivo)) {
+                                $array .= $linea;
+                            }
+            
+                            $array = preg_replace("/[\r\n|\n|\r]+/", "", $array);
+            
+                            $array = $array == '' ? [] : json_decode($array);
+            
+                            array_push($array, $notificacion);
+            
+                            fclose($archivo);
+            
+                            $archivo = fopen( public_path() . '/notificacion/' . $user->usuario . '.txt', 'w+');
+            
+                            if ( fwrite( $archivo, json_encode($array) ) ) {
+                                fclose( $archivo );
+                            }
+            
+                        } else {
+                            $archivo = fopen( public_path() . '/notificacion/' . $user->usuario . '.txt', 'w+');
+                            
+                            $array = [];
+                            array_push($array, $notificacion);
+            
+                            if ( fwrite( $archivo, json_encode($array) ) ) {
+                                fclose( $archivo );
+                            }
+                        }
+
+                    }
+                }
+
+                $notificacion = new Notificacion();
+                $notificacion->idsolicitud = $solictud->id;
+                $notificacion->idusuarioenviado = Auth::user()->id;
+                $notificacion->idusuariorecibido = $solictud->idusuario;
+                $notificacion->idasignartrabajo = $data->id;
+                $notificacion->mensaje = 'SE LE HA ASIGNADO PERSONAL A SU SOLICITUD.';
+                $notificacion->tipo = 'A';
+                $notificacion->fecha = $mytime->toDateString();
+                $notificacion->hora = $mytime->toTimeString();
+                $notificacion->save();
+
+                $user = User::findOrFail($solictud->idusuario);
+
+                if (file_exists( public_path() . '/notificacion/' . $user->usuario . '.txt' )) {
+
+                    $archivo = fopen(public_path() . '/notificacion/' . $user->usuario . '.txt', 'r');
+                    $array = '';
+                    while ($linea = fgets($archivo)) {
+                        $array .= $linea;
+                    }
+    
+                    $array = preg_replace("/[\r\n|\n|\r]+/", "", $array);
+    
+                    $array = $array == '' ? [] : json_decode($array);
+    
+                    array_push($array, $notificacion);
+    
+                    fclose($archivo);
+    
+                    $archivo = fopen( public_path() . '/notificacion/' . $user->usuario . '.txt', 'w+');
+    
+                    if ( fwrite( $archivo, json_encode($array) ) ) {
+                        fclose( $archivo );
+                    }
+    
+                } else {
+                    $archivo = fopen( public_path() . '/notificacion/' . $user->usuario . '.txt', 'w+');
+                    
+                    $array = [];
+                    array_push($array, $notificacion);
+    
+                    if ( fwrite( $archivo, json_encode($array) ) ) {
+                        fclose( $archivo );
                     }
                 }
 

@@ -21,7 +21,7 @@ class CreateCategoria extends Component {
             error_descripcion: '',
 
             loadingcargando: false,
-            cargando: this.cargando(),
+            
         }
     }
     cargando() {

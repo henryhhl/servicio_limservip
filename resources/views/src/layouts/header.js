@@ -6,7 +6,7 @@ import web from '../utils/services';
 
 import {withRouter, Link} from 'react-router-dom';
 
-import { notification, Dropdown, Menu, message } from 'antd';
+import { notification, Dropdown, Menu, message, Badge } from 'antd';
 import 'antd/dist/antd.css';
 
 class Header extends Component {
@@ -15,20 +15,7 @@ class Header extends Component {
         super(props);
         this.state = {
             visible_perfil: false,
-            visible_search: false,
-            active_search: 'active',
-            search: '',
-            timeoutSearch: undefined,
-
-            articulo: [],
-            categoria: [],
-            cliente: [],
-            color: [],
-            marca: [],
-            mecanico: [],
-            servicio: [],
-            usuario: [],
-            vehiculo: [],
+            visible_notificacion: false,
         };
     }
 
@@ -37,522 +24,41 @@ class Header extends Component {
         this.props.history.push( web.serv_link + '/ajuste');
     }
 
-    get_search(value) {
-        var formdata = new FormData();
-        formdata.append('search', value);
-        axios.post( web.servidor + '/ajuste/search_general', formdata).then(
+    onShowPedido(data) {
+
+        axios.get( web.servidor + '/usuario/update_notificacion/' + data.id).then(
             (response) => {
-                console.log(response.data)
-                if (response.status == 200) {
-                    if (response.data.response == -3) {
-                        this.props.logout();
-                        return;
-                    }
-                    if (response.data.response == 1) {
-                        console.log(response.data)
-                        this.setState({
-                            articulo: response.data.articulo,
-                            categoria: response.data.categoria,
-                            cliente: response.data.cliente,
-                            color: response.data.color,
-                            marca: response.data.marca,
-                            mecanico: response.data.mecanico,
-                            servicio: response.data.servicio,
-                            usuario: response.data.usuario,
-                            vehiculo: response.data.vehiculo,
-                        });
-                        return;
-                    }
+                if (response.data.response == -3) {
+                    this.onLogout();
+                    return;
                 }
+                if (response.data.response == 1) {
+                    this.props.desactivarnotificacion(response.data.notificacion)
+                    this.setState({
+                        visible_notificacion: false,
+                    }, () => {
+                        setTimeout(() => {
+                            this.props.history.push( web.serv_link + '/solicitud_pedido/show/' + data.idsolicitud);
+                        }, 500);
+                    });
+                    return;
+                }
+                notification.error({
+                    description: 'HUBO UN ERROR AL SOLICITAR SERVICIO FAVOR DE REVISAR CONEXION.',
+                    zIndex: 1200,
+                });
             }
         ).catch( error => {
-            message.error('HUBO PROBLEMA AL SOLICITUD SERVICIO');
+            notification.error({
+                description: 'HUBO UN ERROR AL SOLICITAR SERVICIO FAVOR DE REVISAR CONEXION.',
+                zIndex: 1200,
+            });
         } );
-    }
-
-    onShowUsuario(id) {
-        console.log(id)
-        this.setState({
-            visible_search: false,
-            search: '',
-            articulo: [],
-            categoria: [],
-            cliente: [],
-            color: [],
-            marca: [],
-            mecanico: [],
-            servicio: [],
-            usuario: [],
-            vehiculo: [],
-        });
-        setTimeout(() => {
-            this.props.history.push(web.serv_link + '/usuario/show/' + id);
-        }, 1000);
-    }
-
-    onShowVehiculo(id) {
-        console.log(id)
-        this.setState({
-            visible_search: false,
-            search: '',
-            articulo: [],
-            categoria: [],
-            cliente: [],
-            color: [],
-            marca: [],
-            mecanico: [],
-            servicio: [],
-            usuario: [],
-            vehiculo: [],
-        });
-        setTimeout(() => {
-            this.props.history.push(web.serv_link + '/vehiculo/show/' + id);
-        }, 1000);
-    }
-
-    onShowServicio(id) {
-        this.setState({
-            visible_search: false,
-            search: '',
-            articulo: [],
-            categoria: [],
-            cliente: [],
-            color: [],
-            marca: [],
-            mecanico: [],
-            servicio: [],
-            usuario: [],
-            vehiculo: [],
-        });
-        setTimeout(() => {
-            this.props.history.push(web.serv_link + '/almacen/show/' + id);
-        }, 1000);
-    }
-
-    onShowCliente(id) {
-        this.setState({
-            visible_search: false,
-            search: '',
-            articulo: [],
-            categoria: [],
-            cliente: [],
-            color: [],
-            marca: [],
-            mecanico: [],
-            servicio: [],
-            usuario: [],
-            vehiculo: [],
-        });
-        setTimeout(() => {
-            this.props.history.push(web.serv_link + '/cliente/show/' + id);
-        }, 1000);
-    }
-
-    onShowMarca(id) {
-        this.setState({
-            visible_search: false,
-            search: '',
-            articulo: [],
-            categoria: [],
-            cliente: [],
-            color: [],
-            marca: [],
-            mecanico: [],
-            servicio: [],
-            usuario: [],
-            vehiculo: [],
-        });
-        setTimeout(() => {
-            this.props.history.push(web.serv_link + '/vehiculo_marca/show/' + id);
-        }, 1000);
-    }
-    onShowColor(id) {
-        this.setState({
-            visible_search: false,
-            search: '',
-            articulo: [],
-            categoria: [],
-            cliente: [],
-            color: [],
-            marca: [],
-            mecanico: [],
-            servicio: [],
-            usuario: [],
-            vehiculo: [],
-        });
-        setTimeout(() => {
-            this.props.history.push(web.serv_link + '/vehiculo_color/show/' + id);
-        }, 1000);
-    }
-    onShowMecanico(id) {
-        this.setState({
-            visible_search: false,
-            search: '',
-            articulo: [],
-            categoria: [],
-            cliente: [],
-            color: [],
-            marca: [],
-            mecanico: [],
-            servicio: [],
-            usuario: [],
-            vehiculo: [],
-        });
-        setTimeout(() => {
-            this.props.history.push(web.serv_link + '/mecanico/show/' + id);
-        }, 1000);
-    }
-    onShowCategoria(id) {
-        this.setState({
-            visible_search: false,
-            search: '',
-            articulo: [],
-            categoria: [],
-            cliente: [],
-            color: [],
-            marca: [],
-            mecanico: [],
-            servicio: [],
-            usuario: [],
-            vehiculo: [],
-        });
-        setTimeout(() => {
-            this.props.history.push(web.serv_link + '/categoria/show/' + id);
-        }, 1000);
-    }
-    onShowArticulo(id) {
-        this.setState({
-            visible_search: false,
-            search: '',
-            articulo: [],
-            categoria: [],
-            cliente: [],
-            color: [],
-            marca: [],
-            mecanico: [],
-            servicio: [],
-            usuario: [],
-            vehiculo: [],
-        });
-        setTimeout(() => {
-            this.props.history.push(web.serv_link + '/categoria/show/' + id);
-        }, 1000);
-    }
-
-    onchangeSearch(event) {
-        var value = event.target.value;
-        this.setState({
-            search: value,
-        });
-        if (this.state.timeoutSearch) {
-            clearTimeout(this.state.timeoutSearch);
-            this.setState({ timeoutSearch: undefined});
-        }
-        this.state.timeoutSearch = setTimeout(() => {
-            this.get_search(value)
-        }, 1000);
-        this.setState({ timeoutSearch: this.state.timeoutSearch});
     }
 
     render() {
 
         var usuario = this.props.usuario;
-
-        const menushearch = (
-            <Menu style={{width: '200%', height: 350, overflow: 'scroll'}}>
-
-                {this.state.articulo.map( (data, key) => {
-                    if (key == 0) {
-                        return (
-                            <div style={{width: '100%',}} key={key}>
-                                <div className="font-size-md text-capitalize font-weight-normal" 
-                                    style={{paddingLeft: 10, paddingTop: 4, paddingBottom: 5, borderBottom: '1px solid #e8e8e8'}}
-                                >
-                                    <strong>ARTICULOS ENCONTRADOS</strong>
-                                </div>
-                                <div className="font-size-md text-capitalize font-weight-normal"
-                                    style={{paddingLeft: 10, paddingTop: 4, paddingBottom: 5, borderBottom: '1px solid #e8e8e8', color: 'blue'}}
-                                    onClick={this.onShowArticulo.bind(this, data.id)}
-                                >
-                                    {data.descripcion}
-                                </div>
-                            </div>
-                        );
-                    }
-                    return (
-                        <div className="font-size-md text-capitalize font-weight-normal" key={key}
-                            style={{paddingLeft: 10, paddingTop: 4, paddingBottom: 5, borderBottom: '1px solid #e8e8e8'}}
-                        >
-                            <div className="font-size-md text-capitalize font-weight-normal" 
-                                style={{paddingLeft: 10, paddingTop: 4, paddingBottom: 5, borderBottom: '1px solid #e8e8e8', color: 'blue'}}
-                                onClick={this.onShowArticulo.bind(this, data.id)}
-                            >
-                                {data.descripcion}
-                            </div>
-                        </div>
-                    );
-                } )}
-
-                {this.state.categoria.map( (data, key) => {
-                    if (key == 0) {
-                        return (
-                            <div style={{width: '100%',}} key={key}>
-                                <div className="font-size-md text-capitalize font-weight-normal"
-                                    style={{paddingLeft: 10, paddingTop: 4, paddingBottom: 5, borderBottom: '1px solid #e8e8e8'}}
-                                >
-                                    <strong>CATEGORIA ENCONTRADOS</strong>
-                                </div>
-                                <div className="font-size-md text-capitalize font-weight-normal" 
-                                    style={{paddingLeft: 10, paddingTop: 4, paddingBottom: 5, borderBottom: '1px solid #e8e8e8', color: 'blue'}}
-                                    onClick={this.onShowCategoria.bind(this, data.id)}
-                                >
-                                    {data.descripcion}
-                                </div>
-                            </div>
-                        );
-                    }
-                    return (
-                        <div className="font-size-md text-capitalize font-weight-normal" key={key}
-                            style={{paddingLeft: 10, paddingTop: 4, paddingBottom: 5, borderBottom: '1px solid #e8e8e8'}}
-                        >
-                            <div className="font-size-md text-capitalize font-weight-normal" 
-                                style={{paddingLeft: 10, paddingTop: 4, paddingBottom: 5, borderBottom: '1px solid #e8e8e8', color: 'blue'}}
-                                onClick={this.onShowCategoria.bind(this, data.id)}
-                            >
-                                {data.descripcion}
-                            </div>
-                        </div>
-                    );
-                } )}
-
-                {this.state.cliente.map( (data, key) => {
-                    if (key == 0) {
-                        return (
-                            <div style={{width: '100%',}} key={key}>
-                                <div className="font-size-md text-capitalize font-weight-normal" 
-                                    style={{paddingLeft: 10, paddingTop: 4, paddingBottom: 5, borderBottom: '1px solid #e8e8e8'}}
-                                >
-                                    <strong>CLIENTES ENCONTRADOS</strong>
-                                </div>
-                                <div className="font-size-md text-capitalize font-weight-normal" 
-                                    style={{paddingLeft: 10, paddingTop: 4, paddingBottom: 5, borderBottom: '1px solid #e8e8e8', color: 'blue', cursor: 'pointer'}}
-                                    onClick={this.onShowCliente.bind(this, data.id)}
-                                >
-                                    {data.nombre} - {data.apellido == null ? '' : data.apellido} - {data.telefono == null ? '' : data.telefono}
-                                    
-                                </div>
-                            </div>
-                        );
-                    }
-                    return (
-                        <div className="font-size-md text-capitalize font-weight-normal" key={key}
-                            style={{paddingLeft: 10, paddingTop: 4, paddingBottom: 5, borderBottom: '1px solid #e8e8e8'}}
-                        >
-                            <div className="font-size-md text-capitalize font-weight-normal" 
-                                style={{paddingLeft: 10, paddingTop: 4, paddingBottom: 5, borderBottom: '1px solid #e8e8e8', color: 'blue', cursor: 'pointer'}}
-                                onClick={this.onShowCliente.bind(this, data.id)}
-                            >
-                                {data.nombre} - {data.apellido == null ? '' : data.apellido} - {data.telefono == null ? '' : data.telefono}
-                            </div>
-                        </div>
-                    );
-                } )}
-
-                {this.state.color.map( (data, key) => {
-                    if (key == 0) {
-                        return (
-                            <div style={{width: '100%',}} key={key}>
-                                <div className="font-size-md text-capitalize font-weight-normal" 
-                                    style={{paddingLeft: 10, paddingTop: 4, paddingBottom: 5, borderBottom: '1px solid #e8e8e8'}}
-                                >
-                                    <strong>COLORES ENCONTRADOS</strong>
-                                </div>
-                                <div className="font-size-md text-capitalize font-weight-normal" 
-                                    style={{paddingLeft: 10, paddingTop: 4, paddingBottom: 5, borderBottom: '1px solid #e8e8e8', color: 'blue'}}
-                                    onClick={this.onShowColor.bind(this, data.id)}
-                                >
-                                    {data.descripcion}
-                                </div>
-                            </div>
-                        );
-                    }
-                    return (
-                        <div className="font-size-md text-capitalize font-weight-normal" key={key}
-                            style={{paddingLeft: 10, paddingTop: 4, paddingBottom: 5, borderBottom: '1px solid #e8e8e8'}}
-                        >
-                            <div className="font-size-md text-capitalize font-weight-normal" 
-                                style={{paddingLeft: 10, paddingTop: 4, paddingBottom: 5, borderBottom: '1px solid #e8e8e8', color: 'blue'}}
-                                onClick={this.onShowColor.bind(this, data.id)}
-                            >
-                                {data.descripcion}
-                            </div>
-                        </div>
-                    );
-                } )}
-
-                {this.state.marca.map( (data, key) => {
-                    if (key == 0) {
-                        return (
-                            <div style={{width: '100%',}} key={key}>
-                                <div className="font-size-md text-capitalize font-weight-normal" 
-                                    style={{paddingLeft: 10, paddingTop: 4, paddingBottom: 5, borderBottom: '1px solid #e8e8e8'}}
-                                >
-                                    <strong>MARCA ENCONTRADOS</strong>
-                                </div>
-                                <div className="font-size-md text-capitalize font-weight-normal" 
-                                    style={{paddingLeft: 10, paddingTop: 4, paddingBottom: 5, borderBottom: '1px solid #e8e8e8', color: 'blue', cursor: 'pointer'}}
-                                    onClick={this.onShowMarca.bind(this, data.id)}
-                                >
-                                    {data.descripcion}
-                                </div>
-                            </div>
-                        );
-                    }
-                    return (
-                        <div className="font-size-md text-capitalize font-weight-normal" key={key}
-                            style={{paddingLeft: 10, paddingTop: 4, paddingBottom: 5, borderBottom: '1px solid #e8e8e8'}}
-                        >
-                            <div className="font-size-md text-capitalize font-weight-normal" 
-                                style={{paddingLeft: 10, paddingTop: 4, paddingBottom: 5, borderBottom: '1px solid #e8e8e8', color: 'blue', cursor: 'pointer'}}
-                                onClick={this.onShowMarca.bind(this, data.id)}
-                            >
-                                {data.descripcion}
-                            </div>
-                        </div>
-                    );
-                } )}
-
-                {this.state.mecanico.map( (data, key) => {
-                    if (key == 0) {
-                        return (
-                            <div style={{width: '100%',}} key={key}>
-                                <div className="font-size-md text-capitalize font-weight-normal" 
-                                    style={{paddingLeft: 10, paddingTop: 4, paddingBottom: 5, borderBottom: '1px solid #e8e8e8'}}
-                                >
-                                    <strong>MECANICOS ENCONTRADOS</strong>
-                                </div>
-                                <div className="font-size-md text-capitalize font-weight-normal" 
-                                    style={{paddingLeft: 10, paddingTop: 4, paddingBottom: 5, borderBottom: '1px solid #e8e8e8', color: 'blue', cursor:'pointer'}}
-                                    onClick={this.onShowMecanico.bind(this, data.id)}
-                                >
-                                    {data.nombre} - {data.apellido == null ? '' : data.apellido} - {data.telefono == null ? '' : data.telefono}
-                                    
-                                </div>
-                            </div>
-                        );
-                    }
-                    return (
-                        <div className="font-size-md text-capitalize font-weight-normal" key={key}
-                            style={{paddingLeft: 10, paddingTop: 4, paddingBottom: 5, borderBottom: '1px solid #e8e8e8'}}
-                        >
-                            <div className="font-size-md text-capitalize font-weight-normal"
-                                style={{paddingLeft: 10, paddingTop: 4, paddingBottom: 5, borderBottom: '1px solid #e8e8e8', color: 'blue', cursor: 'pointer'}}
-                                onClick={this.onShowMecanico.bind(this, data.id)}
-                            >
-                                {data.nombre} - {data.apellido == null ? '' : data.apellido} - {data.telefono == null ? '' : data.telefono}
-                            </div>
-                        </div>
-                    );
-                } )}
-
-                {this.state.servicio.map( (data, key) => {
-                    if (key == 0) {
-                        return (
-                            <div style={{width: '100%',}} key={key}>
-                                <div className="font-size-md text-capitalize font-weight-normal"
-                                    style={{paddingLeft: 10, paddingTop: 4, paddingBottom: 5, borderBottom: '1px solid #e8e8e8'}}
-                                >
-                                    <strong>SERVICIOS ENCONTRADOS</strong>
-                                </div>
-                                <div className="font-size-md text-capitalize font-weight-normal"
-                                    style={{paddingLeft: 10, paddingTop: 4, paddingBottom: 5, borderBottom: '1px solid #e8e8e8', color: 'blue', cursor: 'pointer'}}
-                                    onClick={this.onShowServicio.bind(this, data.id)}
-                                >
-                                    {data.descripcion}
-                                </div>
-                            </div>
-                        );
-                    }
-                    return (
-                        <div className="font-size-md text-capitalize font-weight-normal" key={key}
-                            style={{paddingLeft: 10, paddingTop: 4, paddingBottom: 5, borderBottom: '1px solid #e8e8e8'}}
-                        >
-                            <div className="font-size-md text-capitalize font-weight-normal"
-                                style={{paddingLeft: 10, paddingTop: 4, paddingBottom: 5, borderBottom: '1px solid #e8e8e8', color: 'blue', cursor: 'pointer'}}
-                                onClick={this.onShowServicio.bind(this, data.id)}
-                            >
-                                {data.descripcion}
-                            </div>
-                        </div>
-                    );
-                } )}
-
-                {this.state.vehiculo.map( (data, key) => {
-                    if (key == 0) {
-                        return (
-                            <div style={{width: '100%',}} key={key}>
-                                <div className="font-size-md text-capitalize font-weight-normal"
-                                    style={{paddingLeft: 10, paddingTop: 4, paddingBottom: 5, borderBottom: '1px solid #e8e8e8'}}
-                                >
-                                    <strong>VEHICULOS ENCONTRADOS</strong>
-                                </div>
-                                <div className="font-size-md text-capitalize font-weight-normal"
-                                    style={{paddingLeft: 10, paddingTop: 4, paddingBottom: 5, borderBottom: '1px solid #e8e8e8', color: 'blue', cursor: 'pointer'}}
-                                    onClick={this.onShowVehiculo.bind(this, data.id)}
-                                >
-                                    {data.descripcion}
-                                </div>
-                            </div>
-                        );
-                    }
-                    return (
-                        <div className="font-size-md text-capitalize font-weight-normal" key={key}
-                            style={{paddingLeft: 10, paddingTop: 4, paddingBottom: 5, borderBottom: '1px solid #e8e8e8'}}
-                        >
-                            <div className="font-size-md text-capitalize font-weight-normal"
-                                style={{paddingLeft: 10, paddingTop: 4, paddingBottom: 5, borderBottom: '1px solid #e8e8e8', color: 'blue', cursor: 'pointer'}}
-                                onClick={this.onShowVehiculo.bind(this, data.id)}
-                            >
-                                {data.descripcion}
-                            </div>
-                        </div>
-                    );
-                } )}
-                
-                {this.state.usuario.map( (data, key) => {
-                    if (key == 0) {
-                        return (
-                            <div style={{width: '100%',}} key={key}>
-                                <div className="font-size-md text-capitalize font-weight-normal"
-                                    style={{paddingLeft: 10, paddingTop: 4, paddingBottom: 5, borderBottom: '1px solid #e8e8e8'}}
-                                >
-                                    <strong>USUARIOS ENCONTRADOS</strong>
-                                </div>
-                                <div className="font-size-md text-capitalize font-weight-normal"
-                                    style={{paddingLeft: 10, paddingTop: 4, paddingBottom: 5, borderBottom: '1px solid #e8e8e8', color: 'blue'}}
-                                    onClick={this.onShowUsuario.bind(this, data.id)}
-                                >
-                                    {data.nombre} - {data.apellido == null ? '' : data.apellido} - {data.telefono == null ? '' : data.telefono}
-                                </div>
-                            </div>
-                        );
-                    }
-                    return (
-                        <div className="font-size-md text-capitalize font-weight-normal" key={key}
-                            style={{paddingLeft: 10, paddingTop: 4, paddingBottom: 5, borderBottom: '1px solid #e8e8e8'}}
-                        >
-                            <div className="font-size-md text-capitalize font-weight-normal" 
-                                style={{paddingLeft: 10, paddingTop: 4, paddingBottom: 5, borderBottom: '1px solid #e8e8e8', color: 'blue', cursor: 'pointer'}}
-                                onClick={this.onShowUsuario.bind(this, data.id)}
-                            >
-                                {data.nombre} - {data.apellido == null ? '' : data.apellido} - { ' USUARIO: ' + data.usuario}
-                            </div>
-                        </div>
-                    );
-                } )}
-
-            </Menu>
-        );
 
         const menu = (
             <div tabIndex="-1" role="menu" className={`rm-pointers dropdown-menu-lg dropdown-menu dropdown-menu-right show`}>
@@ -635,7 +141,65 @@ class Header extends Component {
                     </li>
                 </ul> */}
             </div>
-          );
+        );
+
+        const menunotificacion = (
+            <div className="dropdown-menu-xl rm-pointers dropdown-menu dropdown-menu-right show" style={{display: 'block'}}>
+                <div className="dropdown-menu-header mb-0">
+                    <div className="dropdown-menu-header-inner bg-deep-blue">
+                        <div className="menu-header-image opacity-1" style={{backgroundImage: "url('/assets/images/dropdown-header/city3.jpg')"}}></div>
+                        <div className="menu-header-content text-dark">
+                            <h5 className="menu-header-title">Notificatión</h5>
+                            <h6 className="menu-header-subtitle"> Tienes <b> {this.props.notificacion.length} </b> mensajes</h6>
+                        </div>
+                    </div>
+                </div>
+                <div className="tab-content">
+                    <div className="tab-pane active" id="tab-messages-header" role="tabpanel">
+                        <div className="scroll-area-sm">
+                            <div className="scrollbar-container">
+                                <div className="p-3">
+                                    <div className="notifications-box">
+                                        <div className="vertical-time-simple vertical-without-time vertical-timeline vertical-timeline--one-column">
+
+                                            {this.props.notificacion.map(
+                                                (data, key) => (
+                                                    <div key={key} className="vertical-timeline-item dot-primary vertical-timeline-element">
+                                                        <div><span className="vertical-timeline-element-icon bounce-in"></span>
+                                                            <div className="vertical-timeline-element-content bounce-in">
+                                                                <h4 className="timeline-title"> 
+                                                                    {data.mensaje} 
+                                                                    <span className="badge badge-success ml-2" style={{cursor: 'pointer',}}
+                                                                        onClick={this.onShowPedido.bind(this, data)}
+                                                                    >
+                                                                        IR AL PEDIDO
+                                                                    </span>
+                                                                </h4>
+                                                                <p> {data.hora} - <span className="text-success"> {data.hora}</span></p>
+                                                                <span className="vertical-timeline-element-date"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                )
+                                            )}
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <ul className="nav flex-column">
+                    <li className="nav-item-divider nav-item"></li>
+                    <li className="nav-item-btn text-center nav-item">
+                        <button className="btn-shadow btn-wide btn-pill btn btn-focus btn-sm">
+                            Ver Todos los Mensajes
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        );
 
         return (
             <div className={"app-header header-shadow " + this.props.headercolor}>
@@ -675,24 +239,27 @@ class Header extends Component {
                     
                     <div className="app-header-left">
 
-                        <Dropdown overlay={menushearch} trigger={['click']} 
-                            visible={this.state.visible_search}
-                            onVisibleChange={ () => this.setState({visible_search: !this.state.visible_search}) }
-                        >
-                            <div className={`search-wrapper ${this.state.active_search}`}>
-                                <div className="input-holder">
-                                    <input type="text" className="search-input" placeholder="INGRESAR DATO..." 
-                                        value={this.state.search} onChange={this.onchangeSearch.bind(this)}
-                                    />
-                                    <button className="search-icon" onClick={ () => this.setState({active_search: 'active'}) }><span></span></button>
-                                </div>
-                                <button className="close" onClick={ () => this.setState({search: '', active_search: ''}) }></button>
-                            </div>
-                        </Dropdown>
                     </div>
 
                     <div className="app-header-right">
                         
+                        <div className="header-dots">
+      
+                            <Dropdown overlay={menunotificacion} trigger={['click']} 
+                                visible={this.state.visible_notificacion}
+                                onVisibleChange={ () => this.setState({visible_notificacion: !this.state.visible_notificacion}) }
+                            >
+                                <Badge count={this.props.notificacion.length} overflowCount={999}>
+                                    <button type="button" className="p-0 mr-2 btn btn-link">
+                                        <span className="icon-wrapper icon-wrapper-alt rounded-circle">
+                                            <span className="icon-wrapper-bg bg-danger"></span>
+                                            <i className="icon text-danger icon-anim-pulse ion-android-notifications"></i>
+                                            <span className="badge badge-dot badge-dot-sm badge-danger">Notificacion</span>
+                                        </span>
+                                    </button>
+                                </Badge>
+                            </Dropdown>
+                        </div>
                         
                         <div className="header-btn-lg pr-0">
                             <div className="widget-content p-0">
@@ -731,6 +298,7 @@ Header.propTypes = {
     usuario: PropTypes.object,
     token: PropTypes.string,
     headercolor:PropTypes.string,
+    notificacion: PropTypes.array,
 }
 
 Header.defaultProps = {
@@ -742,6 +310,7 @@ Header.defaultProps = {
     },
     token: '',
     headercolor: '',
+    notificacion: [],
 }
 
 export default withRouter(Header)

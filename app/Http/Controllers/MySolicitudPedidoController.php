@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Informacion;
+use App\Notificacion;
 use App\Solicitud;
 use App\SolicitudDetalle;
 use Carbon\Carbon;
@@ -209,6 +210,11 @@ class MySolicitudPedidoController extends Controller
                 $detalle->descuento = 0;
                 $detalle->save();
             }
+
+            $idusuario = Auth::user()->id;
+
+            $notificacion = new Notificacion();
+            $notificacion->insertarNotificacion($servicio->id, $nombre, $apellido, $idusuario);
 
             DB::commit();
 
