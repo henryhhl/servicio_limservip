@@ -188,9 +188,9 @@ class SolicitudMovilController extends Controller
              }
             
             DB::commit();
-            return response()->json([
-                'data' => 'Insertado Correctamente',
-            ]);
+            return response()->json(
+                 'Insertado Correctamente'
+            );
 
         }catch(\Exception $th) {
             DB::rollBack();
