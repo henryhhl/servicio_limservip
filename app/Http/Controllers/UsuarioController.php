@@ -228,7 +228,7 @@ class UsuarioController extends Controller
                 ->leftJoin('rol as grupo', 'det.idrol', '=', 'grupo.id')
                 ->select('grupo.nombre as rol', 'grupo.descripcion', 'user.id', 
                     'user.nombre', 'user.apellido', 'user.nacimiento', 'user.usuario', 'user.imagen', 
-                    'user.genero', 'user.email_verified_at as email'
+                    'user.genero', 'user.email_verified_at as email', 'det.idrol'
                 )
                 ->where('user.id', '=', Auth::user()->id)
                 ->first();

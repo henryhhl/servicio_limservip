@@ -22,6 +22,7 @@ class Notificacion extends Model
     ];
     
     public function get_notificacion($idusuario) {
+
         $notificacion = DB::table('notificacion')
             ->select('id', 'idsolicitud', 'idasignartrabajo', 'idusuarioenviado', 'idusuariorecibido', 
                 'mensaje', 'tipo', 'estado', 'fecha', 'hora'
@@ -32,6 +33,7 @@ class Notificacion extends Model
             ->get();
 
         return $notificacion;
+        
     }
 
     public function insertarNotificacion($idsolicitud, $nombre, $apellido, $idusuario) {
@@ -62,6 +64,7 @@ class Notificacion extends Model
             $notificacion->save();
 
 
+            /*  notificacion web */
 
             if (file_exists( public_path() . '/notificacion/' . $user->usuario . '.txt' )) {
 
@@ -95,6 +98,45 @@ class Notificacion extends Model
                     fclose( $archivo );
                 }
             }
+
+            /* end notificacion web */
+
+            /* notificacion movil */
+
+            if (file_exists( public_path() . '/notificacion/' . $user->usuario .'_movil' . '.txt' )) {
+
+                $archivo = fopen(public_path() . '/notificacion/' . $user->usuario . '_movil' . '.txt', 'r');
+                $array = '';
+                while ($linea = fgets($archivo)) {
+                    $array .= $linea;
+                }
+
+                $array = preg_replace("/[\r\n|\n|\r]+/", "", $array);
+
+                $array = $array == '' ? [] : json_decode($array);
+
+                array_push($array, $notificacion);
+
+                fclose($archivo);
+
+                $archivo = fopen( public_path() . '/notificacion/' . $user->usuario . '_movil' . '.txt', 'w+');
+
+                if ( fwrite( $archivo, json_encode($array) ) ) {
+                    fclose( $archivo );
+                }
+
+            } else {
+                $archivo = fopen( public_path() . '/notificacion/' . $user->usuario . '_movil' . '.txt', 'w+');
+                
+                $array = [];
+                array_push($array, $notificacion);
+
+                if ( fwrite( $archivo, json_encode($array) ) ) {
+                    fclose( $archivo );
+                }
+            }
+
+            /* end notificacion movil */
 
         }
 

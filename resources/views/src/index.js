@@ -237,6 +237,10 @@ export default class Index extends Component {
                                 this.setState({
                                     array_notificacion: response.data.notificacion,
                                 });
+                                notification.success({
+                                    description: 'TIENE UNA NUEVA NOTIFICACIÓN.',
+                                    zIndex: 1200,
+                                });
                             }
                         }
                     }
@@ -873,6 +877,7 @@ export default class Index extends Component {
                         headercolor={this.state.layoutoption.headercolor} 
                         notificacion={this.state.array_notificacion}
                         desactivarnotificacion={this.desactivarnotificacion.bind(this)}
+                        idrol={this.state.usuario.idrol}
                     />
 
                     <div className="app-main">

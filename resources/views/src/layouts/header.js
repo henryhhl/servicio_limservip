@@ -38,7 +38,18 @@ class Header extends Component {
                         visible_notificacion: false,
                     }, () => {
                         setTimeout(() => {
-                            this.props.history.push( web.serv_link + '/solicitud_pedido/show/' + data.idsolicitud);
+                            if (this.props.idrol == 1 || this.props.idrol == 2) {
+                                this.props.history.push( web.serv_link + '/solicitud_pedido/show/' + data.idsolicitud);
+                                return;
+                            }
+                            if (this.props.idrol == 3) {
+                                this.props.history.push( web.serv_link + '/mysolicitud_pedido/show/' + data.idsolicitud);
+                                return;
+                            }
+                            if (this.props.idrol == 4) {
+                                this.props.history.push( web.serv_link + '/mysolicitud_asignado/show/' + data.idsolicitud);
+                                return;
+                            }
                         }, 500);
                     });
                     return;
@@ -175,7 +186,7 @@ class Header extends Component {
                                                                         IR AL PEDIDO
                                                                     </span>
                                                                 </h4>
-                                                                <p> {data.hora} - <span className="text-success"> {data.hora}</span></p>
+                                                                <p> {data.fecha} - <span className="text-success"> {data.hora}</span></p>
                                                                 <span className="vertical-timeline-element-date"></span>
                                                             </div>
                                                         </div>
@@ -299,6 +310,7 @@ Header.propTypes = {
     token: PropTypes.string,
     headercolor:PropTypes.string,
     notificacion: PropTypes.array,
+    idrol: PropTypes.any,
 }
 
 Header.defaultProps = {
@@ -311,6 +323,7 @@ Header.defaultProps = {
     token: '',
     headercolor: '',
     notificacion: [],
+    idrol: null,
 }
 
 export default withRouter(Header)

@@ -432,7 +432,7 @@ class ShowMySolicitudAsignado extends Component {
         );
     }
     onBack() {
-        this.props.history.goBack();
+        this.props.history.push( web.serv_link + '/mysolicitud_asignado/');
     }
 
     onUpdateEstado() {

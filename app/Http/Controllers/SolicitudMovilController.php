@@ -5,12 +5,70 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Informacion;
+use App\Notificacion;
 use App\Solicitud;
 use App\SolicitudDetalle;
 use Carbon\Carbon;
 
 class SolicitudMovilController extends Controller
 {
+
+
+    public function get_notificacionMovil($nickname, $idusuario) {
+
+        try {
+
+            $bandera = '';
+
+            if (file_exists( public_path() . '/notificacion/' . $nickname . '_movil' . '.txt' )) {
+
+                $archivo = fopen(public_path() . '/notificacion/' . $nickname . '_movil' . '.txt', 'r');
+                while ($linea = fgets($archivo)) {
+                    $bandera .= $linea;
+                }
+                $bandera = preg_replace("/[\r\n|\n|\r]+/", "", $bandera);
+                fclose($archivo);
+
+            } else {
+                $archivo = fopen( public_path() . '/notificacion/' . $nickname . '_movil' . '.txt', 'w+');
+                if ( fwrite( $archivo, '' ) ) {
+                    fclose( $archivo );
+                }
+            }
+            $bandera = $bandera == '' ? [] : json_decode($bandera);
+
+            $archivo = fopen( public_path() . '/notificacion/' . $nickname . '_movil' . '.txt', 'w+');
+            if ( fwrite( $archivo, '' ) ) {
+                fclose( $archivo );
+            }
+
+            $notificacion = [];
+            if (sizeof($bandera) > 0) {
+                $obj = new Notificacion();
+                $notificacion = $obj->get_notificacion( $idusuario );
+            }
+
+            return response()->json([
+                'response' => 1,
+                'bandera' => $bandera,
+                'notificacion' => $notificacion,
+            ]);
+            
+        } catch(\Exception $th) {
+            return response()->json([
+                'response' => 0,
+                'message' => 'Error al procesar la solicitud',
+                'error' => [
+                    'file'    => $th->getFile(),
+                    'line'    => $th->getLine(),
+                    'message' => $th->getMessage()
+                ]
+            ]);
+        } 
+    }
+
+
+
     public function miSolicitud(Request $request){
         $idcliente = $request->cliente;
 
@@ -185,7 +243,10 @@ class SolicitudMovilController extends Controller
                 $detalle->estadoproceso = 'P';
                 $detalle->descuento = 0;
                 $detalle->save();
-             }
+            }
+
+            $notificacion = new Notificacion();
+            $notificacion->insertarNotificacion($servicio->id, $nombre, $apellido, $cliente);
             
             DB::commit();
             return response()->json(
