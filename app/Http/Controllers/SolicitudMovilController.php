@@ -50,7 +50,7 @@ class SolicitudMovilController extends Controller
             }
 
             return response()->json([
-                'response' => 1,
+                
                 'notificacion' => $notificacion,
             ]);
             
