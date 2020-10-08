@@ -34,7 +34,7 @@ class UsuarioMovilController extends Controller
                         $ser->imagen = $nuevo;
                     }
                     
-                    $ser->noti = get_notificacionMovil($ser->usuario, $ser->id);
+                    $ser->noti = $this->get_notificacionMovil($ser->usuario, $ser->id);
                 }
                 
             }
