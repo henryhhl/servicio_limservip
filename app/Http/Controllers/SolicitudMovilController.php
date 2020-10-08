@@ -14,10 +14,11 @@ class SolicitudMovilController extends Controller
 {
 
 
-    public function get_notificacionMovil($nickname, $idusuario) {
+    public function get_notificacionMovil(Request $request) {
 
         try {
-
+            $nickname= $request->nickname;
+            $idusuario= $request->idusuario;
             $bandera = '';
 
             if (file_exists( public_path() . '/notificacion/' . $nickname . '_movil' . '.txt' )) {
@@ -49,8 +50,7 @@ class SolicitudMovilController extends Controller
             }
 
             return response()->json([
-                'response' => 1,
-                'bandera' => $bandera,
+                
                 'notificacion' => $notificacion,
             ]);
             
@@ -90,6 +90,29 @@ class SolicitudMovilController extends Controller
         return response()->json([
             'data'   => $solicitudes
         ]);
+
+    }
+
+    public function verSolicitud(Request $request){
+        $solicitud = $request->solicitud;
+        $solicitudes =  DB::table('solicitud as sol')
+                ->leftJoin('users as user', 'sol.idusuario', '=', 'user.id')
+                ->join('informacion as info', 'info.idsolicitud', '=', 'sol.id')
+                ->select('sol.id', 'sol.montototal', 'sol.estadoproceso', 'sol.fecha', 'sol.hora', 
+                    'user.nombre', 'user.apellido', 'info.direccion', 'info.latitud' , 'info.longitud', 'info.pais', 'info.ciudad', 'info.zona'
+                )
+                ->where('sol.id', '=', $solicitud)
+                ->where('sol.estado', '=', 'A')
+                ->orderBy('sol.id', 'desc')
+                ->first();
+
+        /*if(count($solicitudes) == 0){
+            $solicitudes = [];
+        }*/
+
+        return response()->json(
+            $solicitudes
+        );
 
     }
 
