@@ -206,6 +206,31 @@ class SolicitudMovilController extends Controller
         ]);
     }
 
+    public function update_notificacion(Request $request) {
+        try {
+
+            
+            $idnoti = $request->idnoti;
+            $idusuario= $request->idusuario;
+            
+            $obj = new Notificacion();
+            $data = $obj->desactivar($idnoti);
+
+            $idusuario = $idusuario;
+
+            $notificacion = $obj->get_notificacion($idusuario);
+
+            return response()->json([
+                
+                'notificacion' => $notificacion,
+            ]);
+        } catch(\Exception $th) {
+            return response()->json(
+                [ ]
+            );
+        }
+    }
+
     public function store(Request $request){
         
         try {
