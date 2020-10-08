@@ -110,9 +110,9 @@ class SolicitudMovilController extends Controller
             $solicitudes = [];
         }*/
 
-        return response()->json([
+        return response()->json(
             $solicitudes
-        ]);
+        );
 
     }
 
