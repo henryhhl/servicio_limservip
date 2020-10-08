@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use App\User;
+use App\Notificacion;
 use App\Cliente;
 
 class UsuarioMovilController extends Controller
@@ -33,8 +34,12 @@ class UsuarioMovilController extends Controller
                         $nuevo = substr($ser->imagen,$pos+1,strlen($ser->imagen)-1);
                         $ser->imagen = $nuevo;
                     }
+
+                    $obj = new Notificacion();
+                    $notificacion = $obj->get_notificacion($ser->id);
+
+                    $ser->noti = $notificacion;
                     
-                    $ser->noti = $this->get_notificacionMovil($ser->usuario, $ser->id);
                 }
                 
             }
@@ -45,11 +50,11 @@ class UsuarioMovilController extends Controller
         ]);
     }
     
-    public function get_notificacionMovil($nickname, $idusuario) {
+    public function get_notificacionMovil(Request $request) {
 
         try {
-            //$nickname= $request->nickname;
-            //$idusuario= $request->idusuario;
+            $nickname= $request->nickname;
+            $idusuario= $request->idusuario;
             $bandera = '';
 
             if (file_exists( public_path() . '/notificacion/' . $nickname . '_movil' . '.txt' )) {
