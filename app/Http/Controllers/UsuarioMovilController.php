@@ -16,7 +16,7 @@ class UsuarioMovilController extends Controller
         $user = DB::table('cliente as cli')
                 ->leftJoin('users as user', 'cli.idusuario', '=', 'user.id')
                 ->select('user.id', 'user.nombre', 'user.apellido', 'user.nacimiento','user.usuario' ,'cli.nit', 'cli.contacto', 
-                    'user.imagen', 'user.email', 'user.password','cli.estado', 'user.tipo', 'user.genero'
+                    'user.imagen', 'user.email', 'user.password','cli.estado', 'user.tipo', 'user.genero', 'user.nombre as noti'
                 )
                 ->where('cli.estado', '=', 'A')
                 ->where( 'user.usuario', '=', $usuario )
@@ -33,7 +33,9 @@ class UsuarioMovilController extends Controller
                         $nuevo = substr($ser->imagen,$pos+1,strlen($ser->imagen)-1);
                         $ser->imagen = $nuevo;
                     }
+                    $ser->noti = get_notificacionMovil($ser->usuario, $ser->id);
                 }
+                
             }
         }
                
@@ -42,6 +44,58 @@ class UsuarioMovilController extends Controller
         ]);
     }
     
+    public function get_notificacionMovil(Request $request) {
+
+        try {
+            $nickname= $request->nickname;
+            $idusuario= $request->idusuario;
+            $bandera = '';
+
+            if (file_exists( public_path() . '/notificacion/' . $nickname . '_movil' . '.txt' )) {
+
+                $archivo = fopen(public_path() . '/notificacion/' . $nickname . '_movil' . '.txt', 'r');
+                while ($linea = fgets($archivo)) {
+                    $bandera .= $linea;
+                }
+                $bandera = preg_replace("/[\r\n|\n|\r]+/", "", $bandera);
+                fclose($archivo);
+
+            } else {
+                $archivo = fopen( public_path() . '/notificacion/' . $nickname . '_movil' . '.txt', 'w+');
+                if ( fwrite( $archivo, '' ) ) {
+                    fclose( $archivo );
+                }
+            }
+            $bandera = $bandera == '' ? [] : json_decode($bandera);
+
+            $archivo = fopen( public_path() . '/notificacion/' . $nickname . '_movil' . '.txt', 'w+');
+            if ( fwrite( $archivo, '' ) ) {
+                fclose( $archivo );
+            }
+
+            $notificacion = [];
+            if (sizeof($bandera) > 0) {
+                $obj = new Notificacion();
+                $notificacion = $obj->get_notificacion( $idusuario );
+            }
+
+            return response()->json([
+                
+                'notificacion' => $notificacion,
+            ]);
+            
+        } catch(\Exception $th) {
+            return response()->json([
+                'response' => 0,
+                'message' => 'Error al procesar la solicitud',
+                'error' => [
+                    'file'    => $th->getFile(),
+                    'line'    => $th->getLine(),
+                    'message' => $th->getMessage()
+                ]
+            ]);
+        } 
+    }
     public function registrar(Request $request)
     {
         try {
