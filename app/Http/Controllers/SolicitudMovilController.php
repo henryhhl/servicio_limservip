@@ -93,6 +93,29 @@ class SolicitudMovilController extends Controller
 
     }
 
+    public function verSolicitud(Request $request){
+        $solicitud = $request->solicitud;
+        $solicitudes =  DB::table('solicitud as sol')
+                ->leftJoin('users as user', 'sol.idusuario', '=', 'user.id')
+                ->join('informacion as info', 'info.idsolicitud', '=', 'sol.id')
+                ->select('sol.id', 'sol.montototal', 'sol.estadoproceso', 'sol.fecha', 'sol.hora', 
+                    'user.nombre', 'user.apellido', 'info.direccion', 'info.latitud' , 'info.longitud', 'info.pais', 'info.ciudad', 'info.zona'
+                )
+                ->where('sol.id', '=', $solicitud)
+                ->where('sol.estado', '=', 'A')
+                ->orderBy('sol.id', 'desc')
+                ->first();
+
+        /*if(count($solicitudes) == 0){
+            $solicitudes = [];
+        }*/
+
+        return response()->json([
+            'data'   => $solicitudes
+        ]);
+
+    }
+
     public function detalleSolicitud(Request $request){
         $idsol = $request->solicitud;
 
