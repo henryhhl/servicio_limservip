@@ -23,8 +23,8 @@ class VisualizarSeguimiento extends Component {
             loading: false,
 
             mapPosition: {
-                lat: 0,
-                lng: 0,
+                lat: -17.775404,
+                lng: -63.165923,
             },
             markerPosition: {
                 lat: 0,
@@ -193,7 +193,7 @@ class VisualizarSeguimiento extends Component {
 
         const WrappedMap = withScriptjs( withGoogleMap(
             props => <GoogleMap 
-                defaultZoom={2}
+                defaultZoom={12}
                 defaultCenter={ {lat: this.state.mapPosition.lat, lng: this.state.mapPosition.lng,} }
             >
 

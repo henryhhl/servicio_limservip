@@ -1,1 +1,0 @@
-[{"idsolicitud":9,"idusuarioenviado":5,"idusuariorecibido":2,"idasignartrabajo":null,"mensaje":"LA SOLICITUD DEL PEDIDO DEL CLIENTE admin administra HA SIDO FINALIZADO","tipo":"P","fecha":"2020-10-07","hora":"19:04:30","updated_at":"2020-10-07 23:04:30","created_at":"2020-10-07 23:04:30","id":36}]

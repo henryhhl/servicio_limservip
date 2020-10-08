@@ -231,6 +231,8 @@ class AsignarTrabajoController extends Controller
 
                         $user = User::findOrFail($objpersonal->idusuario);
 
+                        /*  notificacion web */
+
                         if (file_exists( public_path() . '/notificacion/' . $user->usuario . '.txt' )) {
 
                             $archivo = fopen(public_path() . '/notificacion/' . $user->usuario . '.txt', 'r');
@@ -264,6 +266,46 @@ class AsignarTrabajoController extends Controller
                             }
                         }
 
+                        /* end notificacion web */
+
+                        /* notificacion movil */
+
+
+                        if (file_exists( public_path() . '/notificacion/' . $user->usuario . '_movil' . '.txt' )) {
+
+                            $archivo = fopen(public_path() . '/notificacion/' . $user->usuario . '_movil' .  '.txt', 'r');
+                            $array = '';
+                            while ($linea = fgets($archivo)) {
+                                $array .= $linea;
+                            }
+            
+                            $array = preg_replace("/[\r\n|\n|\r]+/", "", $array);
+            
+                            $array = $array == '' ? [] : json_decode($array);
+            
+                            array_push($array, $notificacion);
+            
+                            fclose($archivo);
+            
+                            $archivo = fopen( public_path() . '/notificacion/' . $user->usuario . '_movil' .  '.txt', 'w+');
+            
+                            if ( fwrite( $archivo, json_encode($array) ) ) {
+                                fclose( $archivo );
+                            }
+            
+                        } else {
+                            $archivo = fopen( public_path() . '/notificacion/' . $user->usuario . '_movil' .  '.txt', 'w+');
+                            
+                            $array = [];
+                            array_push($array, $notificacion);
+            
+                            if ( fwrite( $archivo, json_encode($array) ) ) {
+                                fclose( $archivo );
+                            }
+                        }
+
+                        /* end notificacion movil */
+
                     }
                 }
 
@@ -279,6 +321,9 @@ class AsignarTrabajoController extends Controller
                 $notificacion->save();
 
                 $user = User::findOrFail($solictud->idusuario);
+
+
+                /*  notificacion web */
 
                 if (file_exists( public_path() . '/notificacion/' . $user->usuario . '.txt' )) {
 
@@ -312,6 +357,46 @@ class AsignarTrabajoController extends Controller
                         fclose( $archivo );
                     }
                 }
+
+                /* end notificacion web */
+
+                /* notificacion movil */
+
+
+                if (file_exists( public_path() . '/notificacion/' . $user->usuario . '_movil' . '.txt' )) {
+
+                    $archivo = fopen(public_path() . '/notificacion/' . $user->usuario . '_movil' . '.txt', 'r');
+                    $array = '';
+                    while ($linea = fgets($archivo)) {
+                        $array .= $linea;
+                    }
+    
+                    $array = preg_replace("/[\r\n|\n|\r]+/", "", $array);
+    
+                    $array = $array == '' ? [] : json_decode($array);
+    
+                    array_push($array, $notificacion);
+    
+                    fclose($archivo);
+    
+                    $archivo = fopen( public_path() . '/notificacion/' . $user->usuario . '_movil' . '.txt', 'w+');
+    
+                    if ( fwrite( $archivo, json_encode($array) ) ) {
+                        fclose( $archivo );
+                    }
+    
+                } else {
+                    $archivo = fopen( public_path() . '/notificacion/' . $user->usuario . '_movil' . '.txt', 'w+');
+                    
+                    $array = [];
+                    array_push($array, $notificacion);
+    
+                    if ( fwrite( $archivo, json_encode($array) ) ) {
+                        fclose( $archivo );
+                    }
+                }
+
+                /* end notificacion movil */
 
             }
 

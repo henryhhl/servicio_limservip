@@ -42,14 +42,12 @@ class Header extends Component {
                                 this.props.history.push( web.serv_link + '/solicitud_pedido/show/' + data.idsolicitud);
                                 return;
                             }
-                            if (this.props.idrol == 3) {
-                                this.props.history.push( web.serv_link + '/mysolicitud_pedido/show/' + data.idsolicitud);
-                                return;
-                            }
                             if (this.props.idrol == 4) {
                                 this.props.history.push( web.serv_link + '/mysolicitud_asignado/show/' + data.idsolicitud);
                                 return;
                             }
+                            this.props.history.push( web.serv_link + '/mysolicitud_pedido/show/' + data.idsolicitud);
+                                return;
                         }, 500);
                     });
                     return;

@@ -20,6 +20,20 @@ import Geocode from "react-geocode";
 Geocode.setApiKey("AIzaSyAofod0Bp0frLcLHVLxuacn0QBXqVyJ7lc");
 Geocode.enableDebug();
 
+
+
+const WrappedMap = withScriptjs( withGoogleMap(
+    props => (
+        <GoogleMap 
+            defaultZoom={15}
+            defaultCenter={{ lat: props.latitud, lng: props.longitud, }}
+        >
+            {props.children}
+        </GoogleMap>
+    )
+) );
+
+
 class CreateMySolicitud extends Component {
 
     constructor(props) {
@@ -136,6 +150,9 @@ class CreateMySolicitud extends Component {
                             },
                             error => {
                                 console.error(error);
+                            },
+                            {
+                                enableHighAccuracy: true,
                             }
                         );
 
@@ -701,31 +718,6 @@ class CreateMySolicitud extends Component {
         var colordanger = this.props.buttoncolor == '' ? 'danger' : 'outline-' + this.props.buttoncolor;
         var colorback = this.props.buttoncolor == '' ? 'focus' : this.props.buttoncolor;
 
-        const WrappedMap = withScriptjs( withGoogleMap(
-            props => <GoogleMap 
-                defaultZoom={15}
-                defaultCenter={ {lat: this.state.mapPosition.lat, lng: this.state.mapPosition.lng,} }
-            >
-                <Marker
-                    // google={this.props.google}
-                    // name={ this.state.nombre.toString().trim().length == 0 ? '-' : this.state.nombre }
-                    draggable={true}
-                    onDragEnd={this.onMarkerDragEnd.bind(this)}
-                    position={{ lat: this.state.markerPosition.lat, lng: this.state.markerPosition.lng }}
-                />
-                <InfoWindow
-                    onClose={this.onInfoWindowClose.bind(this)}
-                    position={{ lat: (this.state.markerPosition.lat + 0.0018), lng: this.state.markerPosition.lng }}
-                >
-                    <div>
-                        <span style={{ padding: 0, margin: 0 }}>
-                            {this.state.direccioncompleto}
-                        </span>
-                    </div>
-                </InfoWindow>
-            </GoogleMap>
-        ) );
-
         return (
             <div className="rows">
                 {this.onModalServicio()}
@@ -1136,7 +1128,26 @@ class CreateMySolicitud extends Component {
                                                 loadingElement={ <div style={ {height:'100%', } }></div> }
                                                 containerElement={ <div style={ {height: '100%',} }></div> }
                                                 mapElement={ <div style={ {height: '100%',} }></div> }
-                                            />
+
+                                                latitud={ this.state.mapPosition.lat }
+                                                longitud={ this.state.mapPosition.lng }
+                                            >
+                                                <Marker
+                                                    draggable={true}
+                                                    onDragEnd={this.onMarkerDragEnd.bind(this)}
+                                                    position={{ lat: this.state.markerPosition.lat, lng: this.state.markerPosition.lng }}
+                                                />
+                                                <InfoWindow
+                                                    onClose={this.onInfoWindowClose.bind(this)}
+                                                    position={{ lat: (this.state.markerPosition.lat + 0.0018), lng: this.state.markerPosition.lng }}
+                                                >
+                                                    <div>
+                                                        <span style={{ padding: 0, margin: 0 }}>
+                                                            {this.state.direccioncompleto}
+                                                        </span>
+                                                    </div>
+                                                </InfoWindow>
+                                            </WrappedMap>
                                         </div>
                                     </div>
                                     <div className="cols-lg-12 cols-md-12 cols-sm-12 cols-xs-12" style={{padding: 0, textAlign: 'center'}}>

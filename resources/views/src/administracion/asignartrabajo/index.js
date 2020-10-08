@@ -110,6 +110,7 @@ class AsignarTrabajo extends Component {
         this.props.history.goBack();
     }
     onValidar() {
+        console.log(this.state.select_solicitud)
         if (this.state.select_solicitud.length == 0) {
             notification.error({
                 description: 'FAVOR DE SELECCIONAR SOLICITUD. DAR CLICK AL VER SOLICITUD PARA SELECCIONAR.',
@@ -261,6 +262,7 @@ class AsignarTrabajo extends Component {
                     this.props.logout();
                     return;
                 }
+                console.log(response.data)
                 if (response.data.response == 1) {
                     this.setState({
                         array_solicitud: response.data.solicitud,
@@ -309,6 +311,9 @@ class AsignarTrabajo extends Component {
         );
     }
     onSelectSolicitud(data) {
+        for (let index = 0; index < data.servicios.length; index++) {
+            data.servicios[index].array_personal = [];
+        }
         this.setState({
             select_solicitud: data.servicios,
             select_informacion: data,
@@ -641,9 +646,6 @@ class AsignarTrabajo extends Component {
                                         </thead>
                                         <tbody>
                                             {this.state.select_solicitud.map((data, key) => {
-                                                if (typeof this.state.select_solicitud[key].array_personal == 'undefined') {
-                                                    this.state.select_solicitud[key].array_personal = [];
-                                                }
                                                 return (
                                                     <tr key={key}>
                                                         <td style={{cursor: 'default', textAlign: 'left', paddingLeft: 10, 
@@ -720,14 +722,13 @@ class AsignarTrabajo extends Component {
                                                                                             {this.state.array_personal.map(
                                                                                                 (personal, i) => {
                                                                                                     if (personal.cantidad * 1 > 0) return null;
-
                                                                                                     if (typeof this.state.select_solicitud[key].array_personal[i] == 'undefined') {
                                                                                                         this.state.select_solicitud[key].array_personal[i] = {
                                                                                                             value: false, id: personal.id,
                                                                                                         };
                                                                                                     }
                                                                                                     return (
-                                                                                                    <tr key={i} onClick={() => {
+                                                                                                    <tr style={{cursor: 'pointer',}} key={i} onClick={() => {
                                                                                                         for (let j = 0; j < this.state.select_solicitud.length; j++) {
                                                                                                             var select = this.state.select_solicitud[j];
                                                                                                             if (key != j) {
@@ -743,13 +744,13 @@ class AsignarTrabajo extends Component {
                                                                                                                 }
                                                                                                             }
                                                                                                         }
-                                                                                                        this.state.select_solicitud[key].array_personal[i].value = !this.state.select_solicitud[key].array_personal[i].value;
+                                                                                                        data.array_personal[i].value = !data.array_personal[i].value;
                                                                                                         this.setState({select_solicitud: this.state.select_solicitud,})
                                                                                                     }}>
                                                                                                         <td className="text-center" style={{width: 30,}}>
                                                                                                             <div className="custom-checkbox custom-control">
                                                                                                                 <input type="checkbox" 
-                                                                                                                    checked={ this.state.select_solicitud[key].array_personal[i].value}
+                                                                                                                    checked={ this.state.select_solicitud[key].array_personal[i].value }
                                                                                                                     className="custom-control-input" 
                                                                                                                     readOnly
                                                                                                                 />

@@ -432,7 +432,10 @@ class ShowSolicitud extends Component {
         );
     }
     onBack() {
-        this.props.history.goBack();
+        this.props.history.push( web.serv_link + '/solicitud_pedido');
+    }
+    onAsignarTrabajo() {
+        this.props.history.push( web.serv_link + '/asignar_trabajo');
     }
 
     render() {
@@ -549,6 +552,17 @@ class ShowSolicitud extends Component {
                                         />
                                     </div>
                                 </div>
+                                {this.state.estadoproceso == 'P' ?
+                                    <div className='cols-lg-2 cols-md-2 cols-sm-2 cols-xs-12'>
+                                        <div className='inputs-groups'>
+                                            <button className={"mb-2 btn-hover-shine btn btn-" + colorsuccess}
+                                                onClick={this.onAsignarTrabajo.bind(this)}
+                                            >
+                                                ASIGNAR TRABAJO
+                                            </button>
+                                        </div>
+                                    </div> : null 
+                                }
                             </div>
                             <div className='forms-groups'>
                                 <div className="tabless" 

@@ -12,9 +12,32 @@ import { isPermission } from './utils/functions';
 import permissions from './utils/permisions';
 
 import PropTypes from 'prop-types';
-import C_Input from './components/input';
+import { GoogleMap, InfoWindow, Marker, withGoogleMap, withScriptjs } from 'react-google-maps';
+
+function Map() {
+    return (
+        <GoogleMap 
+            defaultZoom={12}
+            defaultCenter={{ lat: -17.775404, lng: -63.165923, }}
+        >
+            {this.props.children}
+        </GoogleMap>
+    );
+}
+
+const WrappedMap = withScriptjs( withGoogleMap(
+    props => (
+        <GoogleMap 
+            defaultZoom={12}
+            defaultCenter={{ lat: -17.775404, lng: -63.165923, }}
+        >
+            {props.children}
+        </GoogleMap>
+    )
+) );
 
 export default class Home extends Component {
+
     constructor(props) {
         super(props);
         this.state = {
@@ -26,6 +49,7 @@ export default class Home extends Component {
             cantidad_estadistica: [],
             loading: false,
             array_color: [],
+            texto: '',
         }
     }
     componentDidMount() {
@@ -173,11 +197,48 @@ export default class Home extends Component {
                         <div className="row">
                         </div>
 
-
-
                         <div className="rows">
                             <div className="cards">
-                                <div className="forms-groups"></div>
+                                <div className="forms-groups" style={{width: '100%', height: 500,}}>
+                                    <WrappedMap 
+                                        googleMapURL={'https://maps.googleapis.com/maps/api/js?key=AIzaSyAofod0Bp0frLcLHVLxuacn0QBXqVyJ7lc&v=3.exp&libraries=geometry,drawing,places'}
+                                        loadingElement={ <div style={ {height:'100%', } }></div> }
+                                        containerElement={ <div style={ {height: '100%',} }></div> }
+                                        mapElement={ <div style={ {height: '100%',} }></div> }
+                                    >
+                                        <Marker
+                                            // google={this.props.google}
+                                            // name={ this.state.nombre.toString().trim().length == 0 ? '-' : this.state.nombre }
+                                            //draggable={true}
+                                            //onDragEnd={this.onMarkerDragEnd.bind(this)}
+                                            position={{ lat: -17.775404, lng: -63.165923, }}
+                                        />
+                                        <InfoWindow
+                                            //onClose={this.onInfoWindowClose.bind(this)}
+                                            position={{ lat: (-17.775404 + 0.0029), lng: -63.165923 }}
+                                        >
+                                            <div>
+                                                <span style={{ padding: 0, margin: 0 }}>
+                                                    {'aslmlkamsd'}
+                                                </span>
+                                            </div>
+                                        </InfoWindow>
+                                    </WrappedMap>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className='forms-groups'>
+                            <div className='cols-lg-4 cols-md-4 cols-sm-4'></div>
+                            <div className='cols-lg-4 cols-md-4 cols-sm-4 cols-xs-12' style={{paddingTop: 0, }}>
+                                <div className='inputs-groups'>
+                                    <input type='text' placeholder='INGRESAR DESCRIPCION...'
+                                        style={{ textAlign: 'left', paddingLeft: 10, paddingRight: 24, }}
+                                        className={`forms-control`}
+                                        value={this.state.texto}
+                                        onChange={ (event) => this.setState({texto: event.target.value,}) }
+                                    />
+                                </div>
                             </div>
                         </div>
 

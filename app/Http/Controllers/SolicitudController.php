@@ -387,6 +387,7 @@ class SolicitudController extends Controller
                     ->where('det.idsolicitud', '=', $obj->id)
                     ->orderBy('det.id', 'asc')
                     ->get();
+                
             }
 
             return response()->json([

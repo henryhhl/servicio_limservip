@@ -1,0 +1,1 @@
+[{"idsolicitud":12,"idusuarioenviado":2,"idusuariorecibido":7,"idasignartrabajo":4,"mensaje":"SE HA ASIGNADO UNA NUEVA SOLICITUD","tipo":"A","fecha":"2020-10-08","hora":"08:04:21","updated_at":"2020-10-08 12:04:21","created_at":"2020-10-08 12:04:21","id":42}]
