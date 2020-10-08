@@ -51,8 +51,18 @@ class VisualizarSeguimiento extends Component {
 
             array_personalasignado: [],
             array_personallibre: [],
+
+            //seguimiento: this.goSeguimiento(),
         }
     }
+    // goSeguimiento() {
+    //     setInterval(() => {
+    //         console.log(34)
+    //     }, 5000);
+    // }
+    // componentWillUnmount() {
+    //     clearInterval( this.goSeguimiento );
+    // }
     componentDidMount() {
         this.props.get_link('visualizar_seguimiento', true);
         this.get_data();
@@ -198,6 +208,7 @@ class VisualizarSeguimiento extends Component {
             });
         } );
     }
+    IniciarSegumiento() {}
     render() {
         var colorsuccess = this.props.buttoncolor == '' ? 'primary' : this.props.buttoncolor;
         var colordanger = this.props.buttoncolor == '' ? 'danger' : 'outline-' + this.props.buttoncolor;
@@ -378,7 +389,7 @@ class VisualizarSeguimiento extends Component {
 
                             <div className='forms-groups txts-center mt-4'>
                                 <button className={"mb-2 mr-2 btn-hover-shine btn btn-" + colorsuccess}
-                                    onClick={this.onValidar.bind(this)}
+                                    onClick={this.IniciarSegumiento.bind(this)}
                                 >
                                     Aceptar
                                 </button>

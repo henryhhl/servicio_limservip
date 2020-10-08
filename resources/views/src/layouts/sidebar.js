@@ -235,23 +235,28 @@ export default class Sidebar extends Component {
                                 </li> : null 
                             }
 
-                            <li>
-                                <Link to={ web.serv_link + '/mysolicitud_pedido'} onClick={this.props.init} 
-                                    className={this.props.link_active.mysolicitud_pedido + ' ' + this.props.sizetext}
-                                >
-                                    <i className="metismenu-icon">
-                                    </i> Mi Solicitud Pedido
-                                </Link>
-                            </li>
+                            {this.props.idrol == 3 ? 
+                                <li>
+                                    <Link to={ web.serv_link + '/mysolicitud_pedido'} onClick={this.props.init} 
+                                        className={this.props.link_active.mysolicitud_pedido + ' ' + this.props.sizetext}
+                                    >
+                                        <i className="metismenu-icon">
+                                        </i> Mi Solicitud Pedido
+                                    </Link>
+                                </li> : 
+                                null
+                            }
 
-                            <li>
-                                <Link to={ web.serv_link + '/mysolicitud_asignado'} onClick={this.props.init} 
-                                    className={this.props.link_active.mysolicitud_asignado + ' ' + this.props.sizetext}
-                                >
-                                    <i className="metismenu-icon">
-                                    </i> Mi Solicitud Asignado
-                                </Link>
-                            </li>
+                            {this.props.idrol == 4 ? 
+                                <li>
+                                    <Link to={ web.serv_link + '/mysolicitud_asignado'} onClick={this.props.init} 
+                                        className={this.props.link_active.mysolicitud_asignado + ' ' + this.props.sizetext}
+                                    >
+                                        <i className="metismenu-icon">
+                                        </i> Mi Solicitud Asignado
+                                    </Link>
+                                </li> : null 
+                            }
 
                         </ul>
                     </div>
@@ -267,6 +272,7 @@ Sidebar.propTypes = {
     sidebarcolor: PropTypes.string,
     sizetext: PropTypes.string,
     permisos_habilitados: PropTypes.array,
+    idrol: PropTypes.any,
 }
 
 Sidebar.defaultProps = {
@@ -303,6 +309,7 @@ Sidebar.defaultProps = {
     sidebarcolor: '',
     sizetext: '',
     permisos_habilitados: [],
+    idrol: null,
 }
 
 

@@ -108,7 +108,7 @@ export default class Index extends Component {
                 id: '', nombre: '',
                 apellido: '', nacimiento: '',
                 usuario: '', imagen: '', genero: 'N',
-                email: '', rol: '', descripcion: '',
+                email: '', rol: '', descripcion: '', idrol: '',
             },
 
             paginate: {
@@ -889,6 +889,7 @@ export default class Index extends Component {
                             sidebarcolor={this.state.layoutoption.sidebarcolor}
                             sizetext={this.state.layoutoption.sizetext}
                             permisos_habilitados={this.state.permisos_habilitados}
+                            idrol={this.state.usuario.idrol}
                         />
 
                         <div className="app-main__outer">
