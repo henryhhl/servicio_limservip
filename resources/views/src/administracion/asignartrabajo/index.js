@@ -313,6 +313,13 @@ class AsignarTrabajo extends Component {
     onSelectSolicitud(data) {
         for (let index = 0; index < data.servicios.length; index++) {
             data.servicios[index].array_personal = [];
+            for (let j = 0; j < this.state.array_personal.length; j++) {
+                var element = this.state.array_personal[j];
+                if (element.cantidad * 1 == 0) {
+                    var obj = { id: element.id, value: false, nombre: element.nombre, apellido: element.apellido, imagen: element.imagen, };
+                    data.servicios[index].array_personal.push(obj)
+                }
+            }
         }
         this.setState({
             select_solicitud: data.servicios,
@@ -719,63 +726,58 @@ class AsignarTrabajo extends Component {
                                                                                 <div className="table-responsive">
                                                                                     <table className="text-nowrap table-lg mb-0 table table-hover">
                                                                                         <tbody>
-                                                                                            {this.state.array_personal.map(
+                                                                                            { data.array_personal.map(
                                                                                                 (personal, i) => {
-                                                                                                    if (personal.cantidad * 1 > 0) return null;
-                                                                                                    if (typeof this.state.select_solicitud[key].array_personal[i] == 'undefined') {
-                                                                                                        this.state.select_solicitud[key].array_personal[i] = {
-                                                                                                            value: false, id: personal.id,
-                                                                                                        };
-                                                                                                    }
                                                                                                     return (
-                                                                                                    <tr style={{cursor: 'pointer',}} key={i} onClick={() => {
-                                                                                                        for (let j = 0; j < this.state.select_solicitud.length; j++) {
-                                                                                                            var select = this.state.select_solicitud[j];
-                                                                                                            if (key != j) {
-                                                                                                                for (let k = 0; k < select.array_personal.length; k++) {
-                                                                                                                    var solicitud = select.array_personal[k];
-                                                                                                                    if (solicitud.id == this.state.select_solicitud[key].array_personal[i].id) {
-                                                                                                                        if (solicitud.value) {
-                                                                                                                            message.warning('EL PERSONAL HA SIDO SELECCIONADO.');
-                                                                                                                            return;
+                                                                                                        <tr style={{cursor: 'pointer',}} key={i} onClick={() => {
+                                                                                                            for (let j = 0; j < this.state.select_solicitud.length; j++) {
+                                                                                                                var select = this.state.select_solicitud[j];
+                                                                                                                if (key != j) {
+                                                                                                                    for (let k = 0; k < select.array_personal.length; k++) {
+                                                                                                                        var solicitud = select.array_personal[k];
+                                                                                                                        if (solicitud.id == this.state.select_solicitud[key].array_personal[i].id) {
+                                                                                                                            if (solicitud.value) {
+                                                                                                                                message.warning('EL PERSONAL HA SIDO SELECCIONADO.');
+                                                                                                                                return;
+                                                                                                                            }
+                                                                                                                            break;
                                                                                                                         }
-                                                                                                                        break;
                                                                                                                     }
                                                                                                                 }
                                                                                                             }
-                                                                                                        }
-                                                                                                        data.array_personal[i].value = !data.array_personal[i].value;
-                                                                                                        this.setState({select_solicitud: this.state.select_solicitud,})
-                                                                                                    }}>
-                                                                                                        <td className="text-center" style={{width: 30,}}>
-                                                                                                            <div className="custom-checkbox custom-control">
-                                                                                                                <input type="checkbox" 
-                                                                                                                    checked={ this.state.select_solicitud[key].array_personal[i].value }
-                                                                                                                    className="custom-control-input" 
-                                                                                                                    readOnly
-                                                                                                                />
-                                                                                                                <label className="custom-control-label">&nbsp;</label>
-                                                                                                            </div>
-                                                                                                        </td>
-                                                                                                        <td>
-                                                                                                            <div className="widget-content p-0">
-                                                                                                                <div className="widget-content-wrapper">
-                                                                                                                    <div className="widget-content-left mr-3">
-                                                                                                                        {(personal.imagen == null || personal.imagen == '') ?
-                                                                                                                            <img width="42" className="rounded-circle" src="/images/anonimo.jpg" alt="" />:
-                                                                                                                            <img width="42" className="rounded-circle" src={personal.imagen} alt="" />
-                                                                                                                        }
-                                                                                                                    </div>
-                                                                                                                    <div className="widget-content-left">
-                                                                                                                        <div className="widget-heading">
-                                                                                                                            {personal.nombre} {personal.apellido}
+                                                                                                            data.array_personal[i].value = !data.array_personal[i].value;
+                                                                                                            this.setState({select_solicitud: this.state.select_solicitud,})
+                                                                                                        }}>
+                                                                                                            <td className="text-center" style={{width: 30,}}>
+                                                                                                                <div className="custom-checkbox custom-control">
+                                                                                                                    <input type="checkbox" 
+                                                                                                                        checked={ personal.value }
+                                                                                                                        className="custom-control-input" 
+                                                                                                                        readOnly
+                                                                                                                    />
+                                                                                                                    <label className="custom-control-label">&nbsp;</label>
+                                                                                                                </div>
+                                                                                                            </td>
+                                                                                                            <td>
+                                                                                                                <div className="widget-content p-0">
+                                                                                                                    <div className="widget-content-wrapper">
+                                                                                                                        <div className="widget-content-left mr-3">
+                                                                                                                            {(personal.imagen == null || personal.imagen == '') ?
+                                                                                                                                <img width="42" className="rounded-circle" src="/images/anonimo.jpg" alt="" />:
+                                                                                                                                <img width="42" className="rounded-circle" src={personal.imagen} alt="" />
+                                                                                                                            }
+                                                                                                                        </div>
+                                                                                                                        <div className="widget-content-left">
+                                                                                                                            <div className="widget-heading">
+                                                                                                                                {personal.nombre} {personal.apellido}
+                                                                                                                            </div>
                                                                                                                         </div>
                                                                                                                     </div>
                                                                                                                 </div>
-                                                                                                            </div>
-                                                                                                        </td>
-                                                                                                    </tr>
-                                                                                                )}
+                                                                                                            </td>
+                                                                                                        </tr>
+                                                                                                    ) 
+                                                                                                }
                                                                                             )}
                                                                                         </tbody>
                                                                                     </table>
