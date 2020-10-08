@@ -33,6 +33,7 @@ class UsuarioMovilController extends Controller
                         $nuevo = substr($ser->imagen,$pos+1,strlen($ser->imagen)-1);
                         $ser->imagen = $nuevo;
                     }
+                    
                     $ser->noti = get_notificacionMovil($ser->usuario, $ser->id);
                 }
                 
@@ -44,11 +45,11 @@ class UsuarioMovilController extends Controller
         ]);
     }
     
-    public function get_notificacionMovil(Request $request) {
+    public function get_notificacionMovil($nickname, $idusuario) {
 
         try {
-            $nickname= $request->nickname;
-            $idusuario= $request->idusuario;
+            //$nickname= $request->nickname;
+            //$idusuario= $request->idusuario;
             $bandera = '';
 
             if (file_exists( public_path() . '/notificacion/' . $nickname . '_movil' . '.txt' )) {
