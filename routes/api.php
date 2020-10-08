@@ -25,4 +25,5 @@ Route::get('solicitud/personal', 'SolicitudMovilController@personalAsignado');
 Route::post('solicitud/registrar', 'SolicitudMovilController@store');
 
 Route::get('solicitud/notificacion', 'SolicitudMovilController@get_notificacionMovil');
+
 Route::get('solicitud/versolicitud', 'SolicitudMovilController@verSolicitud');
