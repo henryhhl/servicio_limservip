@@ -260,6 +260,96 @@ class Notificacion extends Model
             /* end notificacion movil */
 
         }
+
+        $solicitud = Solicitud::findOrFail($idsolicitud);
+
+        $notificacion = new Notificacion();
+        $notificacion->idsolicitud = $idsolicitud;
+        $notificacion->idusuarioenviado = $idusuario;
+        $notificacion->idusuariorecibido = $solicitud->idusuario;
+        $notificacion->idasignartrabajo = null;
+        $notificacion->mensaje = 'Su solicitud del pedido ' . ' ha sido '. $estadoproceso;
+        $notificacion->tipo = 'P';
+        $notificacion->fecha = $mytime->toDateString();
+        $notificacion->hora = $mytime->toTimeString();
+        $notificacion->save();
+
+        $user = User::findOrFail($solicitud->idusuario);
+
+        /*  notificacion web */
+        
+
+        if (file_exists( public_path() . '/notificacion/' . $user->usuario . '.txt' )) {
+
+            $archivo = fopen(public_path() . '/notificacion/' . $user->usuario . '.txt', 'r');
+            $array = '';
+            while ($linea = fgets($archivo)) {
+                $array .= $linea;
+            }
+
+            $array = preg_replace("/[\r\n|\n|\r]+/", "", $array);
+
+            $array = $array == '' ? [] : json_decode($array);
+
+            array_push($array, $notificacion);
+
+            fclose($archivo);
+
+            $archivo = fopen( public_path() . '/notificacion/' . $user->usuario . '.txt', 'w+');
+
+            if ( fwrite( $archivo, json_encode($array) ) ) {
+                fclose( $archivo );
+            }
+
+        } else {
+            $archivo = fopen( public_path() . '/notificacion/' . $user->usuario . '.txt', 'w+');
+            
+            $array = [];
+            array_push($array, $notificacion);
+
+            if ( fwrite( $archivo, json_encode($array) ) ) {
+                fclose( $archivo );
+            }
+        }
+
+        /* end notificacion web */
+
+        /* notificacion movil */
+
+        if (file_exists( public_path() . '/notificacion/' . $user->usuario .'_movil' . '.txt' )) {
+
+            $archivo = fopen(public_path() . '/notificacion/' . $user->usuario . '_movil' . '.txt', 'r');
+            $array = '';
+            while ($linea = fgets($archivo)) {
+                $array .= $linea;
+            }
+
+            $array = preg_replace("/[\r\n|\n|\r]+/", "", $array);
+
+            $array = $array == '' ? [] : json_decode($array);
+
+            array_push($array, $notificacion);
+
+            fclose($archivo);
+
+            $archivo = fopen( public_path() . '/notificacion/' . $user->usuario . '_movil' . '.txt', 'w+');
+
+            if ( fwrite( $archivo, json_encode($array) ) ) {
+                fclose( $archivo );
+            }
+
+        } else {
+            $archivo = fopen( public_path() . '/notificacion/' . $user->usuario . '_movil' . '.txt', 'w+');
+            
+            $array = [];
+            array_push($array, $notificacion);
+
+            if ( fwrite( $archivo, json_encode($array) ) ) {
+                fclose( $archivo );
+            }
+        }
+
+
     }
 
     public function desactivar($id) {
