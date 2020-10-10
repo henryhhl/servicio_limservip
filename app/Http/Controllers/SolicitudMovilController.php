@@ -17,6 +17,7 @@ class SolicitudMovilController extends Controller
     public function get_notificacionMovil(Request $request) {
 
         try {
+            
             $nickname= $request->nickname;
             $idusuario= $request->idusuario;
             $bandera = '';
