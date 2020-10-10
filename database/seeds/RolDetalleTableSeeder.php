@@ -21,43 +21,43 @@ class RolDetalleTableSeeder extends Seeder
     private function _get_data() {
         return [
             [
-                'idusuario'   => 1,
-                'idrol'       => 1,
+                'fkidusuario'   => 1,
+                'fkidrol'       => 1,
                 'estado'      => 'A',
             ], //1
             [
-                'idusuario'   => 2,
-                'idrol'       => 1,
+                'fkidusuario'   => 2,
+                'fkidrol'       => 1,
                 'estado'      => 'A',
             ], //2
             [
-                'idusuario'   => 3,
-                'idrol'       => 3,
+                'fkidusuario'   => 3,
+                'fkidrol'       => 3,
                 'estado'      => 'A',
             ], //3
             [
-                'idusuario'   => 4,
-                'idrol'       => 3,
+                'fkidusuario'   => 4,
+                'fkidrol'       => 3,
                 'estado'      => 'A',
             ], //4
             [
-                'idusuario'   => 5,
-                'idrol'       => 4,
+                'fkidusuario'   => 5,
+                'fkidrol'       => 4,
                 'estado'      => 'A',
             ], //5
             [
-                'idusuario'   => 6,
-                'idrol'       => 4,
+                'fkidusuario'   => 6,
+                'fkidrol'       => 4,
                 'estado'      => 'A',
             ], //6
             [
-                'idusuario'   => 7,
-                'idrol'       => 4,
+                'fkidusuario'   => 7,
+                'fkidrol'       => 4,
                 'estado'      => 'A',
             ], //7
             [
-                'idusuario'   => 8,
-                'idrol'       => 2,
+                'fkidusuario'   => 8,
+                'fkidrol'       => 2,
                 'estado'      => 'A',
             ], //7
         ];

@@ -22,7 +22,7 @@ class PersonalLimpiezaTableSeeder extends Seeder
         return [
             [
                 
-                'idusuario'   => 1,
+                'fkidusuario'   => 1,
                 'ci' => '9788412',
                 'direccion' => 'av. 2 de agosto',
                 'ciudad' => 'Santa Cruz',
@@ -30,7 +30,7 @@ class PersonalLimpiezaTableSeeder extends Seeder
                 'estado'      => 'A',
             ], //1
             [
-                'idusuario'   => 2,
+                'fkidusuario'   => 2,
                 'ci' => '9788423',
                 'direccion' => 'av. alemana',
                 'ciudad' => 'Santa Cruz',
@@ -38,7 +38,7 @@ class PersonalLimpiezaTableSeeder extends Seeder
                 'estado'      => 'A',
             ], //2
             [
-                'idusuario'   => 5,
+                'fkidusuario'   => 5,
                 'ci' => '9733210',
                 'direccion' => 'av. Trinidad',
                 'ciudad' => 'Santa Cruz',
@@ -46,7 +46,7 @@ class PersonalLimpiezaTableSeeder extends Seeder
                 'estado'      => 'A',
             ], //2
             [
-                'idusuario'   => 6,
+                'fkidusuario'   => 6,
                 'ci' => '971415',
                 'direccion' => 'Plan 3000',
                 'ciudad' => 'Santa Cruz',
@@ -54,7 +54,7 @@ class PersonalLimpiezaTableSeeder extends Seeder
                 'estado'      => 'A',
             ], //2
             [
-                'idusuario'   => 7,
+                'fkidusuario'   => 7,
                 'ci' => '974121',
                 'direccion' => 'Los Pozos',
                 'ciudad' => 'Santa Cruz',
@@ -62,7 +62,7 @@ class PersonalLimpiezaTableSeeder extends Seeder
                 'estado'      => 'A',
             ], //2
             [
-                'idusuario'   => 8,
+                'fkidusuario'   => 8,
                 'ci' => '974213',
                 'direccion' => 'av. Guapilo',
                 'ciudad' => 'Santa Cruz',

@@ -13,11 +13,11 @@ class AsignarPermisoTableSeeder extends Seeder
      */
     public function run()
     {
-        $data = Permiso::where('estado', '=', 'A')->orderBy('id', 'asc')->get();
+        $data = Permiso::where('estado', '=', 'A')->orderBy('idpermiso', 'asc')->get();
         foreach ($data as $d) {
             $detalle = new PermisoDetalle();
-            $detalle->idpermiso = $d->id;
-            $detalle->idrol = 1;
+            $detalle->fkidpermiso = $d->id;
+            $detalle->fkidrol = 1;
             $detalle->estado = 'A';
             $detalle->save();
         }
@@ -33,44 +33,44 @@ class AsignarPermisoTableSeeder extends Seeder
      public function permisos_cliente(){
          return [
              [
-                 'idpermiso'   => 1,
-                 'idrol'       => 3,
+                 'fkidpermiso'   => 1,
+                 'fkidrol'       => 3,
                  'estado'      => 'A',
              ], //1
              [
-                'idpermiso'   => 10,
-                'idrol'       => 3,
+                'fkidpermiso'   => 10,
+                'fkidrol'       => 3,
                 'estado'      => 'A',
             ], //1
             [
-                'idpermiso'   => 11,
-                'idrol'       => 3,
+                'fkidpermiso'   => 11,
+                'fkidrol'       => 3,
                 'estado'      => 'A',
             ], //1
             [
-                'idpermiso'   => 12,
-                'idrol'       => 3,
+                'fkidpermiso'   => 12,
+                'fkidrol'       => 3,
                 'estado'      => 'A',
             ], //1
             
             [
-                'idpermiso'   => 24,
-                'idrol'       => 3,
+                'fkidpermiso'   => 24,
+                'fkidrol'       => 3,
                 'estado'      => 'A',
             ], //1
             [
-                'idpermiso'   => 26,
-                'idrol'       => 3,
+                'fkidpermiso'   => 26,
+                'fkidrol'       => 3,
                 'estado'      => 'A',
             ], //1
             [
-                'idpermiso'   => 27,
-                'idrol'       => 3,
+                'fkidpermiso'   => 27,
+                'fkidrol'       => 3,
                 'estado'      => 'A',
             ], //1
             [
-                'idpermiso'   => 47,
-                'idrol'       => 3,
+                'fkidpermiso'   => 47,
+                'fkidrol'       => 3,
                 'estado'      => 'A',
             ], //1
     
@@ -79,78 +79,78 @@ class AsignarPermisoTableSeeder extends Seeder
     public function permisos_supervisor(){
         return [
             [
-                'idpermiso'   => 1,
-                'idrol'       => 2,
+                'fkidpermiso'   => 1,
+                'fkidrol'       => 2,
                 'estado'      => 'A',
             ], //1
             [
-                'idpermiso'   => 7,
-                'idrol'       => 2,
+                'fkidpermiso'   => 7,
+                'fkidrol'       => 2,
                 'estado'      => 'A',
             ], //1
             [
-                'idpermiso'   => 8,
-                'idrol'       => 2,
+                'fkidpermiso'   => 8,
+                'fkidrol'       => 2,
                 'estado'      => 'A',
             ], //1
             [
-                'idpermiso'   => 9,
-                'idrol'       => 2,
+                'fkidpermiso'   => 9,
+                'fkidrol'       => 2,
                 'estado'      => 'A',
             ], //1
             [
-                'idpermiso'   => 10,
-                'idrol'       => 2,
+                'fkidpermiso'   => 10,
+                'fkidrol'       => 2,
                 'estado'      => 'A',
             ], //1
             [
-                'idpermiso'   => 11,
-                'idrol'       => 2,
+                'fkidpermiso'   => 11,
+                'fkidrol'       => 2,
                 'estado'      => 'A',
             ], //1
             [
-                'idpermiso'   => 12,
-                'idrol'       => 2,
+                'fkidpermiso'   => 12,
+                'fkidrol'       => 2,
                 'estado'      => 'A',
             ], //1
             [
-                'idpermiso'   => 13,
-                'idrol'       => 2,
+                'fkidpermiso'   => 13,
+                'fkidrol'       => 2,
                 'estado'      => 'A',
             ], //1
             [
-                'idpermiso'   => 17,
-                'idrol'       => 2,
+                'fkidpermiso'   => 17,
+                'fkidrol'       => 2,
                 'estado'      => 'A',
             ], //1
             [
-                'idpermiso'   => 18,
-                'idrol'       => 2,
+                'fkidpermiso'   => 18,
+                'fkidrol'       => 2,
                 'estado'      => 'A',
             ], //1
             [
-                'idpermiso'   => 22,
-                'idrol'       => 2,
+                'fkidpermiso'   => 22,
+                'fkidrol'       => 2,
                 'estado'      => 'A',
             ], //1
             [
-                'idpermiso'   => 23,
-                'idrol'       => 2,
+                'fkidpermiso'   => 23,
+                'fkidrol'       => 2,
                 'estado'      => 'A',
             ], //1
             [
-                'idpermiso'   => 27,
-                'idrol'       => 2,
+                'fkidpermiso'   => 27,
+                'fkidrol'       => 2,
                 'estado'      => 'A',
             ], //1
             [
-                'idpermiso'   => 28,
-                'idrol'       => 2,
+                'fkidpermiso'   => 28,
+                'fkidrol'       => 2,
                 'estado'      => 'A',
             ], //1
             [
-                'idpermiso'   => 29,
-                'idrol'       => 2,
+                'fkidpermiso'   => 29,
+                'fkidrol'       => 2,
                 'estado'      => 'A',
             ], //1
         ];
