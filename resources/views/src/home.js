@@ -200,7 +200,7 @@ export default class Home extends Component {
                         <div className="rows">
                             <div className="cards">
                                 <div className="forms-groups" style={{width: '100%', height: 500,}}>
-                                    <WrappedMap 
+                                    {/* <WrappedMap 
                                         googleMapURL={'https://maps.googleapis.com/maps/api/js?key=AIzaSyAofod0Bp0frLcLHVLxuacn0QBXqVyJ7lc&v=3.exp&libraries=geometry,drawing,places'}
                                         loadingElement={ <div style={ {height:'100%', } }></div> }
                                         containerElement={ <div style={ {height: '100%',} }></div> }
@@ -223,7 +223,7 @@ export default class Home extends Component {
                                                 </span>
                                             </div>
                                         </InfoWindow>
-                                    </WrappedMap>
+                                    </WrappedMap> */}
                                 </div>
                             </div>
                         </div>

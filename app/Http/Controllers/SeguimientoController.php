@@ -138,4 +138,81 @@ class SeguimientoController extends Controller
     {
         //
     }
+
+    public function iniciar_seguimiento(Request $request) {
+
+        try {
+
+            $idusuario = $request->input('idusuario');
+            $nickname = $request->input('nickname');
+            $nombre = $request->input('nombre');
+            $apellido = $request->input('apellido');
+            $latitud = $request->input('latitud');
+            $longitud = $request->input('longitud');
+
+
+            /*  notificacion web */
+
+
+            $obj = new \stdClass;
+            $obj->idusuario = $idusuario;
+            $obj->nickname = $nickname;
+            $obj->nombre = $nombre;
+            $obj->apellido = $apellido;
+            $obj->latitud = $latitud;
+            $obj->longitud = $longitud;
+        
+
+            if (file_exists( public_path() . '/seguimiento/' . $nickname . '.txt' )) {
+
+                $archivo = fopen(public_path() . '/seguimiento/' . $nickname . '.txt', 'r');
+                $array = '';
+                while ($linea = fgets($archivo)) {
+                    $array .= $linea;
+                }
+
+                $array = preg_replace("/[\r\n|\n|\r]+/", "", $array);
+
+                $array = $array == '' ? [] : json_decode($array);
+
+                array_push($array, $obj);
+
+                fclose($archivo);
+
+                $archivo = fopen( public_path() . '/seguimiento/' . $nickname . '.txt', 'w+');
+
+                if ( fwrite( $archivo, json_encode($array) ) ) {
+                    fclose( $archivo );
+                }
+
+            } else {
+                $archivo = fopen( public_path() . '/seguimiento/' . $nickname . '.txt', 'w+');
+                
+                $array = [];
+                array_push($array, $obj);
+
+                if ( fwrite( $archivo, json_encode($array) ) ) {
+                    fclose( $archivo );
+                }
+            }
+
+
+            return response()->json([
+                'response'  => 1,
+            ]);
+
+        }catch(\Exception $th) {
+            DB::rollBack();
+            return response()->json([
+                'response' => 0,
+                'message' => 'Error al procesar la solicitud',
+                'error' => [
+                    'file'    => $th->getFile(),
+                    'line'    => $th->getLine(),
+                    'message' => $th->getMessage()
+                ]
+            ]);
+        }
+        
+    }
 }

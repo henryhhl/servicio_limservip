@@ -14,6 +14,18 @@ import PropTypes from 'prop-types';
 
 import { GoogleMap, InfoWindow, Marker, withGoogleMap, withScriptjs } from "react-google-maps";
 
+
+const WrappedMap = withScriptjs( withGoogleMap(
+    props => (
+        <GoogleMap 
+            defaultZoom={15}
+            defaultCenter={{ lat: props.latitud, lng: props.longitud, }}
+        >
+            {props.children}
+        </GoogleMap>
+    )
+) );
+
 class VisualizarSeguimiento extends Component {
 
     constructor(props) {
@@ -39,8 +51,18 @@ class VisualizarSeguimiento extends Component {
 
             array_personalasignado: [],
             array_personallibre: [],
+
+            //seguimiento: this.goSeguimiento(),
         }
     }
+    // goSeguimiento() {
+    //     setInterval(() => {
+    //         console.log(34)
+    //     }, 5000);
+    // }
+    // componentWillUnmount() {
+    //     clearInterval( this.goSeguimiento );
+    // }
     componentDidMount() {
         this.props.get_link('visualizar_seguimiento', true);
         this.get_data();
@@ -186,20 +208,12 @@ class VisualizarSeguimiento extends Component {
             });
         } );
     }
+    IniciarSegumiento() {}
     render() {
         var colorsuccess = this.props.buttoncolor == '' ? 'primary' : this.props.buttoncolor;
         var colordanger = this.props.buttoncolor == '' ? 'danger' : 'outline-' + this.props.buttoncolor;
         var colorback = this.props.buttoncolor == '' ? 'focus' : this.props.buttoncolor;
 
-        const WrappedMap = withScriptjs( withGoogleMap(
-            props => <GoogleMap 
-                defaultZoom={12}
-                defaultCenter={ {lat: this.state.mapPosition.lat, lng: this.state.mapPosition.lng,} }
-            >
-
-            </GoogleMap>
-        ) );
-        
         return (
             <div className="rows">
                 { (this.state.isOpenPersonal && this.state.img_personal != '' && this.state.img_personal != null) ? 
@@ -224,12 +238,17 @@ class VisualizarSeguimiento extends Component {
                                     <div className='cols-lg-10 cols-md-10 cols-sm-10 cols-xs-12'>
                                         <div className='inputs-groups'>
                                             <div style={{width: '100%', height: 400, }}>
-                                                <WrappedMap 
-                                                    googleMapURL={'https://maps.googleapis.com/maps/api/js?key=AIzaSyAofod0Bp0frLcLHVLxuacn0QBXqVyJ7lc&v=3.exp&libraries=geometry,drawing,places'}
-                                                    loadingElement={ <div style={ {height:'100%', } }></div> }
-                                                    containerElement={ <div style={ {height: '100%',} }></div> }
-                                                    mapElement={ <div style={ {height: '100%',} }></div> }
-                                                />
+                                            <WrappedMap 
+                                                // googleMapURL={'https://maps.googleapis.com/maps/api/js?key=AIzaSyAofod0Bp0frLcLHVLxuacn0QBXqVyJ7lc&callback=initMap'}
+                                                googleMapURL={'https://maps.googleapis.com/maps/api/js?key=AIzaSyAofod0Bp0frLcLHVLxuacn0QBXqVyJ7lc&v=3.exp&libraries=geometry,drawing,places'}
+                                                loadingElement={ <div style={ {height:'100%', } }></div> }
+                                                containerElement={ <div style={ {height: '100%',} }></div> }
+                                                mapElement={ <div style={ {height: '100%',} }></div> }
+
+                                                latitud={ this.state.mapPosition.lat }
+                                                longitud={ this.state.mapPosition.lng }
+                                            >
+                                            </WrappedMap>
                                             </div>
                                         </div>
                                     </div>
@@ -237,7 +256,7 @@ class VisualizarSeguimiento extends Component {
 
                                 <div className="forms-groups">
                                     <div className='cols-lg-6 cols-md-6 cols-sm-12 cols-xs-12' style={{border: '1px solid #e8e8e8', paddingTop: 0, }}>
-                                        <div className="card-header-title font-size-md text-capitalize font-weight-bold">
+                                        <div className="card-header-title font-size-md text-capitalize font-weight-bold text-primary" style={{borderBottom: '1px solid #e8e8e8'}}>
                                             PERSONAL ASIGNADO
                                         </div>
                                         <div className="scroll-area-lg">
@@ -301,7 +320,7 @@ class VisualizarSeguimiento extends Component {
                                         </div>
                                     </div>
                                     <div className='cols-lg-6 cols-md-6 cols-sm-12 cols-xs-12' style={{border: '1px solid #e8e8e8', paddingTop: 0, }}>
-                                        <div className="card-header-title font-size-md text-capitalize font-weight-bold">
+                                        <div className="card-header-title font-size-md text-capitalize font-weight-bold text-primary" style={{borderBottom: '1px solid #e8e8e8'}}>
                                             PERSONAL LIBRE
                                         </div>
                                         <div className="scroll-area-lg">
@@ -370,7 +389,7 @@ class VisualizarSeguimiento extends Component {
 
                             <div className='forms-groups txts-center mt-4'>
                                 <button className={"mb-2 mr-2 btn-hover-shine btn btn-" + colorsuccess}
-                                    onClick={this.onValidar.bind(this)}
+                                    onClick={this.IniciarSegumiento.bind(this)}
                                 >
                                     Aceptar
                                 </button>
