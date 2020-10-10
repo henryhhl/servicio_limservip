@@ -80,7 +80,7 @@ class ReporteController extends Controller
             }
 
             if (!is_null($nrosolicitud)) {
-                array_push($consulta, ['sol.id', '=', $nrosolicitud]);
+                array_push($consulta, ['sol.idsolicitud', '=', $nrosolicitud]);
             }
 
             if (!is_null($cliente)) {
@@ -90,29 +90,29 @@ class ReporteController extends Controller
             array_push($consulta, ['sol.estado', '=', 'A']);
 
             $data = DB::table('solicitud as sol')
-                ->leftJoin('users as user', 'sol.idusuario', '=', 'user.id')
-                ->leftJoin('informacion as info', 'sol.id', '=', 'info.idsolicitud')
-                ->select( 'sol.id', 'sol.montototal', 'sol.estadoproceso', 'sol.fecha', 'sol.hora', 'sol.nota',
+                ->leftJoin('users as user', 'sol.fkidusuario', '=', 'user.id')
+                ->leftJoin('informacion as info', 'sol.idsolicitud', '=', 'info.fkidsolicitud')
+                ->select( 'sol.idsolicitud as id', 'sol.montototal', 'sol.estadoproceso', 'sol.fecha', 'sol.hora', 'sol.nota',
                     'user.nombre as usuario', 'user.apellido as apellidouser',
                     'info.nombre', 'info.apellido', 'info.pais', 'info.ciudad', 'info.direccion', 'info.direccioncompleto',
                     'info.telefono', 'info.email'
                 )
                 ->where( $consulta )
                 ->whereNull('sol.deleted_at')
-                ->orderBy('sol.id', 'desc')
+                ->orderBy('sol.idsolicitud', 'desc')
                 ->get();
 
             foreach ($data as $obj) {
 
                 if ($tiposolicitud == '1') {
                     $obj->servicios = DB::table('solicituddetalle as det')
-                        ->leftJoin('servicio as serv', 'det.idservicio', '=', 'serv.id')
-                        ->leftJoin('categoria as cat', 'serv.idcategoria', '=', 'cat.id')
-                        ->select('serv.id', 'serv.nombre as servicio', 'serv.descripcion', 'serv.imagen', 'cat.descripcion as categoria', 
-                            'det.cantidad', 'det.precio', 'det.nota', 'det.estadoproceso', 'det.id as iddetalle'
+                        ->leftJoin('servicio as serv', 'det.fkidservicio', '=', 'serv.idservicio')
+                        ->leftJoin('categoria as cat', 'serv.fkidcategoria', '=', 'cat.idcategoria')
+                        ->select('serv.idservicio as id', 'serv.nombre as servicio', 'serv.descripcion', 'serv.imagen', 'cat.nombre as categoria', 
+                            'det.cantidad', 'det.precio', 'det.nota', 'det.estadoproceso', 'det.idsolicituddetalle as iddetalle'
                         )
-                        ->where('det.idsolicitud', '=', $obj->id)
-                        ->orderBy('det.id', 'asc')
+                        ->where('det.fkidsolicitud', '=', $obj->id)
+                        ->orderBy('det.idsolicituddetalle', 'asc')
                         ->get();
                 }else {
                     $obj->servicios = [];

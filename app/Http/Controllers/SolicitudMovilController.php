@@ -73,14 +73,14 @@ class SolicitudMovilController extends Controller
         $idcliente = $request->cliente;
 
         $solicitudes =  DB::table('solicitud as sol')
-                ->leftJoin('users as user', 'sol.idusuario', '=', 'user.id')
-                ->join('informacion as info', 'info.idsolicitud', '=', 'sol.id')
-                ->select('sol.id', 'sol.montototal', 'sol.estadoproceso', 'sol.fecha', 'sol.hora', 
+                ->leftJoin('users as user', 'sol.fkidusuario', '=', 'user.id')
+                ->join('informacion as info', 'info.fkidsolicitud', '=', 'sol.idsolicitud')
+                ->select('sol.idsolicitud as id', 'sol.montototal', 'sol.estadoproceso', 'sol.fecha', 'sol.hora', 
                     'user.nombre', 'user.apellido', 'info.direccion', 'info.latitud' , 'info.longitud', 'info.pais', 'info.ciudad', 'info.zona'
                 )
-                ->where('sol.idusuario', '=', $idcliente)
+                ->where('sol.fkidusuario', '=', $idcliente)
                 ->where('sol.estado', '=', 'A')
-                ->orderBy('sol.id', 'desc')
+                ->orderBy('sol.idsolicitud', 'desc')
                 ->get();
 
         if(count($solicitudes) == 0){
@@ -96,14 +96,14 @@ class SolicitudMovilController extends Controller
     public function verSolicitud(Request $request){
         $solicitud = $request->solicitud;
         $solicitudes =  DB::table('solicitud as sol')
-                ->leftJoin('users as user', 'sol.idusuario', '=', 'user.id')
-                ->join('informacion as info', 'info.idsolicitud', '=', 'sol.id')
-                ->select('sol.id', 'sol.montototal', 'sol.estadoproceso', 'sol.fecha', 'sol.hora', 
+                ->leftJoin('users as user', 'sol.fkidusuario', '=', 'user.id')
+                ->join('informacion as info', 'info.fkidsolicitud', '=', 'sol.idsolicitud')
+                ->select('sol.idsolicitud as id', 'sol.montototal', 'sol.estadoproceso', 'sol.fecha', 'sol.hora', 
                     'user.nombre', 'user.apellido', 'info.direccion', 'info.latitud' , 'info.longitud', 'info.pais', 'info.ciudad', 'info.zona'
                 )
-                ->where('sol.id', '=', $solicitud)
+                ->where('sol.idsolicitud', '=', $solicitud)
                 ->where('sol.estado', '=', 'A')
-                ->orderBy('sol.id', 'desc')
+                ->orderBy('sol.idsolicitud', 'desc')
                 ->first();
 
         /*if(count($solicitudes) == 0){
@@ -120,13 +120,13 @@ class SolicitudMovilController extends Controller
         $idsol = $request->solicitud;
 
         $detalles =  DB::table('solicituddetalle as soldet')
-                ->join('servicio as ser', 'soldet.idservicio', '=', 'ser.id')
-                ->select('soldet.id as iddet', 'soldet.cantidad', 'soldet.precio', 'ser.nombre as nombreservicio', 
+                ->join('servicio as ser', 'soldet.fkidservicio', '=', 'ser.idservicio')
+                ->select('soldet.idsolicituddetalle as iddet', 'soldet.cantidad', 'soldet.precio', 'ser.nombre as nombreservicio', 
                     'soldet.nota', 'ser.imagen', 'soldet.nota as personal'
                 )
-                ->where('soldet.idsolicitud', '=', $idsol)
+                ->where('soldet.fkidsolicitud', '=', $idsol)
                 ->where('soldet.estado', '=', 'A')
-                ->orderBy('soldet.id', 'asc')
+                ->orderBy('soldet.idsolicituddetalle', 'asc')
                 ->get();
         
         if(count($detalles) == 0){
@@ -142,12 +142,12 @@ class SolicitudMovilController extends Controller
 
                // $iddet = $request->iddet;
                 $personal = DB::table('solicituddetalle as soldet')
-                    ->join('asignartrabajo as at', 'soldet.id', '=', 'at.idsolicituddetalle')
-                    ->join('asignardetalle as ad', 'at.id', '=', 'ad.idasignartrabajo')
-                    ->join('personal as per','per.id','=','ad.idpersonal')
-                    ->join('users as user','user.id','=','per.idusuario')
+                    ->join('asignartrabajo as at', 'soldet.idsoolicituddetalle', '=', 'at.fkidsolicituddetalle')
+                    ->join('asignardetalle as ad', 'at.idasignartrabajo', '=', 'ad.fkidasignartrabajo')
+                    ->join('personal as per','per.idpersonal','=','ad.fkidpersonal')
+                    ->join('users as user','user.id','=','per.fkidusuario')
                     ->select('user.nombre','user.imagen','per.ci','per.contacto')
-                    ->where('soldet.id', '=', $ser->iddet)
+                    ->where('soldet.idsolicituddetalle', '=', $ser->iddet)
                     ->get();
                 if(count($personal) == 0){
                     $personal = [];
@@ -180,12 +180,12 @@ class SolicitudMovilController extends Controller
     public function personalAsignado(Request $request){
         $iddet = $request->iddet;
         $personal = DB::table('solicituddetalle as soldet')
-            ->join('asignartrabajo as at', 'soldet.id', '=', 'at.idsolicituddetalle')
-            ->join('asignardetalle as ad', 'at.id', '=', 'ad.idasignartrabajo')
-            ->join('personal as per','per.id','=','ad.idpersonal')
+            ->join('asignartrabajo as at', 'soldet.idsolicituddetalle', '=', 'at.fkidsolicituddetalle')
+            ->join('asignardetalle as ad', 'at.idasignartrabajo', '=', 'ad.fkidasignartrabajo')
+            ->join('personal as per','per.idpersonal','=','ad.fkidpersonal')
             ->join('users as user','user.id','=','per.idusuario')
             ->select('user.nombre','user.imagen','per.ci','per.contacto')
-            ->where('soldet.id', '=', $iddet)
+            ->where('soldet.idsolicituddetalle', '=', $iddet)
             ->get();
         if(count($personal) == 0){
             $personal = [];
@@ -231,7 +231,7 @@ class SolicitudMovilController extends Controller
             $array_servicio = $request->get('array_servicio', '[]');
 
             $servicio = new Solicitud();
-            $servicio->idusuario = $cliente;
+            $servicio->fkidusuario = $cliente;
             $servicio->montototal = $montototal;
             $mytime = Carbon::now('America/La_paz');
             $servicio->estadoproceso = 'P';
@@ -240,7 +240,7 @@ class SolicitudMovilController extends Controller
             $servicio->save();
 
             $informacion = new Informacion();
-            $informacion->idsolicitud = $servicio->id;
+            $informacion->fkidsolicitud = $servicio->idsolicitud;
             $informacion->nombre = $nombre;
             $informacion->apellido = $apellido;
             $informacion->pais = $pais;
@@ -259,8 +259,8 @@ class SolicitudMovilController extends Controller
             foreach ($array_servicio as $value) {
                 
                 $detalle = new SolicitudDetalle();
-                $detalle->idsolicitud = $servicio->id;
-                $detalle->idservicio = $value['id'];
+                $detalle->fkidsolicitud = $servicio->idsolicitud;
+                $detalle->fkidservicio = $value['id'];
                 $detalle->cantidad = $value['cantidad'];
                 $detalle->precio = $value['precio'];
                 $detalle->estadoproceso = 'P';
@@ -269,7 +269,7 @@ class SolicitudMovilController extends Controller
             }
 
             $notificacion = new Notificacion();
-            $notificacion->insertarNotificacion($servicio->id, $nombre, $apellido, $cliente);
+            $notificacion->insertarNotificacion($servicio->idsolicitud, $nombre, $apellido, $cliente);
             
             DB::commit();
             return response()->json(

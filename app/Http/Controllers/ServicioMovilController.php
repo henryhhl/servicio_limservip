@@ -9,8 +9,8 @@ class ServicioMovilController extends Controller
 {
     public function listar(Request $request){
         $servicio = DB::table('servicio as ser')
-                    ->leftJoin('categoria as cat', 'ser.idcategoria', '=', 'cat.id')
-                    ->select('ser.id', 'ser.nombre', 'ser.descripcion', 'ser.precio','ser.imagen', 'cat.descripcion as nombrecategoria',
+                    ->leftJoin('categoria as cat', 'ser.fkidcategoria', '=', 'cat.idcategoria')
+                    ->select('ser.idservicio as id', 'ser.nombre', 'ser.descripcion', 'ser.precio','ser.imagen', 'cat.nombre as nombrecategoria',
                      'ser.estado'
                     )
                     ->where('ser.estado', '=', 'A')

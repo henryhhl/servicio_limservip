@@ -35,7 +35,7 @@ class HomeController extends Controller
                 $token = $session->token();
             }
 
-            $data = Ajuste::where('idusuario', '=', Auth::user()->id)->orderBy('id')->first();
+            $data = Ajuste::where('fkidusuario', '=', Auth::user()->id)->orderBy('id')->first();
 
             return response()->json([
                 'response' => 1,

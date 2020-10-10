@@ -15,7 +15,7 @@ class UsuarioMovilController extends Controller
         $usuario = $request->usuario;
         $password = $request->password;
         $user = DB::table('cliente as cli')
-                ->leftJoin('users as user', 'cli.idusuario', '=', 'user.id')
+                ->leftJoin('users as user', 'cli.fkidusuario', '=', 'user.id')
                 ->select('user.id', 'user.nombre', 'user.apellido', 'user.nacimiento','user.usuario' ,'cli.nit', 'cli.contacto', 
                     'user.imagen', 'user.email', 'user.password','cli.estado', 'user.tipo', 'user.genero', 'user.nombre as noti'
                 )
@@ -136,7 +136,7 @@ class UsuarioMovilController extends Controller
             $user->save();
 
             $cliente = new Cliente();
-            $cliente->idusuario = $user->id;
+            $cliente->fkidusuario = $user->id;
             $cliente->nit = $nit;
             $cliente->contacto = $contacto;
             $cliente->save();
@@ -144,7 +144,7 @@ class UsuarioMovilController extends Controller
             DB::commit();
             
             $ultimoU=DB::table('cliente as cli')
-            ->leftJoin('users as user', 'cli.idusuario', '=', 'user.id')
+            ->leftJoin('users as user', 'cli.fkidusuario', '=', 'user.id')
             ->select('user.id', 'user.nombre', 'user.apellido', 'user.nacimiento','user.usuario' ,'cli.nit', 'cli.contacto', 
                 'user.imagen', 'user.email', 'user.password','cli.estado', 'user.tipo', 'user.genero'
             )

@@ -35,17 +35,17 @@ class AsignarTrabajoController extends Controller
             }
 
             $data = DB::table('personal as pers')
-                ->leftJoin('users as user', 'pers.idusuario', '=', 'user.id')
-                ->leftJoin('detalle_rol as rol', 'user.id', '=', 'rol.idusuario')
+                ->leftJoin('users as user', 'pers.fkidusuario', '=', 'user.id')
+                ->leftJoin('detalle_rol as rol', 'user.id', '=', 'rol.fkidusuario')
                 ->select(
-                    'user.nombre', 'user.apellido', 'user.email', 'user.imagen', 'pers.id', 'pers.ci', 'pers.contacto',
+                    'user.nombre', 'user.apellido', 'user.email', 'user.imagen', 'pers.idpersonal as id', 'pers.ci', 'pers.contacto',
                     DB::raw(
                         "(SELECT COUNT(*)  
                         FROM asignardetalle as det 
-                        WHERE pers.id = det.idpersonal AND det.estadoproceso = 'A') as cantidad"
+                        WHERE pers.idpersonal = det.fkidpersonal AND det.estadoproceso = 'A') as cantidad"
                     )
                 )
-                ->where('rol.idrol', '=', '4')
+                ->where('rol.fkidrol', '=', '4')
                 ->whereNull('pers.deleted_at')
                 ->get();
 
@@ -148,17 +148,17 @@ class AsignarTrabajoController extends Controller
             }
 
             $data = DB::table('personal as pers')
-                ->leftJoin('users as user', 'pers.idusuario', '=', 'user.id')
-                ->leftJoin('detalle_rol as rol', 'user.id', '=', 'rol.idusuario')
+                ->leftJoin('users as user', 'pers.fkidusuario', '=', 'user.id')
+                ->leftJoin('detalle_rol as rol', 'user.id', '=', 'rol.fkidusuario')
                 ->select(
-                    'user.nombre', 'user.apellido', 'user.email', 'user.imagen', 'pers.id', 'pers.ci', 'pers.contacto',
+                    'user.nombre', 'user.apellido', 'user.email', 'user.imagen', 'pers.idpersonal as id', 'pers.ci', 'pers.contacto',
                     DB::raw(
                         "(SELECT COUNT(*)  
                         FROM asignardetalle as det 
-                        WHERE pers.id = det.idpersonal AND det.estadoproceso = 'A') as cantidad"
+                        WHERE pers.idpersonal = det.idpersonal AND det.estadoproceso = 'A') as cantidad"
                     )
                 )
-                ->where('rol.idrol', '=', '4')
+                ->where('rol.fkidrol', '=', '4')
                 ->whereNull('pers.deleted_at')
                 ->get();
 
@@ -190,8 +190,8 @@ class AsignarTrabajoController extends Controller
 
             foreach ($array_servicio as $array) {
                 $data = new AsignarTrabajo();
-                $data->idsolicituddetalle = $array->iddetalle;
-                $data->idusuario = Auth::user()->id;
+                $data->fkidsolicituddetalle = $array->iddetalle;
+                $data->fkidusuario = Auth::user()->id;
                 $mytime = Carbon::now('America/La_paz');
                 $data->fecha = $mytime->toDateString();
                 $data->horainicio =$mytime->toTimeString();
@@ -209,8 +209,8 @@ class AsignarTrabajoController extends Controller
                 foreach ($array->array_personal as $personal) {
                     if ($personal->value) {
                         $detalle = new AsignarDetalle();
-                        $detalle->idasignartrabajo = $data->id;
-                        $detalle->idpersonal = $personal->id;
+                        $detalle->fkidasignartrabajo = $data->idasignartrabajo;
+                        $detalle->fkidpersonal = $personal->id;
                         $detalle->fecha = $mytime->toDateString();
                         $detalle->horainicio =$mytime->toTimeString();
                         $detalle->horafin =$mytime->toTimeString();
@@ -219,17 +219,17 @@ class AsignarTrabajoController extends Controller
                         $objpersonal = Personal::findOrFail($personal->id);
 
                         $notificacion = new Notificacion();
-                        $notificacion->idsolicitud = $solictud->id;
-                        $notificacion->idusuarioenviado = Auth::user()->id;
-                        $notificacion->idusuariorecibido = $objpersonal->idusuario;
-                        $notificacion->idasignartrabajo = $data->id;
+                        $notificacion->fkidsolicitud = $solictud->id;
+                        $notificacion->fkidusuarioenviado = Auth::user()->id;
+                        $notificacion->fkidusuariorecibido = $objpersonal->fkidusuario;
+                        $notificacion->fkidasignartrabajo = $data->id;
                         $notificacion->mensaje = 'SE HA ASIGNADO UNA NUEVA SOLICITUD';
                         $notificacion->tipo = 'A';
                         $notificacion->fecha = $mytime->toDateString();
                         $notificacion->hora = $mytime->toTimeString();
                         $notificacion->save();
 
-                        $user = User::findOrFail($objpersonal->idusuario);
+                        $user = User::findOrFail($objpersonal->fkidusuario);
 
                         if (file_exists( public_path() . '/notificacion/' . $user->usuario . '.txt' )) {
 
@@ -268,17 +268,17 @@ class AsignarTrabajoController extends Controller
                 }
 
                 $notificacion = new Notificacion();
-                $notificacion->idsolicitud = $solictud->id;
-                $notificacion->idusuarioenviado = Auth::user()->id;
-                $notificacion->idusuariorecibido = $solictud->idusuario;
-                $notificacion->idasignartrabajo = $data->id;
+                $notificacion->fkidsolicitud = $solictud->idsolicitud;
+                $notificacion->fkidusuarioenviado = Auth::user()->id;
+                $notificacion->fkidusuariorecibido = $solictud->fkidusuario;
+                $notificacion->fkidasignartrabajo = $data->id;
                 $notificacion->mensaje = 'SE LE HA ASIGNADO PERSONAL A SU SOLICITUD.';
                 $notificacion->tipo = 'A';
                 $notificacion->fecha = $mytime->toDateString();
                 $notificacion->hora = $mytime->toTimeString();
                 $notificacion->save();
 
-                $user = User::findOrFail($solictud->idusuario);
+                $user = User::findOrFail($solictud->fkidusuario);
 
                 if (file_exists( public_path() . '/notificacion/' . $user->usuario . '.txt' )) {
 

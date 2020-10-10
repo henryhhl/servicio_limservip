@@ -18,12 +18,14 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 Route::get('loguear', 'UsuarioMovilController@loguear');
 Route::post('usuario/registrar', 'UsuarioMovilController@registrar');
+
 Route::get('servicio/listar', 'ServicioMovilController@listar');
+
 Route::get('solicitud/listar', 'SolicitudMovilController@misolicitud');
 Route::get('solicitud/detalle', 'SolicitudMovilController@detalleSolicitud');
 Route::get('solicitud/personal', 'SolicitudMovilController@personalAsignado');
 Route::post('solicitud/registrar', 'SolicitudMovilController@store');
-
 Route::get('solicitud/notificacion', 'SolicitudMovilController@get_notificacionMovil');
-
 Route::get('solicitud/versolicitud', 'SolicitudMovilController@verSolicitud');
+
+Route::get('personal/loguear', 'PersonalMovilController@loguear');
