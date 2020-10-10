@@ -12,7 +12,7 @@ class IniciarJornada extends Model
 
     protected $table = 'iniciarjornada';
 
-    protected $primaryKey = 'id';
+    protected $primaryKey = 'idiniciarjornada';
 
     protected $fillable = [
         

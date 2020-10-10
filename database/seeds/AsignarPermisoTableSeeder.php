@@ -16,7 +16,7 @@ class AsignarPermisoTableSeeder extends Seeder
         $data = Permiso::where('estado', '=', 'A')->orderBy('idpermiso', 'asc')->get();
         foreach ($data as $d) {
             $detalle = new PermisoDetalle();
-            $detalle->fkidpermiso = $d->id;
+            $detalle->fkidpermiso = $d->idpermiso;
             $detalle->fkidrol = 1;
             $detalle->estado = 'A';
             $detalle->save();

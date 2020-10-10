@@ -14,16 +14,17 @@ class CreatePagoTable extends Migration
     public function up()
     {
         Schema::create('pago', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('idsolicitud')->unsigned();
+            $table->increments('idpago');
+            $table->integer('fkidsolicitud')->unsigned();
             $table->decimal('montopagado', 12, 2);
             $table->text('tipopago')->nullable();
-            $table->enum('estado', ['A', 'N'])->default('A');
+            // $table->enum('estado', ['A', 'N'])->default('A');
+            $table->string('estado', 1)->default('A');
             $table->date('fecha');
             $table->time('hora');
             $table->softDeletes();
             $table->timestamps();
-            $table->foreign('idsolicitud')->references('id')->on('solicitud')->ondelete('cascade');
+            $table->foreign('fkidsolicitud')->references('idsolicitud')->on('solicitud')->ondelete('cascade');
         });
     }
 

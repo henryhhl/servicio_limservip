@@ -10,12 +10,12 @@ class Pago extends Model
     
     use SoftDeletes;
 
-    protected $table = 'solicituddetalle';
+    protected $table = 'pago';
 
-    protected $primaryKey = 'id';
+    protected $primaryKey = 'idpago';
 
     protected $fillable = [
-        'idsolicitud', 'montopagado', 'tipopago', 'fecha', 'hora', 'estado',
+        
     ];
     
 }

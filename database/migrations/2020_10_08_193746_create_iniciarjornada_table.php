@@ -14,14 +14,14 @@ class CreateIniciarjornadaTable extends Migration
     public function up()
     {
         Schema::create('iniciarjornada', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('idusuario')->unsigned();
+            $table->increments('idiniciarjornada');
+            $table->integer('fkidusuario')->unsigned();
             $table->string('descripcion');
             $table->date('fecha');
             $table->time('hora');
             $table->timestamps();
             $table->softDeletes();
-            $table->foreign('idusuario')->references('id')->on('users')->ondelete('cascade');
+            $table->foreign('fkidusuario')->references('id')->on('users')->ondelete('cascade');
         });
     }
 
