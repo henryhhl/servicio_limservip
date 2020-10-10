@@ -12,7 +12,7 @@ class AsignarDetalle extends Model
 
     protected $table = 'asignardetalle';
 
-    protected $primaryKey = 'id';
+    protected $primaryKey = 'idasignardetalle';
 
     protected $fillable = [
         

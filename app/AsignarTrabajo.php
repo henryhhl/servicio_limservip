@@ -12,7 +12,7 @@ class AsignarTrabajo extends Model
 
     protected $table = 'asignartrabajo';
 
-    protected $primaryKey = 'id';
+    protected $primaryKey = 'idasignartrabajo';
 
     protected $fillable = [
         
