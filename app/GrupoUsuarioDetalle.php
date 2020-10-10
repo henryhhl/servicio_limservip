@@ -8,9 +8,9 @@ class GrupoUsuarioDetalle extends Model
 {
     protected $table = 'detalle_rol';
 
-    protected $primaryKey = 'id';
+    protected $primaryKey = 'idroldetalle';
 
     protected $fillable = [
-        'idrol', 'idusuario', 'estado'
+        
     ];
 }

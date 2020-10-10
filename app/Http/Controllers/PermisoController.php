@@ -38,13 +38,15 @@ class PermisoController extends Controller
             }
 
             $rol = DB::table('rol')
+                ->select('idrol as id', 'nombre', 'descripcion')
                 ->where('estado', '=', 'A')
-                ->orderBy('id', 'desc')
+                ->orderBy('idrol', 'desc')
                 ->get();
 
             $permiso = DB::table('permiso')
+                ->select('idpermiso as id', 'nombre')
                 ->where('estado', '=', 'A')
-                ->orderBy('id', 'asc')
+                ->orderBy('idpermiso', 'asc')
                 ->get();
             
             return response()->json([
@@ -144,9 +146,9 @@ class PermisoController extends Controller
 
             $array_permiso = DB::select(
                 'SELECT * FROM permiso AS perm
-                    WHERE perm.id NOT IN 
-                    (SELECT det.idpermiso  FROM detalle_permiso AS det
-                        WHERE det.idrol = '.$idrol.')'
+                    WHERE perm.idpermiso NOT IN 
+                    (SELECT det.fkidpermiso  FROM detalle_permiso AS det
+                        WHERE det.fkidrol = '.$idrol.')'
             );
 
             if (sizeof($array_permiso) > 0) {
@@ -154,8 +156,8 @@ class PermisoController extends Controller
                 foreach ($array_permiso as $permiso) {
 
                     $detalle = new PermisoDetalle();
-                    $detalle->idrol = $idrol;
-                    $detalle->idpermiso = $permiso->id;
+                    $detalle->fkidrol = $idrol;
+                    $detalle->fkidpermiso = $permiso->id;
                     $detalle->estado = 'N';
                     $detalle->save();
     
@@ -163,17 +165,17 @@ class PermisoController extends Controller
             }
 
             $array_permiso = DB::table('detalle_permiso as det')
-                ->leftJoin('permiso as perm', 'det.idpermiso', '=', 'perm.id')
-                ->select('det.id', 'perm.nombre', 'det.estado')
-                ->where('det.idrol', '=', $idrol)
-                ->orderBy('perm.id', 'asc')
+                ->leftJoin('permiso as perm', 'det.fkidpermiso', '=', 'perm.idpermiso')
+                ->select('det.idpermisodetalle as id', 'perm.nombre', 'det.estado')
+                ->where('det.fkidrol', '=', $idrol)
+                ->orderBy('perm.idpermiso', 'asc')
                 ->get();
 
             $permiso_activo = DB::table('detalle_permiso as det')
-                ->leftJoin('permiso as perm', 'det.idpermiso', '=', 'perm.id')
-                ->select('det.id', 'perm.nombre', 'det.estado')
-                ->where([ ['det.idrol', '=', $idrol], ['det.estado', '=', 'A'] ])
-                ->orderBy('perm.id', 'asc')
+                ->leftJoin('permiso as perm', 'det.fkidpermiso', '=', 'perm.idpermiso')
+                ->select('det.idpermisodetalle as id', 'perm.nombre', 'det.estado')
+                ->where([ ['det.fkidrol', '=', $idrol], ['det.estado', '=', 'A'] ])
+                ->orderBy('perm.idpermiso', 'asc')
                 ->get();
 
                 DB::commit();
@@ -207,10 +209,10 @@ class PermisoController extends Controller
             $idrol = $request->input('idrol', null);
 
             $array_permiso = DB::table('detalle_permiso as det')
-                ->leftJoin('permiso as perm', 'det.idpermiso', '=', 'perm.id')
-                ->select('det.id', 'perm.nombre', 'det.estado')
-                ->where('det.idrol', '=', $idrol)
-                ->orderBy('perm.id', 'asc')
+                ->leftJoin('permiso as perm', 'det.fkidpermiso', '=', 'perm.idpermiso')
+                ->select('det.idpermisodetalle as id', 'perm.nombre', 'det.estado')
+                ->where('det.fkidrol', '=', $idrol)
+                ->orderBy('perm.idpermiso', 'asc')
                 ->get();
 
             foreach ($array_permiso as $permiso) {

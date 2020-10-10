@@ -14,14 +14,15 @@ class CreateDetalleRolTable extends Migration
     public function up()
     {
         Schema::create('detalle_rol', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('idusuario')->unsigned();
-            $table->integer('idrol')->unsigned();
-            $table->enum('estado', ['A', 'N'])->default('A');
+            $table->increments('idroldetalle');
+            $table->integer('fkidusuario')->unsigned();
+            $table->integer('fkidrol')->unsigned();
+            // $table->enum('estado', ['A', 'N'])->default('A');
+            $table->string('estado', 1)->default('A');
             $table->softDeletes();
             $table->timestamps();
-            $table->foreign('idusuario')->references('id')->on('users')->ondelete('cascade');
-            $table->foreign('idrol')->references('id')->on('rol')->ondelete('cascade');
+            $table->foreign('fkidusuario')->references('id')->on('users')->ondelete('cascade');
+            $table->foreign('fkidrol')->references('idrol')->on('rol')->ondelete('cascade');
         });
     }
 

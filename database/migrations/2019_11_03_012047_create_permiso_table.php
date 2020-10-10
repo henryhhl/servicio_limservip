@@ -14,13 +14,14 @@ class CreatePermisoTable extends Migration
     public function up()
     {
         Schema::create('permiso', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('idpermiso')->unsigned()->nullable();
-            $table->string('nombre');
-            $table->enum('estado', ['A', 'N'])->default('A');
+            $table->increments('idpermiso');
+            $table->integer('fkidpermiso')->unsigned()->nullable();
+            $table->string('nombre', 70);
+            // $table->enum('estado', ['A', 'N'])->default('A');
+            $table->string('estado', 1)->default('A');
             $table->softDeletes();
             $table->timestamps();
-            $table->foreign('idpermiso')->references('id')->on('permiso')->ondelete('cascade');
+            $table->foreign('fkidpermiso')->references('idpermiso')->on('permiso')->ondelete('cascade');
         });
     }
 

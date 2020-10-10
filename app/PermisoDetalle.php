@@ -8,9 +8,9 @@ class PermisoDetalle extends Model
 {
     protected $table = 'detalle_permiso';
 
-    protected $primaryKey = 'id';
+    protected $primaryKey = 'idpermisodetalle';
 
     protected $fillable = [
-        'idpermiso', 'idrol', 'estado',
+        
     ];
 }

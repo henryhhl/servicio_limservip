@@ -102,8 +102,8 @@ class UsuarioController extends Controller
             }
 
             $usuario = DB::table('users as user')
-                ->leftJoin('detalle_rol as det', 'user.id', '=', 'det.idusuario')
-                ->leftJoin('rol as grupo', 'det.idrol', '=', 'grupo.id')
+                ->leftJoin('detalle_rol as det', 'user.id', '=', 'det.fkidusuario')
+                ->leftJoin('rol as grupo', 'det.fkidrol', '=', 'grupo.idrol')
                 ->select('grupo.nombre as rol', 'grupo.descripcion', 'user.id', 
                     'user.nombre', 'user.apellido', 'user.nacimiento', 'user.usuario', 'user.imagen', 
                     'user.genero', 'user.email_verified_at as email'
@@ -209,26 +209,26 @@ class UsuarioController extends Controller
                 $token = $session->token();
             }
 
-            $data = Ajuste::where('idusuario', '=', Auth::user()->id)->orderBy('id')->first();
+            $data = Ajuste::where('fkidusuario', '=', Auth::user()->id)->orderBy('idajuste')->first();
 
-            $rol = DB::table('detalle_rol')->where([['idusuario', '=', Auth::user()->id], ['estado', '=', 'A']])->first();
+            $rol = DB::table('detalle_rol')->where([['fkidusuario', '=', Auth::user()->id], ['estado', '=', 'A']])->first();
 
             $permisos = [];
 
             if (!is_null($rol)) {
                 $permisos = DB::table('permiso as perm')
-                    ->leftJoin('detalle_permiso as det', 'perm.id', '=', 'det.idpermiso')
-                    ->select('perm.id', 'perm.nombre', 'det.estado')
-                    ->where('det.idrol', '=', $rol->idrol)
+                    ->leftJoin('detalle_permiso as det', 'perm.idpermiso', '=', 'det.fkidpermiso')
+                    ->select('perm.idpermiso as id', 'perm.nombre', 'det.estado')
+                    ->where('det.fkidrol', '=', $rol->fkidrol)
                     ->get();
             }
 
             $usuario = DB::table('users as user')
-                ->leftJoin('detalle_rol as det', 'user.id', '=', 'det.idusuario')
-                ->leftJoin('rol as grupo', 'det.idrol', '=', 'grupo.id')
+                ->leftJoin('detalle_rol as det', 'user.id', '=', 'det.fkidusuario')
+                ->leftJoin('rol as grupo', 'det.fkidrol', '=', 'grupo.idrol')
                 ->select('grupo.nombre as rol', 'grupo.descripcion', 'user.id', 
                     'user.nombre', 'user.apellido', 'user.nacimiento', 'user.usuario', 'user.imagen', 
-                    'user.genero', 'user.email_verified_at as email', 'det.idrol'
+                    'user.genero', 'user.email_verified_at as email', 'det.fkidrol as idrol'
                 )
                 ->where('user.id', '=', Auth::user()->id)
                 ->first();
@@ -314,8 +314,8 @@ class UsuarioController extends Controller
             if ($search == null) {
 
                 $data = DB::table('users as user')
-                    ->leftJoin('detalle_rol as det', 'user.id', '=', 'det.idusuario')
-                    ->leftJoin('rol as grupousuario', 'det.idrol', '=', 'grupousuario.id')
+                    ->leftJoin('detalle_rol as det', 'user.id', '=', 'det.fkidusuario')
+                    ->leftJoin('rol as grupousuario', 'det.fkidrol', '=', 'grupousuario.idrol')
                     ->select('user.id', 'user.nombre', 'user.apellido', 'user.usuario', 'user.nacimiento', 
                         'user.genero', 'user.tipo', 'user.estado', 'grupousuario.nombre as rol'
                     )
@@ -326,8 +326,10 @@ class UsuarioController extends Controller
             }else {
 
                 $data = DB::table('users as user')
+                    ->leftJoin('detalle_rol as det', 'user.id', '=', 'det.fkidusuario')
+                    ->leftJoin('rol as grupousuario', 'det.fkidrol', '=', 'grupousuario.idrol')
                     ->select('user.id', 'user.nombre', 'user.apellido', 'user.usuario', 'user.nacimiento', 
-                        'user.genero', 'user.tipo', 'user.estado'
+                        'user.genero', 'user.tipo', 'user.estado', 'grupousuario.nombre as rol'
                     )
                     ->where(function ($query) use ($search, $number) {
                         return $query->orWhere(DB::raw("CONCAT(user.nombre, ' ',user.apellido)"), 'LIKE', "%".$search."%")
@@ -384,7 +386,7 @@ class UsuarioController extends Controller
                 ]);
             }
 
-            $data = GrupoUsuario::select('id', 'nombre', 'descripcion')->where('estado', '=', 'A')->get();
+            $data = GrupoUsuario::select('idrol as id', 'nombre', 'descripcion')->where('estado', '=', 'A')->get();
 
             return response()->json([
                 'response'  => 1,
@@ -467,8 +469,8 @@ class UsuarioController extends Controller
             if ($idrol != null) {
                 
                 $detalle = new GrupoUsuarioDetalle();
-                $detalle->idrol = $idrol;
-                $detalle->idusuario = $data->id;
+                $detalle->fkidrol = $idrol;
+                $detalle->fkidusuario = $data->id;
                 $detalle->estado = 'A';
                 $detalle->save();
                 
@@ -528,13 +530,13 @@ class UsuarioController extends Controller
             $data->apellido = $apellido;
             $data->nacimiento = $nacimiento;
             $data->genero = $genero;
-            $data->email_verified_at = $email;
+            $data->email = $email;
             $data->imagen = $img;
             $data->update();
 
             $usuario = DB::table('users as user')
-                ->leftJoin('detalle_rol as det', 'user.id', '=', 'det.idusuario')
-                ->leftJoin('rol as grupo', 'det.idrol', '=', 'grupo.id')
+                ->leftJoin('detalle_rol as det', 'user.id', '=', 'det.fkidusuario')
+                ->leftJoin('rol as grupo', 'det.fkidrol', '=', 'grupo.idrol')
                 ->select('grupo.nombre as rol', 'grupo.descripcion', 'user.id', 
                     'user.nombre', 'user.apellido', 'user.nacimiento', 'user.usuario', 'user.imagen', 
                     'user.genero', 'user.email_verified_at as email'
@@ -579,7 +581,8 @@ class UsuarioController extends Controller
                 ->first();
 
             $rol = DB::table('detalle_rol')
-                ->where('idusuario', '=', $id)
+                ->select('idroldetalle as id', 'fkidrol as idrol', 'fkidusuario as idusuario')
+                ->where('fkidusuario', '=', $id)
                 ->first();
 
             return response()->json([
@@ -625,13 +628,13 @@ class UsuarioController extends Controller
                 ->first();
 
             $rol = DB::table('detalle_rol as det')
-                ->leftJoin('rol as r', 'det.idrol', '=', 'r.id')
-                ->select('r.id', 'r.nombre', 'r.descripcion')
-                ->where('det.idusuario', '=', $id)
+                ->leftJoin('rol as r', 'det.fkidrol', '=', 'r.idrol')
+                ->select('r.idrol as id', 'r.nombre', 'r.descripcion')
+                ->where('det.fkidusuario', '=', $id)
                 ->where('det.estado', '=', 'A')
                 ->first();
 
-            $array_rol = GrupoUsuario::select('id', 'nombre', 'descripcion')->where('estado', '=', 'A')->get();
+            $array_rol = GrupoUsuario::select('idrol as id', 'nombre', 'descripcion')->where('estado', '=', 'A')->get();
 
             return response()->json([
                 'response' => 1,
@@ -706,28 +709,28 @@ class UsuarioController extends Controller
             if ($idrol != null) {
 
                 $rol_usuario = DB::table('detalle_rol')
-                    ->select('id', 'idrol', 'idusuario', 'estado')
+                    ->select('idroldetalle as id', 'fkidrol as idrol', 'fkidusuario as idusuario', 'estado')
                     ->where('idusuario', '=', $id)
                     ->first();
 
                 if ($rol_usuario == null) {
 
                     $detalle = new GrupoUsuarioDetalle();
-                    $detalle->idrol = $idrol;
-                    $detalle->idusuario = $id;
+                    $detalle->fkidrol = $idrol;
+                    $detalle->fkidusuario = $id;
                     $detalle->estado = 'A';
                     $detalle->save();
 
                 }else {
                     $detalle = GrupoUsuarioDetalle::find($rol_usuario->id);
                     $detalle->estado = 'A';
-                    $detalle->idrol = $idrol;
+                    $detalle->fkidrol = $idrol;
                     $detalle->update();
                 }
             }else {
                 $rol_usuario = DB::table('detalle_rol')
-                    ->select('id', 'idrol', 'idusuario', 'estado')
-                    ->where('idusuario', '=', $id)
+                    ->select('idroldetalle as id', 'fkidrol as idrol', 'fkidusuario as idusuario', 'estado')
+                    ->where('fkidusuario', '=', $id)
                     ->first();
 
                 if ($rol_usuario != null) {

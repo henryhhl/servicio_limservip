@@ -8,9 +8,9 @@ class GrupoUsuario extends Model
 {
     protected $table = 'rol';
 
-    protected $primaryKey = 'id';
+    protected $primaryKey = 'idrol';
 
     protected $fillable = [
-        'nombre', 'descripcion', 'estado', 'delete', 'fecha', 'hora',
+        
     ];
 }

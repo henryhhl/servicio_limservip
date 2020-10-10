@@ -27,7 +27,7 @@ class AjusteController extends Controller
                 ]);
             }
 
-            $data = Ajuste::where('idusuario', '=', Auth::user()->id)->orderBy('id')->first();
+            $data = Ajuste::where('fkidusuario', '=', Auth::user()->id)->orderBy('idajuste')->first();
 
             return response()->json([
                 'response' => 1,
@@ -180,11 +180,11 @@ class AjusteController extends Controller
             $button = $request->input('button');
             $sizetext = $request->input('sizetext');
 
-            $data = Ajuste::where('idusuario', '=', Auth::user()->id)->get();
+            $data = Ajuste::where('fkidusuario', '=', Auth::user()->id)->get();
 
             if ( sizeof($data) > 0 ) {
-                $ajuste = Ajuste::find($data[0]->id);
-                $ajuste->idusuario = Auth::user()->id;
+                $ajuste = Ajuste::find($data[0]->idajuste);
+                $ajuste->fkidusuario = Auth::user()->id;
                 $ajuste->colorheader = $header;
                 $ajuste->colorsidebar = $sidebar;
                 $ajuste->colorfooter = $footer;
@@ -193,7 +193,7 @@ class AjusteController extends Controller
                 $ajuste->update();
             } else {
                 $ajuste = new Ajuste();
-                $ajuste->idusuario = Auth::user()->id;
+                $ajuste->fkidusuario = Auth::user()->id;
                 $ajuste->colorheader = $header;
                 $ajuste->colorsidebar = $sidebar;
                 $ajuste->colorfooter = $footer;
@@ -202,7 +202,7 @@ class AjusteController extends Controller
                 $ajuste->save();
             }
 
-            $data = Ajuste::where('idusuario', '=', Auth::user()->id)->orderBy('id')->first();
+            $data = Ajuste::where('fkidusuario', '=', Auth::user()->id)->orderBy('idajuste')->first();
 
             DB::commit();
 

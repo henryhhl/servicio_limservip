@@ -14,19 +14,22 @@ class CreateAsignardetalleTable extends Migration
     public function up()
     {
         Schema::create('asignardetalle', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('idpersonal')->unsigned();
-            $table->integer('idasignartrabajo')->unsigned();
-            $table->enum('estadoproceso', ['A', 'F'])->default('A');
-            $table->enum('esencargado', ['V', 'F'])->default('F');
+            $table->increments('idasignardetalle');
+            $table->integer('fkidpersonal')->unsigned();
+            $table->integer('fkidasignartrabajo')->unsigned();
+            // $table->enum('estadoproceso', ['A', 'F'])->default('A');
+            $table->string('estadoproceso', 1)->default('A');
+            $table->string('esencargado', 1)->default('F');
+            // $table->enum('esencargado', ['V', 'F'])->default('F');
             $table->date('fecha');
             $table->time('horainicio');
             $table->time('horafin')->nullable();
-            $table->enum('estado', ['A', 'N'])->default('A');
+            // $table->enum('estado', ['A', 'N'])->default('A');
+            $table->string('estado', 1)->default('A');
             $table->softDeletes();
             $table->timestamps();
-            $table->foreign('idpersonal')->references('id')->on('personal')->ondelete('cascade');
-            $table->foreign('idasignartrabajo')->references('id')->on('asignartrabajo')->ondelete('cascade');
+            $table->foreign('fkidpersonal')->references('idpersonal')->on('personal')->ondelete('cascade');
+            $table->foreign('fkidasignartrabajo')->references('idasignartrabajo')->on('asignartrabajo')->ondelete('cascade');
         });
     }
 

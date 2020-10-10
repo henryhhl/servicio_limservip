@@ -34,22 +34,22 @@ class PersonalController extends Controller
 
             if ($search == null) {
                 $data = DB::table('personal as pers')
-                    ->leftJoin('users as user', 'pers.idusuario', '=', 'user.id')
-                    ->leftJoin('detalle_rol as det', 'user.id', '=', 'det.idusuario')
-                    ->leftJoin('rol as cargo', 'det.idrol', '=', 'cargo.id')
-                    ->select('pers.id', 'user.nombre', 'user.apellido', 'user.usuario', 'pers.contacto', 
+                    ->leftJoin('users as user', 'pers.fkidusuario', '=', 'user.id')
+                    ->leftJoin('detalle_rol as det', 'user.id', '=', 'det.fkidusuario')
+                    ->leftJoin('rol as cargo', 'det.fkidrol', '=', 'cargo.idrol')
+                    ->select('pers.idpersonal as id', 'user.nombre', 'user.apellido', 'user.usuario', 'pers.contacto', 
                         'user.imagen', 'user.email', 'pers.ci', 'pers.ciudad', 'pers.direccion', 'cargo.nombre as cargo'
                     )
                     ->where('pers.estado', '=', 'A')
                     ->whereNull('pers.deleted_at')
-                    ->orderBy('pers.id', 'desc')
+                    ->orderBy('pers.idpersonal', 'desc')
                     ->paginate(10);
             }else {
                 $data = DB::table('personal as pers')
-                    ->leftJoin('users as user', 'pers.idusuario', '=', 'user.id')
-                    ->leftJoin('detalle_rol as det', 'user.id', '=', 'det.idusuario')
-                    ->leftJoin('rol as cargo', 'det.idrol', '=', 'cargo.id')
-                    ->select('pers.id', 'user.nombre', 'user.apellido', 'user.usuario', 'pers.contacto', 
+                    ->leftJoin('users as user', 'pers.fkidusuario', '=', 'user.id')
+                    ->leftJoin('detalle_rol as det', 'user.id', '=', 'det.fkidusuario')
+                    ->leftJoin('rol as cargo', 'det.fkidrol', '=', 'cargo.idrol')
+                    ->select('pers.idpersonal as id', 'user.nombre', 'user.apellido', 'user.usuario', 'pers.contacto', 
                         'user.imagen', 'user.email', 'pers.ci', 'pers.ciudad', 'pers.direccion', 'cargo.nombre as cargo'
                     )
                     ->where(function ($query) use ($search) {
@@ -61,7 +61,7 @@ class PersonalController extends Controller
                     })
                     ->where('pers.estado', '=', 'A')
                     ->whereNull('pers.deleted_at')
-                    ->orderBy('pers.id', 'desc')
+                    ->orderBy('pers.idpersonal', 'desc')
                     ->paginate(10);
             }
 
@@ -110,8 +110,8 @@ class PersonalController extends Controller
                 ]);
             }
 
-            $data = GrupoUsuario::select('id', 'nombre', 'descripcion')
-                ->where([ ['estado', '=', 'A'], ['id', '<>', '1'], ['id', '<>', '3'] ])
+            $data = GrupoUsuario::select('idrol as id', 'nombre', 'descripcion')
+                ->where([ ['estado', '=', 'A'], ['idrol', '<>', '1'], ['idrol', '<>', '3'] ])
                 ->get();
 
             return response()->json([
@@ -178,7 +178,7 @@ class PersonalController extends Controller
             $user->save();
 
             $data = new Personal();
-            $data->idusuario = $user->id;
+            $data->fkidusuario = $user->id;
             $data->ci = $ci;
             $data->ciudad = $ciudad;
             $data->direccion = $direccion;
@@ -186,8 +186,8 @@ class PersonalController extends Controller
             $data->save();
 
             $grupousuario = new GrupoUsuarioDetalle();
-            $grupousuario->idrol = $idrol;
-            $grupousuario->idusuario = $user->id;
+            $grupousuario->fkidrol = $idrol;
+            $grupousuario->fkidusuario = $user->id;
             $grupousuario->estado = 'A';
             $grupousuario->save();
 
@@ -231,11 +231,11 @@ class PersonalController extends Controller
             }
             
             $data = DB::table('personal as pers')
-                ->leftJoin('users as user', 'pers.idusuario', '=', 'user.id')
-                ->select('pers.id', 'user.nombre', 'user.apellido', 'user.usuario', 'pers.contacto', 'user.password',
+                ->leftJoin('users as user', 'pers.fkidusuario', '=', 'user.id')
+                ->select('pers.idpersonal as id', 'user.nombre', 'user.apellido', 'user.usuario', 'pers.contacto', 'user.password',
                     'user.imagen', 'user.email', 'user.nacimiento', 'pers.ci', 'pers.ciudad', 'pers.direccion'
                 )
-                ->where('pers.id', '=', $id)
+                ->where('pers.idpersonal', '=', $id)
                 ->first();
 
 
@@ -277,21 +277,21 @@ class PersonalController extends Controller
             }
             
             $data = DB::table('personal as pers')
-                ->leftJoin('users as user', 'pers.idusuario', '=', 'user.id')
-                ->select('pers.id', 'user.nombre', 'user.apellido', 'user.usuario', 'pers.contacto', 'user.password',
+                ->leftJoin('users as user', 'pers.fkidusuario', '=', 'user.id')
+                ->select('pers.idpersonal as id', 'user.nombre', 'user.apellido', 'user.usuario', 'pers.contacto', 'user.password',
                     'user.imagen', 'user.email', 'user.nacimiento', 'pers.ci', 'pers.ciudad', 'pers.direccion', 'user.id as idusuario'
                 )
-                ->where('pers.id', '=', $id)
+                ->where('pers.idpersonal', '=', $id)
                 ->first();
 
-            $array_rol = GrupoUsuario::select('id', 'nombre', 'descripcion')
-                ->where([ ['estado', '=', 'A'], ['id', '<>', '1'], ['id', '<>', '3'] ])
+            $array_rol = GrupoUsuario::select('idrol as id', 'nombre', 'descripcion')
+                ->where([ ['estado', '=', 'A'], ['idrol', '<>', '1'], ['idrol', '<>', '3'] ])
                 ->get();
 
             $rol = DB::table('detalle_rol as det')
-                ->leftJoin('rol as r', 'det.idrol', '=', 'r.id')
-                ->select('r.id', 'r.nombre', 'r.descripcion')
-                ->where('det.idusuario', '=', $data->idusuario)
+                ->leftJoin('rol as r', 'det.fkidrol', '=', 'r.idrol')
+                ->select('r.idrol as id', 'r.nombre', 'r.descripcion')
+                ->where('det.fkidusuario', '=', $data->idusuario)
                 ->where('det.estado', '=', 'A')
                 ->first();
 
@@ -349,7 +349,7 @@ class PersonalController extends Controller
             $data->contacto = $contacto;
             $data->update();
 
-            $user = User::findOrFail($data->idusuario);
+            $user = User::findOrFail($data->fkidusuario);
             $user->nombre = $nombre;
             $user->apellido = $apellido;
             $user->nacimiento = $nacimiento;
@@ -361,22 +361,22 @@ class PersonalController extends Controller
             $user->update();
 
             $rol_usuario = DB::table('detalle_rol')
-                ->select('id', 'idrol', 'idusuario', 'estado')
-                ->where('idusuario', '=', $data->idusuario)
+                ->select('idroldetalle as id', 'fkidrol as idrol', 'fkidusuario as idusuario', 'estado')
+                ->where('fkidusuario', '=', $data->fkidusuario)
                 ->first();
 
             if ($rol_usuario == null) {
 
                 $detalle = new GrupoUsuarioDetalle();
-                $detalle->idrol = $idrol;
-                $detalle->idusuario = $data->idusuario;
+                $detalle->fkidrol = $idrol;
+                $detalle->fkidusuario = $data->fkidusuario;
                 $detalle->estado = 'A';
                 $detalle->save();
 
             }else {
-                $detalle = GrupoUsuarioDetalle::find($rol_usuario->id);
+                $detalle = GrupoUsuarioDetalle::find($rol_usuario->idroldetalle);
                 $detalle->estado = 'A';
-                $detalle->idrol = $idrol;
+                $detalle->fkidrol = $idrol;
                 $detalle->update();
             }
 
@@ -418,13 +418,13 @@ class PersonalController extends Controller
             $data->update();
 
             $data = DB::table('personal as pers')
-                ->leftJoin('users as user', 'pers.idusuario', '=', 'user.id')
-                ->select('pers.id', 'user.nombre', 'user.apellido', 'user.usuario', 'pers.contacto', 
+                ->leftJoin('users as user', 'pers.fkidusuario', '=', 'user.id')
+                ->select('pers.idpersonal', 'user.nombre', 'user.apellido', 'user.usuario', 'pers.contacto', 
                     'user.imagen', 'user.email', 'pers.ci', 'pers.ciudad', 'pers.direccion'
                 )
                 ->where('pers.estado', '=', 'A')
                 ->whereNull('pers.deleted_at')
-                ->orderBy('pers.id', 'desc')
+                ->orderBy('pers.idpersonal', 'desc')
                 ->paginate(10);
 
             return response()->json([

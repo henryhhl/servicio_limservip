@@ -8,9 +8,9 @@ class Ajuste extends Model
 {
     protected $table = 'ajuste';
 
-    protected $primaryKey = 'id';
+    protected $primaryKey = 'idajuste';
 
     protected $fillable = [
-        'idusuario', 'colorheader', 'colorsidebar', 'sizetext', 'fontfamilytext', 'fontweighttext',
+        
     ];
 }

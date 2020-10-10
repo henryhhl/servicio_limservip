@@ -12,10 +12,10 @@ class Servicio extends Model
 
     protected $table = 'servicio';
 
-    protected $primaryKey = 'id';
+    protected $primaryKey = 'idservicio';
 
     protected $fillable = [
-        'idcategoria', 'nombre', 'descripcion', 'precio', 'imagen', 'estado',
+        
     ];
 
 }

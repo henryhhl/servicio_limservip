@@ -14,18 +14,20 @@ class CreateAsignartrabajoTable extends Migration
     public function up()
     {
         Schema::create('asignartrabajo', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('idusuario')->unsigned();
-            $table->integer('idsolicituddetalle')->unsigned();
-            $table->enum('estadoproceso', ['A', 'F'])->default('A');
+            $table->increments('idasignartrabajo');
+            $table->integer('fkidusuario')->unsigned();
+            $table->integer('fkidsolicituddetalle')->unsigned();
+            // $table->enum('estadoproceso', ['A', 'F'])->default('A');
+            $table->string('estadoproceso', 1)->default('A');
             $table->date('fecha');
             $table->time('horainicio');
             $table->time('horafin')->nullable();
-            $table->enum('estado', ['A', 'N'])->default('A');
+            // $table->enum('estado', ['A', 'N'])->default('A');
+            $table->string('estado', 1)->default('A');
             $table->softDeletes();
             $table->timestamps();
-            $table->foreign('idusuario')->references('id')->on('users')->ondelete('cascade');
-            $table->foreign('idsolicituddetalle')->references('id')->on('solicituddetalle')->ondelete('cascade');
+            $table->foreign('fkidusuario')->references('id')->on('users')->ondelete('cascade');
+            $table->foreign('fkidsolicituddetalle')->references('idsolicituddetalle')->on('solicituddetalle')->ondelete('cascade');
         });
     }
 

@@ -12,10 +12,10 @@ class Personal extends Model
 
     protected $table = 'personal';
 
-    protected $primaryKey = 'id';
+    protected $primaryKey = 'idpersonal';
 
     protected $fillable = [
-        'idusuario', 'ci', 'ciudad', 'direccion', 'contacto', 'estado',
+        
     ];
     
 }

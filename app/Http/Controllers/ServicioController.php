@@ -96,19 +96,21 @@ class ServicioController extends Controller
 
             if ($search == null) {
                 $data = DB::table('servicio as serv')
+                    ->select('serv.idservicio as id', 'serv.nombre', 'serv.descripcion', 'serv.precio', 'serv.imagen', 'serv.estado')
                     ->where('serv.estado', '=', 'A')
                     ->whereNull('serv.deleted_at')
-                    ->orderBy('serv.id', 'desc')
+                    ->orderBy('serv.idservicio', 'desc')
                     ->paginate(10);
             }else {
                 $data = DB::table('servicio as serv')
+                    ->select('serv.idservicio as id', 'serv.nombre', 'serv.descripcion', 'serv.precio', 'serv.imagen', 'serv.estado')
                     ->where(function ($query) use ($search) {
                         return $query
                             ->orWhere('serv.nombre', 'LIKE', '%'.$search.'%');
                     })
                     ->where('serv.estado', '=', 'A')
                     ->whereNull('serv.deleted_at')
-                    ->orderBy('serv.id', 'desc')
+                    ->orderBy('serv.idservicio', 'desc')
                     ->paginate(10);
             }
 
@@ -157,7 +159,9 @@ class ServicioController extends Controller
                 ]);
             }
 
-            $data = DB::table('categoria')->where('estado', '=', 'A')->get();
+            $data = DB::table('categoria')
+                ->select('idcategoria as id', 'nombre as descripcion', 'estado')
+                ->where('estado', '=', 'A')->get();
 
             return response()->json([
                 'response'  => 1,
@@ -206,7 +210,7 @@ class ServicioController extends Controller
 
             $data = new Servicio();
             $data->nombre = $nombre;
-            $data->idcategoria = $idcategoria;
+            $data->fkidcategoria = $idcategoria;
             $data->descripcion = $descripcion;
             $data->precio = $precio;
             $data->imagen = $foto;
@@ -252,11 +256,11 @@ class ServicioController extends Controller
             }
             
             $data = DB::table('servicio as serv')
-                ->leftJoin('categoria as cat', 'serv.idcategoria', '=', 'cat.id')
-                ->select('serv.id', 'serv.idcategoria', 'serv.nombre', 'serv.descripcion', 'serv.imagen',
-                    'serv.precio', 'cat.descripcion as categoria'
+                ->leftJoin('categoria as cat', 'serv.fkidcategoria', '=', 'cat.idcategoria')
+                ->select('serv.idservicio as id', 'serv.fkidcategoria as idcategoria', 'serv.nombre', 'serv.descripcion', 'serv.imagen',
+                    'serv.precio', 'cat.nombre as categoria'
                 )
-                ->where('serv.id', '=', $id)
+                ->where('serv.idservicio', '=', $id)
                 ->first();
 
             return response()->json([
@@ -297,14 +301,16 @@ class ServicioController extends Controller
             }
             
             $data = DB::table('servicio as serv')
-                ->leftJoin('categoria as cat', 'serv.idcategoria', '=', 'cat.id')
-                ->select('serv.id', 'serv.idcategoria', 'serv.nombre', 'serv.descripcion', 'serv.imagen',
-                    'serv.precio', 'cat.descripcion as categoria'
+                ->leftJoin('categoria as cat', 'serv.fkidcategoria', '=', 'cat.idcategoria')
+                ->select('serv.idservicio as id', 'serv.fkidcategoria as idcategoria', 'serv.nombre', 'serv.descripcion', 'serv.imagen',
+                    'serv.precio', 'cat.nombre as categoria'
                 )
-                ->where('serv.id', '=', $id)
+                ->where('serv.idservicio', '=', $id)
                 ->first();
 
-            $categoria = DB::table('categoria')->where('estado', '=', 'A')->get();
+            $categoria = DB::table('categoria')
+                ->select('idcategoria as id', 'nombre as descripcion', 'estado')
+                ->where('estado', '=', 'A')->get();
 
             return response()->json([
                 'response' => 1,
@@ -358,7 +364,7 @@ class ServicioController extends Controller
             }
 
             $data->nombre = $nombre;
-            $data->idcategoria = $idcategoria;
+            $data->fkidcategoria = $idcategoria;
             $data->descripcion = $descripcion;
             $data->precio = $precio;
             if ($foto != null) {
@@ -401,7 +407,7 @@ class ServicioController extends Controller
             $idservicio = $request->input('idservicio');
 
             $value = DB::table('solicituddetalle')
-                ->where('idservicio', '=', $idservicio)
+                ->where('fkidservicio', '=', $idservicio)
                 ->where('estado', '=', 'A')
                 ->whereNull('deleted_at')
                 ->get();
@@ -418,9 +424,10 @@ class ServicioController extends Controller
             $data->update();
 
             $data = DB::table('servicio as serv')
+                ->select('serv.idservicio as id', 'serv.nombre', 'serv.descripcion', 'serv.precio', 'serv.imagen', 'serv.estado')
                 ->where('serv.estado', '=', 'A')
                 ->whereNull('serv.deleted_at')
-                ->orderBy('serv.id', 'desc')
+                ->orderBy('serv.idservicio', 'desc')
                 ->paginate(10);
 
             DB::commit();
@@ -468,13 +475,14 @@ class ServicioController extends Controller
             $search = $request->input('search');
 
             $data = DB::table('servicio as serv')
+                ->select('serv.idservicio as id', 'serv.nombre', 'serv.descripcion', 'serv.precio', 'serv.imagen', 'serv.estado')
                 ->where(function ($query) use ($search) {
                     return $query
                         ->orWhere('serv.nombre', 'LIKE', '%'.$search.'%');
                 })
                 ->where('serv.estado', '=', 'A')
                 ->whereNull('serv.deleted_at')
-                ->orderBy('serv.id', 'desc')
+                ->orderBy('serv.idservicio', 'desc')
                 ->paginate(20);
 
             return response()->json([

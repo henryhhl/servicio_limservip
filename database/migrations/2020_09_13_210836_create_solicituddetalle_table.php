@@ -14,19 +14,21 @@ class CreateSolicituddetalleTable extends Migration
     public function up()
     {
         Schema::create('solicituddetalle', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('idsolicitud')->unsigned();
-            $table->integer('idservicio')->unsigned();
+            $table->increments('idsolicituddetalle');
+            $table->integer('fkidsolicitud')->unsigned();
+            $table->integer('fkidservicio')->unsigned();
             $table->integer('cantidad');
             $table->decimal('precio', 12, 2);
             $table->decimal('descuento', 12, 2);
             $table->text('nota')->nullable();
-            $table->enum('estadoproceso', ['P', 'E', 'F', 'C', 'N'])->default('P');
-            $table->enum('estado', ['A', 'N'])->default('A');
+            // $table->enum('estadoproceso', ['P', 'E', 'F', 'C', 'N'])->default('P');
+            // $table->enum('estado', ['A', 'N'])->default('A');
+            $table->string('estado', 1)->default('A');
+            $table->string('estadoproceso', 1)->default('P');
             $table->softDeletes();
             $table->timestamps();
-            $table->foreign('idsolicitud')->references('id')->on('solicitud')->ondelete('cascade');
-            $table->foreign('idservicio')->references('id')->on('servicio')->ondelete('cascade');
+            $table->foreign('fkidsolicitud')->references('idsolicitud')->on('solicitud')->ondelete('cascade');
+            $table->foreign('fkidservicio')->references('idservicio')->on('servicio')->ondelete('cascade');
             // P = pendiente
             // E = En Proceso
             // F = Finalizado

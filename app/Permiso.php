@@ -8,10 +8,10 @@ class Permiso extends Model
 {
     protected $table = 'permiso';
 
-    protected $primaryKey = 'id';
+    protected $primaryKey = 'idpermiso';
 
     protected $fillable = [
-        'idpermiso', 'nombre', 'estado',
+        
     ];
     
 }

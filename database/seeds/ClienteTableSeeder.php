@@ -22,13 +22,13 @@ class ClienteTableSeeder extends Seeder
         return [
             [
                 
-                'idusuario'   => 3,
+                'fkidusuario'   => 3,
                 'nit' => '588315',
                 'contacto' => '63498300',
                 'estado'      => 'A',
             ], //1
             [
-                'idusuario'   => 4,
+                'fkidusuario'   => 4,
                 'nit' => '624582',
                 'contacto' => '72189600',
                 'estado'      => 'A',

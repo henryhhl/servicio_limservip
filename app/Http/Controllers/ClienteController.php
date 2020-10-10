@@ -35,18 +35,18 @@ class ClienteController extends Controller
 
             if ($search == null) {
                 $data = DB::table('cliente as cli')
-                    ->leftJoin('users as user', 'cli.idusuario', '=', 'user.id')
-                    ->select('cli.id', 'user.nombre', 'user.apellido', 'user.usuario','cli.nit', 'cli.contacto', 
+                    ->leftJoin('users as user', 'cli.fkidusuario', '=', 'user.id')
+                    ->select('cli.idcliente as id', 'user.nombre', 'user.apellido', 'user.usuario','cli.nit', 'cli.contacto', 
                         'user.imagen', 'user.email'
                     )
                     ->where('cli.estado', '=', 'A')
                     ->whereNull('cli.deleted_at')
-                    ->orderBy('cli.id', 'desc')
+                    ->orderBy('cli.idcliente', 'desc')
                     ->paginate(10);
             }else {
                 $data = DB::table('cliente as cli')
-                    ->leftJoin('users as user', 'cli.idusuario', '=', 'user.id')
-                    ->select('cli.id', 'user.nombre', 'user.apellido', 'user.usuario','cli.nit', 'cli.contacto', 
+                    ->leftJoin('users as user', 'cli.fkidusuario', '=', 'user.id')
+                    ->select('cli.idcliente as id', 'user.nombre', 'user.apellido', 'user.usuario','cli.nit', 'cli.contacto', 
                         'user.imagen', 'user.email'
                     )
                     ->where(function ($query) use ($search) {
@@ -59,7 +59,7 @@ class ClienteController extends Controller
                     })
                     ->where('cli.estado', '=', 'A')
                     ->whereNull('cli.deleted_at')
-                    ->orderBy('cli.id', 'desc')
+                    ->orderBy('cli.idcliente', 'desc')
                     ->paginate(10);
             }
 
@@ -166,14 +166,14 @@ class ClienteController extends Controller
             $user->save();
 
             $data = new Cliente();
-            $data->idusuario = $user->id;
+            $data->fkidusuario = $user->id;
             $data->nit = $nit;
             $data->contacto = $contacto;
             $data->save();
 
             $grupousuario = new GrupoUsuarioDetalle();
-            $grupousuario->idrol = 3;
-            $grupousuario->idusuario = $user->id;
+            $grupousuario->fkidrol = 3;
+            $grupousuario->fkidusuario = $user->id;
             $grupousuario->estado = 'A';
             $grupousuario->save();
 
@@ -217,11 +217,11 @@ class ClienteController extends Controller
             }
             
             $data = DB::table('cliente as cli')
-                ->leftJoin('users as user', 'cli.idusuario', '=', 'user.id')
-                ->select('cli.id', 'user.nombre', 'user.apellido', 'user.usuario','cli.nit', 'cli.contacto', 
+                ->leftJoin('users as user', 'cli.fkidusuario', '=', 'user.id')
+                ->select('cli.idcliente as id', 'user.nombre', 'user.apellido', 'user.usuario','cli.nit', 'cli.contacto', 
                     'user.imagen', 'user.email', 'user.password'
                 )
-                ->where('cli.id', '=', $id)
+                ->where('cli.idcliente', '=', $id)
                 ->first();
 
 
@@ -263,11 +263,11 @@ class ClienteController extends Controller
             }
             
             $data = DB::table('cliente as cli')
-                ->leftJoin('users as user', 'cli.idusuario', '=', 'user.id')
-                ->select('cli.id', 'user.nombre', 'user.apellido', 'user.usuario','cli.nit', 'cli.contacto', 
+                ->leftJoin('users as user', 'cli.fkidusuario', '=', 'user.id')
+                ->select('cli.idcliente as id', 'user.nombre', 'user.apellido', 'user.usuario','cli.nit', 'cli.contacto', 
                     'user.imagen', 'user.email', 'user.password'
                 )
-                ->where('cli.id', '=', $id)
+                ->where('cli.idcliente', '=', $id)
                 ->first();
 
 
@@ -314,7 +314,7 @@ class ClienteController extends Controller
             $data->contacto = $contacto;
             $data->update();
 
-            $user = User::findOrFail($data->idusuario);
+            $user = User::findOrFail($data->fkidusuario);
             $user->nombre = $nombre;
             $user->apellido = $apellido;
             $user->email = $email;
@@ -363,13 +363,13 @@ class ClienteController extends Controller
             $data->update(); // en analisis TT__TT
 
             $data = DB::table('cliente as cli')
-                ->leftJoin('users as user', 'cli.idusuario', '=', 'user.id')
-                ->select('cli.id', 'user.nombre', 'user.apellido', 'user.usuario','cli.nit', 'cli.contacto', 
+                ->leftJoin('users as user', 'cli.fkidusuario', '=', 'user.id')
+                ->select('cli.idcliente as id', 'user.nombre', 'user.apellido', 'user.usuario','cli.nit', 'cli.contacto', 
                     'user.imagen', 'user.email'
                 )
                 ->where('cli.estado', '=', 'A')
                 ->whereNull('cli.deleted_at')
-                ->orderBy('cli.id', 'desc')
+                ->orderBy('cli.idcliente', 'desc')
                 ->paginate(10);
 
             DB::commit();

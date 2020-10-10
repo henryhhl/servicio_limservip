@@ -15,21 +15,23 @@ class CreateNotificacionTable extends Migration
     {
         Schema::create('notificacion', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('idsolicitud')->unsigned()->nullable();
-            $table->integer('idasignartrabajo')->unsigned()->nullable();
-            $table->integer('idusuarioenviado')->unsigned()->nullable();
-            $table->integer('idusuariorecibido')->unsigned()->nullable();
-            $table->text('mensaje');
-            $table->enum('tipo', ['P', 'A'])->default('P');
-            $table->enum('estado', ['A', 'N'])->default('A');
+            $table->integer('fkidsolicitud')->unsigned()->nullable();
+            $table->integer('fkidasignartrabajo')->unsigned()->nullable();
+            $table->integer('fkidusuarioenviado')->unsigned()->nullable();
+            $table->integer('fkidusuariorecibido')->unsigned()->nullable();
+            $table->string('mensaje', 120);
+            $table->string('tipo', 1)->default('P');
+            $table->string('estado', 1)->default('A');
+            // $table->enum('tipo', ['P', 'A'])->default('P');
+            // $table->enum('estado', ['A', 'N'])->default('A');
             $table->date('fecha');
             $table->time('hora');
             $table->softDeletes();
             $table->timestamps();
-            $table->foreign('idsolicitud')->references('id')->on('solicitud')->ondelete('cascade');
-            $table->foreign('idasignartrabajo')->references('id')->on('asignartrabajo')->ondelete('cascade');
-            $table->foreign('idusuarioenviado')->references('id')->on('users')->ondelete('cascade');
-            $table->foreign('idusuariorecibido')->references('id')->on('users')->ondelete('cascade');
+            $table->foreign('fkidsolicitud')->references('idsolicitud')->on('solicitud')->ondelete('cascade');
+            $table->foreign('fkidasignartrabajo')->references('idasignartrabajo')->on('asignartrabajo')->ondelete('cascade');
+            $table->foreign('fkidusuarioenviado')->references('id')->on('users')->ondelete('cascade');
+            $table->foreign('fkidusuariorecibido')->references('id')->on('users')->ondelete('cascade');
         });
     }
 

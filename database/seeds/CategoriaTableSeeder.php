@@ -22,15 +22,15 @@ class CategoriaTableSeeder extends Seeder
         return [
             [
                 
-                'descripcion'   => 'industrial',
+                'nombre'   => 'industrial',
                 'estado'      => 'A',
             ], //1
             [
-                'descripcion'   => 'domiciliaria',
+                'nombre'   => 'domiciliaria',
                 'estado'      => 'A',
             ], //2
             [
-                'descripcion'   => 'negocio',
+                'nombre'   => 'negocio',
                 'estado'      => 'A',
             ], //3
                         

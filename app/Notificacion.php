@@ -24,12 +24,13 @@ class Notificacion extends Model
     public function get_notificacion($idusuario) {
 
         $notificacion = DB::table('notificacion')
-            ->select('id', 'idsolicitud', 'idasignartrabajo', 'idusuarioenviado', 'idusuariorecibido', 
+            ->select('idnotificacion as id', 'fkidsolicitud as idsolicitud', 'fkidasignartrabajo as idasignartrabajo', 
+                'fkidusuarioenviado as idusuarioenviado', 'fkidusuariorecibido as idusuariorecibido', 
                 'mensaje', 'tipo', 'estado', 'fecha', 'hora'
             )
             ->where('estado', '=', 'A')   //tipo  P= pedido and A=Asignacion
-            ->where('idusuariorecibido', '=', $idusuario)
-            ->orderBy('id', 'desc')
+            ->where('fkidusuariorecibido', '=', $idusuario)
+            ->orderBy('idnotificacion', 'desc')
             ->get();
 
         return $notificacion;
@@ -41,22 +42,22 @@ class Notificacion extends Model
         $mytime = Carbon::now('America/La_paz');
         
         $usuario = DB::table('users as user')
-            ->leftJoin('detalle_rol as det', 'user.id', '=', 'det.idusuario')
+            ->leftJoin('detalle_rol as det', 'user.id', '=', 'det.fkidusuario')
             ->select('user.id', 'user.nombre', 'user.apellido', 'user.imagen', 'user.usuario')
             ->where(function ($query) {
                 return $query
-                    ->orWhere('det.idrol', '=', '1')
-                    ->orWhere('det.idrol', '=', '2');
+                    ->orWhere('det.fkidrol', '=', '1')
+                    ->orWhere('det.fkidrol', '=', '2');
             })
             ->get();
 
         foreach ($usuario as $user) {
 
             $notificacion = new Notificacion();
-            $notificacion->idsolicitud = $idsolicitud;
-            $notificacion->idusuarioenviado = $idusuario;
-            $notificacion->idusuariorecibido = $user->id;
-            $notificacion->idasignartrabajo = null;
+            $notificacion->fkidsolicitud = $idsolicitud;
+            $notificacion->fkidusuarioenviado = $idusuario;
+            $notificacion->fkidusuariorecibido = $user->id;
+            $notificacion->fkidasignartrabajo = null;
             $notificacion->mensaje = 'NUEVA SOLICITUD DE PEDIDO DEL CLIENTE '.$nombre.' '.$apellido;
             $notificacion->tipo = 'P';
             $notificacion->fecha = $mytime->toDateString();
@@ -147,12 +148,12 @@ class Notificacion extends Model
         $mytime = Carbon::now('America/La_paz');
         
         $usuario = DB::table('users as user')
-            ->leftJoin('detalle_rol as det', 'user.id', '=', 'det.idusuario')
+            ->leftJoin('detalle_rol as det', 'user.id', '=', 'det.fkidusuario')
             ->select('user.id', 'user.nombre', 'user.apellido', 'user.imagen', 'user.usuario')
             ->where(function ($query) {
                 return $query
-                    ->orWhere('det.idrol', '=', '1')
-                    ->orWhere('det.idrol', '=', '2');
+                    ->orWhere('det.fkidrol', '=', '1')
+                    ->orWhere('det.fkidrol', '=', '2');
             })
             ->get();
 
@@ -168,16 +169,16 @@ class Notificacion extends Model
         }
 
         $informacion = DB::table('informacion')
-            ->where('idsolicitud', '=', $idsolicitud)
+            ->where('fkidsolicitud', '=', $idsolicitud)
             ->first();
 
         foreach ($usuario as $user) {
 
             $notificacion = new Notificacion();
-            $notificacion->idsolicitud = $idsolicitud;
-            $notificacion->idusuarioenviado = $idusuario;
-            $notificacion->idusuariorecibido = $user->id;
-            $notificacion->idasignartrabajo = null;
+            $notificacion->fkidsolicitud = $idsolicitud;
+            $notificacion->fkidusuarioenviado = $idusuario;
+            $notificacion->fkidusuariorecibido = $user->id;
+            $notificacion->fkidasignartrabajo = null;
             $notificacion->mensaje = 'LA SOLICITUD DEL PEDIDO DEL CLIENTE '.$informacion->nombre.' '.$informacion->apellido. ' HA SIDO '.$estadoproceso;
             $notificacion->tipo = 'P';
             $notificacion->fecha = $mytime->toDateString();
@@ -264,17 +265,17 @@ class Notificacion extends Model
         $solicitud = Solicitud::findOrFail($idsolicitud);
 
         $notificacion = new Notificacion();
-        $notificacion->idsolicitud = $idsolicitud;
-        $notificacion->idusuarioenviado = $idusuario;
-        $notificacion->idusuariorecibido = $solicitud->idusuario;
-        $notificacion->idasignartrabajo = null;
+        $notificacion->fkidsolicitud = $idsolicitud;
+        $notificacion->fkidusuarioenviado = $idusuario;
+        $notificacion->fkidusuariorecibido = $solicitud->idusuario;
+        $notificacion->fkidasignartrabajo = null;
         $notificacion->mensaje = 'Su solicitud del pedido ' . ' ha sido '. $estadoproceso;
         $notificacion->tipo = 'P';
         $notificacion->fecha = $mytime->toDateString();
         $notificacion->hora = $mytime->toTimeString();
         $notificacion->save();
 
-        $user = User::findOrFail($solicitud->idusuario);
+        $user = User::findOrFail($solicitud->fkidusuario);
 
         /*  notificacion web */
         

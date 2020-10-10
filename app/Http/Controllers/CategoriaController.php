@@ -31,21 +31,21 @@ class CategoriaController extends Controller
 
             if ($search == null) {
                 $data = DB::table('categoria as cat')
-                    ->select('cat.id', 'cat.descripcion', 'cat.estado')
+                    ->select('cat.idcategorias as id', 'cat.nombre as descripcion', 'cat.estado')
                     ->where('cat.estado', '=', 'A')
                     ->whereNull('cat.deleted_at')
-                    ->orderBy('cat.id', 'desc')
+                    ->orderBy('cat.idcategoria', 'desc')
                     ->paginate(10);
             }else {
                 $data = DB::table('categoria as cat')
-                    ->select('cat.id', 'cat.descripcion', 'cat.estado')
+                    ->select('cat.idcategoria as id', 'cat.nombre ad descripcion', 'cat.estado')
                     ->where(function ($query) use ($search) {
                         return $query
                             ->orWhere('cat.descripcion', 'LIKE', '%'.$search.'%');
                     })
                     ->where('cat.estado', '=', 'A')
                     ->whereNull('cat.deleted_at')
-                    ->orderBy('cat.id', 'desc')
+                    ->orderBy('cat.idcategoria', 'desc')
                     ->paginate(10);
             }
 
@@ -123,7 +123,7 @@ class CategoriaController extends Controller
 
             $descripcion = $request->input('descripcion');
 
-            $value = Categoria::where('descripcion', '=', $descripcion)->where('estado', '=', 'A')->get();
+            $value = Categoria::where('nombre', '=', $descripcion)->where('estado', '=', 'A')->get();
 
             if (sizeof($value) > 0) {
                 DB::rollBack();
@@ -134,12 +134,12 @@ class CategoriaController extends Controller
 
 
             $data = new Categoria();
-            $data->descripcion = $descripcion;
+            $data->nombre = $descripcion;
             $data->save();
 
             $categoria = DB::table('categoria')
                 ->where('estado', '=', 'A')
-                ->orderBy('id', 'desc')
+                ->orderBy('idcategoria', 'desc')
                 ->get();
 
             DB::commit();
@@ -195,8 +195,8 @@ class CategoriaController extends Controller
             }
             
             $data = DB::table('categoria as cat')
-                ->select('cat.id', 'cat.descripcion', 'cat.estado')
-                ->where('cat.id', '=', $id)
+                ->select('cat.idcategoria as id', 'cat.nombre as descripcion', 'cat.estado')
+                ->where('cat.idcategoria', '=', $id)
                 ->first();
 
 
@@ -236,8 +236,8 @@ class CategoriaController extends Controller
 
             $data = Categoria::findOrFail($idcategoria);
 
-            if ($data->descripcion != $descripcion) {
-                $value = Categoria::where('descripcion', '=', $descripcion)->where('estado', '=', 'A')->get();
+            if ($data->nombre != $descripcion) {
+                $value = Categoria::where('nombre', '=', $descripcion)->where('estado', '=', 'A')->get();
 
                 if (sizeof($value) > 0) {
                     DB::rollBack();
@@ -247,7 +247,7 @@ class CategoriaController extends Controller
                 }
             }
 
-            $data->descripcion = $descripcion;
+            $data->nombre = $descripcion;
             $data->save();
 
             DB::commit();
@@ -287,10 +287,10 @@ class CategoriaController extends Controller
             $categoria->update();
 
             $data = DB::table('categoria as cat')
-                ->select('cat.id', 'cat.descripcion', 'cat.estado')
+                ->select('cat.idcategoria as id', 'cat.nombre as descripcion', 'cat.estado')
                 ->where('cat.estado', '=', 'A')
                 ->whereNull('cat.deleted_at')
-                ->orderBy('cat.id', 'desc')
+                ->orderBy('cat.idcategoria', 'desc')
                 ->paginate(10);
 
             return response()->json([

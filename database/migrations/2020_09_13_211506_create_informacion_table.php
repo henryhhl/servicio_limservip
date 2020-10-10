@@ -14,26 +14,26 @@ class CreateInformacionTable extends Migration
     public function up()
     {
         Schema::create('informacion', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('idsolicitud')->unsigned();
+            $table->increments('idinformacion');
+            $table->integer('fkidsolicitud')->unsigned();
             
             $table->text('latitud')->nullable();
             $table->text('longitud')->nullable();
 
-            $table->text('nombre')->nullable();
-            $table->text('apellido')->nullable();
-            $table->text('pais')->nullable();
-            $table->text('ciudad')->nullable();
-            $table->text('direccion')->nullable(); //nro casa y nombre de la calle
-            $table->text('direccioncompleto')->nullable();
-            $table->text('zona')->nullable();
-            $table->text('telefono')->nullable();
-            $table->text('email')->nullable();
+            $table->string('nombre', 45)->nullable();
+            $table->string('apellido', 60)->nullable();
+            $table->string('pais', 25)->nullable();
+            $table->string('ciudad', 55)->nullable();
+            $table->string('direccion', 120)->nullable(); //nro casa y nombre de la calle
+            $table->string('direccioncompleto', 120)->nullable();
+            $table->string('zona', 50)->nullable();
+            $table->integer('telefono')->nullable();
+            $table->string('email', 75)->nullable();
 
-            $table->enum('estado', ['A', 'N'])->default('A');
+            $table->string('estado', 1)->default('A');
             $table->softDeletes();
             $table->timestamps();
-            $table->foreign('idsolicitud')->references('id')->on('solicitud')->ondelete('cascade');
+            $table->foreign('fkidsolicitud')->references('idsolicitud')->on('solicitud')->ondelete('cascade');
         });
     }
 

@@ -12,11 +12,10 @@ class Informacion extends Model
 
     protected $table = 'informacion';
 
-    protected $primaryKey = 'id';
+    protected $primaryKey = 'idinformacion';
 
     protected $fillable = [
-        'idsolicitud', 'longitud', 'latitud', 'nombre', 'apellido', 'pais', 'ciudad',
-        'direccion', 'calle', 'numero', 'telefono', 'email', 'estado',
+        
     ];
     
 }

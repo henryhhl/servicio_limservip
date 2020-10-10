@@ -14,16 +14,16 @@ class CreatePersonalTable extends Migration
     public function up()
     {
         Schema::create('personal', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('idusuario')->unsigned()->nullable();
-            $table->string('ci')->nullable();
-            $table->string('ciudad')->nullable();
-            $table->string('direccion')->nullable();
+            $table->increments('idpersonal');
+            $table->integer('fkidusuario')->unsigned()->nullable();
+            $table->string('ci', 20)->unique()->nullable();
+            $table->string('ciudad', 40)->nullable();
+            $table->string('direccion', 70)->nullable();
             $table->text('contacto')->nullable();
-            $table->enum('estado', ['A', 'N'])->default('A');
+            $table->string('estado', 1)->default('A');
             $table->softDeletes();
             $table->timestamps();
-            $table->foreign('idusuario')->references('id')->on('users')->ondelete('cascade');
+            $table->foreign('fkidusuario')->references('id')->on('users')->ondelete('cascade');
         });
     }
 

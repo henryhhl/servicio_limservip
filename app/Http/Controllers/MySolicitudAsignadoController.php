@@ -30,31 +30,31 @@ class MySolicitudAsignadoController extends Controller
 
             if ($search == null) {
                 $data = DB::table('solicitud as sol')
-                    ->leftJoin('users as user', 'sol.idusuario', '=', 'user.id')
-                    ->leftJoin('informacion as info', 'sol.id', '=', 'info.idsolicitud')
-                    ->leftJoin('solicituddetalle as soldet', 'sol.id', '=', 'soldet.idsolicitud')
-                    ->leftJoin('asignartrabajo as asignar', 'soldet.id', '=', 'asignar.idsolicituddetalle')
-                    ->leftJoin('asignardetalle as asignardet', 'asignar.id', '=', 'asignardet.idasignartrabajo')
-                    ->leftJoin('personal as pers', 'asignardet.idpersonal', '=', 'pers.id')
-                    ->select( 'sol.id', 'sol.montototal', 'sol.estadoproceso', 'sol.fecha', 'sol.hora', 'sol.nota',
+                    ->leftJoin('users as user', 'sol.fkidusuario', '=', 'user.id')
+                    ->leftJoin('informacion as info', 'sol.idsolicitud', '=', 'info.fkidsolicitud')
+                    ->leftJoin('solicituddetalle as soldet', 'sol.idsolicitud', '=', 'soldet.fkidsolicitud')
+                    ->leftJoin('asignartrabajo as asignar', 'soldet.idsolicituddetalle', '=', 'asignar.fkidsolicituddetalle')
+                    ->leftJoin('asignardetalle as asignardet', 'asignar.idasignartrabajo', '=', 'asignardet.fkidasignartrabajo')
+                    ->leftJoin('personal as pers', 'asignardet.fkidpersonal', '=', 'pers.idpersonal')
+                    ->select( 'sol.idsolicitud as id', 'sol.montototal', 'sol.estadoproceso', 'sol.fecha', 'sol.hora', 'sol.nota',
                         'user.nombre as usuario', 'user.apellido as apellidouser',
                         'info.nombre', 'info.apellido', 'info.pais', 'info.ciudad', 'info.direccion', 'info.direccioncompleto',
                         'info.telefono', 'info.email'
                     )
                     ->where('sol.estado', '=', 'A')
-                    ->where('pers.idusuario', '=', Auth::user()->id)
+                    ->where('pers.fkidusuario', '=', Auth::user()->id)
                     ->whereNull('sol.deleted_at')
-                    ->orderBy('sol.id', 'desc')
+                    ->orderBy('sol.idsolicitud', 'desc')
                     ->paginate(10);
             }else {
                 $data = DB::table('solicitud as sol')
-                    ->leftJoin('users as user', 'sol.idusuario', '=', 'user.id')
-                    ->leftJoin('informacion as info', 'sol.id', '=', 'info.idsolicitud')
-                    ->leftJoin('solicituddetalle as soldet', 'sol.id', '=', 'soldet.idsolicitud')
-                    ->leftJoin('asignartrabajo as asignar', 'soldet.id', '=', 'asignar.idsolicituddetalle')
-                    ->leftJoin('asignardetalle as asignardet', 'asignar.id', '=', 'asignardet.idasignartrabajo')
-                    ->leftJoin('personal as pers', 'asignardet.idpersonal', '=', 'pers.id')
-                    ->select( 'sol.id', 'sol.montototal', 'sol.estadoproceso', 'sol.fecha', 'sol.hora', 'sol.nota',
+                    ->leftJoin('users as user', 'sol.fkidusuario', '=', 'user.id')
+                    ->leftJoin('informacion as info', 'sol.idsolicitud', '=', 'info.fkidsolicitud')
+                    ->leftJoin('solicituddetalle as soldet', 'sol.idsolicitud', '=', 'soldet.fkidsolicitud')
+                    ->leftJoin('asignartrabajo as asignar', 'soldet.idsolicituddetalle', '=', 'asignar.fkidsolicituddetalle')
+                    ->leftJoin('asignardetalle as asignardet', 'asignar.idasignartrabajo', '=', 'asignardet.fkidasignartrabajo')
+                    ->leftJoin('personal as pers', 'asignardet.fkidpersonal', '=', 'pers.idpersonal')
+                    ->select( 'sol.idsolicitud as id', 'sol.montototal', 'sol.estadoproceso', 'sol.fecha', 'sol.hora', 'sol.nota',
                         'user.nombre as usuario', 'user.apellido as apellidouser',
                         'info.nombre', 'info.apellido', 'info.pais', 'info.ciudad', 'info.direccion', 'info.direccioncompleto',
                         'info.telefono', 'info.email'
@@ -68,9 +68,9 @@ class MySolicitudAsignadoController extends Controller
                             ->orWhere('info.telefono', 'LIKE', '%'.$search.'%');
                     })
                     ->where('sol.estado', '=', 'A')
-                    ->where('pers.idusuario', '=', Auth::user()->id)
+                    ->where('pers.fkidusuario', '=', Auth::user()->id)
                     ->whereNull('sol.deleted_at')
-                    ->orderBy('sol.id', 'desc')
+                    ->orderBy('sol.idsolicitud', 'desc')
                     ->paginate(10);
             }
 
@@ -141,36 +141,36 @@ class MySolicitudAsignadoController extends Controller
             }
 
             $solicitud = DB::table('solicitud as sol')
-                ->leftJoin('users as user', 'sol.idusuario', '=', 'user.id')
-                ->select('sol.id', 'sol.montototal', 'sol.nota', 'sol.estadoproceso', 'sol.fecha', 'sol.hora', 
+                ->leftJoin('users as user', 'sol.fkidusuario', '=', 'user.id')
+                ->select('sol.idsolicitud as id', 'sol.montototal', 'sol.nota', 'sol.estadoproceso', 'sol.fecha', 'sol.hora', 
                     'user.nombre', 'user.apellido'
                 )
-                ->where('sol.id', '=', $id)
+                ->where('sol.idsolicitud', '=', $id)
                 ->first();
 
             $informacion = DB::table('informacion')
                 ->select('latitud', 'longitud', 'nombre', 'apellido', 'pais', 'ciudad', 'direccion', 'direccioncompleto', 
                     'zona', 'telefono', 'email'
                 )
-                ->where('idsolicitud', '=', $id)
+                ->where('fkidsolicitud', '=', $id)
                 ->first();
 
             $detalle = DB::table('solicituddetalle as det')
-                ->leftJoin('servicio as serv', 'det.idservicio', '=', 'serv.id')
-                ->leftJoin('categoria as cat', 'serv.idcategoria', '=', 'cat.id')
-                ->select('serv.id', 'serv.nombre as servicio', 'serv.descripcion', 'serv.imagen', 'cat.descripcion as categoria', 
-                    'det.cantidad', 'det.precio', 'det.nota', 'det.estadoproceso', 'det.id as iddetalle'
+                ->leftJoin('servicio as serv', 'det.fkidservicio', '=', 'serv.idservicio')
+                ->leftJoin('categoria as cat', 'serv.fkidcategoria', '=', 'cat.idcategoria')
+                ->select('serv.idservicio as id', 'serv.nombre as servicio', 'serv.descripcion', 'serv.imagen', 'cat.nombre as categoria', 
+                    'det.cantidad', 'det.precio', 'det.nota', 'det.estadoproceso', 'det.idsolicituddetalle as iddetalle'
                 )
-                ->where('det.idsolicitud', '=', $id)
+                ->where('det.fkidsolicitud', '=', $id)
                 ->get();
 
             foreach ($detalle as $det) {
                 $det->personalasignado = DB::table('asignartrabajo as asignar')
-                    ->leftJoin('asignardetalle as det', 'asignar.id', '=', 'det.idasignartrabajo')
-                    ->leftJoin('personal as pers', 'det.idpersonal', '=', 'pers.id')
-                    ->leftJoin('users as user', 'pers.idusuario', '=', 'user.id')
+                    ->leftJoin('asignardetalle as det', 'asignar.idasignartrabajo', '=', 'det.fkidasignartrabajo')
+                    ->leftJoin('personal as pers', 'det.fkidpersonal', '=', 'pers.idpersonal')
+                    ->leftJoin('users as user', 'pers.fkidusuario', '=', 'user.id')
                     ->select('user.nombre', 'user.apellido', 'user.imagen')
-                    ->where('asignar.idsolicituddetalle', '=', $det->iddetalle)
+                    ->where('asignar.fkidsolicituddetalle', '=', $det->iddetalle)
                     ->whereNull('asignar.deleted_at')
                     ->get();
             }

@@ -14,16 +14,16 @@ class CreateServicioTable extends Migration
     public function up()
     {
         Schema::create('servicio', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('idcategoria')->unsigned()->nullable();
-            $table->text('nombre');
+            $table->increments('idservicio');
+            $table->integer('fkidcategoria')->unsigned()->nullable();
+            $table->string('nombre', 70);
             $table->text('descripcion')->nullable();
             $table->longText('imagen')->nullable();
             $table->decimal('precio', 12, 2);
-            $table->enum('estado', ['A', 'N'])->default('A');
+            $table->string('estado', 1)->default('A');
             $table->softDeletes();
             $table->timestamps();
-            $table->foreign('idcategoria')->references('id')->on('categoria')->ondelete('cascade');
+            $table->foreign('fkidcategoria')->references('idcategoria')->on('categoria')->ondelete('cascade');
         });
     }
 

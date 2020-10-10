@@ -34,18 +34,18 @@ class RolController extends Controller
 
             if ($search == null) {
                 $data = DB::table('rol')
-                    ->select('id', 'nombre', 'descripcion', 'estado')
+                    ->select('idrol as id', 'nombre', 'descripcion', 'estado')
                     ->where('estado', '=', 'A')
-                    ->orderBy('id', 'asc')
+                    ->orderBy('idrol', 'asc')
                     ->paginate(10);
             }else {
                 $data = DB::table('rol')
-                    ->select('id', 'nombre', 'descripcion', 'estado')
+                    ->select('idrol as id', 'nombre', 'descripcion', 'estado')
                     ->where(function ($query) use ($search) {
                         return $query->orWhere('nombre', 'LIKE', '%'.$search.'%');
                     })
                     ->where('estado', '=', 'A')
-                    ->orderBy('id', 'desc')
+                    ->orderBy('idrol', 'desc')
                     ->paginate(10);
             }
 
@@ -94,7 +94,7 @@ class RolController extends Controller
             }
 
             $array_usuario = DB::table('users as user')
-                ->leftJoin('detalle_rol as det', 'user.id', '=', 'det.idusuario')
+                ->leftJoin('detalle_rol as det', 'user.id', '=', 'det.fkidusuario')
                 ->select('user.id', 'user.usuario', 'user.nombre', 'user.apellido', 'user.imagen', 'user.genero')
                 ->where(function ($query) use ($request) {
                     return $query->orWhere('det.estado', '=', 'N')
@@ -159,13 +159,13 @@ class RolController extends Controller
             
             $array_permiso = DB::table('permiso')
                 ->where('estado', '=', 'A')
-                ->orderBy('id', 'asc')
+                ->orderBy('idpermiso', 'asc')
                 ->get();
             
             foreach ($array_permiso as $permiso) {
                 $detalle = new PermisoDetalle();
-                $detalle->idrol = $data->id;
-                $detalle->idpermiso = $permiso->id;
+                $detalle->fkidrol = $data->idrol;
+                $detalle->fkidpermiso = $permiso->id;
                 $detalle->estado = 'N';
                 $detalle->save();
             }
@@ -175,19 +175,19 @@ class RolController extends Controller
             foreach ($array_usuario as $key => $idusuario) {
 
                 $detallerol = DB::table('detalle_rol')
-                    ->select('id', 'idusuario', 'idrol', 'estado')
-                    ->where('idusuario', '=', $idusuario)
+                    ->select('idroldetalle as id', 'idusuario', 'fkidrol as idrol', 'estado')
+                    ->where('fkidusuario', '=', $idusuario)
                     ->first();
 
                 if ($detallerol != null) {
                     $detalle = GrupoUsuarioDetalle::find($detallerol->id);
-                    $detalle->idrol = $data->id;
+                    $detalle->fkidrol = $data->idrol;
                     $detalle->estado = 'A';
                     $detalle->update();
                 } else {
                     $detalle = new GrupoUsuarioDetalle();
-                    $detalle->idrol = $data->id;
-                    $detalle->idusuario = $idusuario;
+                    $detalle->fkidrol = $data->idrol;
+                    $detalle->fkidusuario = $idusuario;
                     $detalle->estado = 'A';
                     $detalle->save();
                 }
@@ -195,16 +195,19 @@ class RolController extends Controller
             }
 
             $array_permiso = DB::table('detalle_permiso as det')
-                ->leftJoin('permiso as perm', 'det.idpermiso', '=', 'perm.id')
-                ->select('det.id', 'perm.nombre', 'det.estado')
-                ->where('det.idrol', '=', $data->id)
-                ->orderBy('perm.id', 'asc')
+                ->leftJoin('permiso as perm', 'det.fkidpermiso', '=', 'perm.idpermiso')
+                ->select('det.idpermisodetalle as id', 'perm.nombre', 'det.estado')
+                ->where('det.fkidrol', '=', $data->idrol)
+                ->orderBy('perm.idpermiso', 'asc')
                 ->get();
 
             $rol = DB::table('rol')
+                ->select('idrol as id', 'nombre', 'descripcion')
                 ->where('estado', '=', 'A')
-                ->orderBy('id', 'desc')
+                ->orderBy('idrol', 'desc')
                 ->get();
+
+            $data->id = $data->idrol;
 
             DB::commit();
 
@@ -240,16 +243,17 @@ class RolController extends Controller
         try {
             
             $data = DB::table('rol')
-                ->where('id', '=', $id)
+                ->select('idrol as id', 'nombre', 'descripcion')
+                ->where('fkidrol', '=', $id)
                 ->first();
 
             $consulta = DB::select(
-                'select *
+                'select p.idpermiso as id, p.nombre 
                     from permiso as p
-                    where p.id not in 
-                    (select d.idpermiso 
+                    where p.idpermiso not in 
+                    (select d.fkidpermiso 
                         from detalle_permiso as d
-                        where d.idrol = '.$id.' 
+                        where d.fkidrol = '.$id.' 
                     )'
             );
 
@@ -257,8 +261,8 @@ class RolController extends Controller
                 
                 foreach ($consulta as $c) {
                     $detalle = new PermisoDetalle();
-                    $detalle->idrol = $id;
-                    $detalle->idpermiso = $c->id;
+                    $detalle->fkidrol = $id;
+                    $detalle->fkidpermiso = $c->id;
                     $detalle->estado = 'N';
     
                     $detalle->save();
@@ -267,10 +271,10 @@ class RolController extends Controller
             }
 
             $permiso = DB::table('detalle_permiso as d')
-                ->join('permiso as p', 'd.idpermiso', '=', 'p.id')
-                ->select('d.id', 'p.nombre', 'd.estado')
-                ->where('d.idrol', '=', $id)
-                ->orderBy('p.id', 'asc')
+                ->join('permiso as p', 'd.fkidpermiso', '=', 'p.idpermiso')
+                ->select('d.idpermisodetalle as id', 'p.nombre', 'd.estado')
+                ->where('d.fkidrol', '=', $id)
+                ->orderBy('p.idpermiso', 'asc')
                 ->get();
 
             return response()->json([
@@ -312,12 +316,12 @@ class RolController extends Controller
             }
             
             $data = DB::table('rol')
-                ->select('id', 'nombre', 'descripcion', 'estado')
-                ->where('id', '=', $id)
+                ->select('idrol as id', 'nombre', 'descripcion', 'estado')
+                ->where('idrol', '=', $id)
                 ->first();
 
-                $array_usuario = DB::table('users as user')
-                ->leftJoin('detalle_rol as det', 'user.id', '=', 'det.idusuario')
+            $array_usuario = DB::table('users as user')
+                ->leftJoin('detalle_rol as det', 'user.id', '=', 'det.fkidusuario')
                 ->select('user.id', 'user.usuario', 'user.nombre', 'user.apellido', 'user.imagen', 'user.genero')
                 ->where(function ($query) use ($id) {
                     return $query->orWhere('det.estado', '=', 'N')
@@ -328,9 +332,9 @@ class RolController extends Controller
                 ->get();
 
             $usuario_activo = DB::table('detalle_rol as det')
-                ->leftJoin('users as user', 'det.idusuario', '=', 'user.id')
+                ->leftJoin('users as user', 'det.fkidusuario', '=', 'user.id')
                 ->select('user.id', 'user.usuario', 'user.nombre', 'user.apellido', 'user.imagen', 'user.genero')
-                ->where([ ['det.idrol', '=', $id], ['det.estado', '=', 'A'] ])
+                ->where([ ['det.fkidrol', '=', $id], ['det.estado', '=', 'A'] ])
                 ->get();
 
             return response()->json([
@@ -391,8 +395,8 @@ class RolController extends Controller
             $data->update();
 
             $array_rol = DB::table('detalle_rol')
-                ->select('id', 'idusuario', 'idrol', 'estado')
-                ->where('idrol', '=', $id)
+                ->select('idroldetalle as id', 'fkidusuario as idusuario', 'fkidrol as idrol', 'estado')
+                ->where('fkidrol', '=', $id)
                 ->get();
 
             foreach ($array_rol as $key => $rol) {
@@ -406,19 +410,19 @@ class RolController extends Controller
             foreach ($array_usuario as $key => $idusuario) {
 
                 $detallerol = DB::table('detalle_rol')
-                    ->select('id', 'idusuario', 'idrol', 'estado')
-                    ->where('idusuario', '=', $idusuario)
+                    ->select('idroldetalle as id', 'fkidusuario as idusuario', 'fkidrol as idrol', 'estado')
+                    ->where('fkidusuario', '=', $idusuario)
                     ->first();
 
                 if ($detallerol != null) {
                     $detalle = GrupoUsuarioDetalle::find($detallerol->id);
-                    $detalle->idrol = $data->id;
+                    $detalle->fkidrol = $data->idrol;
                     $detalle->estado = 'A';
                     $detalle->update();
                 } else {
                     $detalle = new GrupoUsuarioDetalle();
-                    $detalle->idrol = $data->id;
-                    $detalle->idusuario = $idusuario;
+                    $detalle->fkidrol = $data->idrol;
+                    $detalle->fkidusuario = $idusuario;
                     $detalle->estado = 'A';
                     $detalle->save();
                 }
@@ -426,10 +430,10 @@ class RolController extends Controller
             }
 
             $array_permiso = DB::select(
-                'SELECT * FROM permiso AS perm
-                    WHERE perm.id NOT IN 
-                    (SELECT det.idpermiso  FROM detalle_permiso AS det
-                        WHERE det.idrol = '.$id.')'
+                'SELECT perm.idpermiso as id, perm.nombre FROM permiso AS perm
+                    WHERE perm.idpermiso NOT IN 
+                    (SELECT det.fkidpermiso  FROM detalle_permiso AS det
+                        WHERE det.fkidrol = '.$id.')'
             );
 
             if (sizeof($array_permiso) > 0) {
@@ -437,8 +441,8 @@ class RolController extends Controller
                 foreach ($array_permiso as $permiso) {
 
                     $detalle = new PermisoDetalle();
-                    $detalle->idrol = $id;
-                    $detalle->idpermiso = $permiso->id;
+                    $detalle->fkidrol = $id;
+                    $detalle->fkidpermiso = $permiso->id;
                     $detalle->estado = 'N';
                     $detalle->save();
     
@@ -479,7 +483,7 @@ class RolController extends Controller
             $idrol = $request->input('idrol', null);
 
             $value = DB::table('detalle_rol')
-                ->where('idrol', '=', $idrol)
+                ->where('fkidrol', '=', $idrol)
                 ->where('estado', '=', 'A')
                 ->get();
 
@@ -495,9 +499,9 @@ class RolController extends Controller
             $data->update();
 
             $data = DB::table('rol')
-                ->select('id', 'nombre', 'descripcion', 'estado')
+                ->select('idrol as id', 'nombre', 'descripcion', 'estado')
                 ->where('estado', '=', 'A')
-                ->orderBy('id', 'asc')
+                ->orderBy('idrol', 'asc')
                 ->paginate(10);
 
             DB::commit();

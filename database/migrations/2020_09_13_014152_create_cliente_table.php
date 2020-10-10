@@ -14,14 +14,14 @@ class CreateClienteTable extends Migration
     public function up()
     {
         Schema::create('cliente', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('idusuario')->unsigned()->nullable();
-            $table->string('nit')->nullable();
+            $table->increments('idcliente');
+            $table->integer('fkidusuario')->unsigned()->nullable();
+            $table->string('nit', 20)->unique()->nullable();
             $table->text('contacto')->nullable();
-            $table->enum('estado', ['A', 'N'])->default('A');
+            $table->string('estado', 1)->default('A');
             $table->softDeletes();
             $table->timestamps();
-            $table->foreign('idusuario')->references('id')->on('users')->ondelete('cascade');
+            $table->foreign('fkidusuario')->references('id')->on('users')->ondelete('cascade');
         });
     }
 

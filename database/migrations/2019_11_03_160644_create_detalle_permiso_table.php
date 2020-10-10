@@ -14,14 +14,15 @@ class CreateDetallePermisoTable extends Migration
     public function up()
     {
         Schema::create('detalle_permiso', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('idpermiso')->unsigned();
-            $table->integer('idrol')->unsigned();
-            $table->enum('estado', ['A', 'N'])->default('A');
+            $table->increments('idpermisodetalle');
+            $table->integer('fkidpermiso')->unsigned();
+            $table->integer('fkidrol')->unsigned();
+            // $table->enum('estado', ['A', 'N'])->default('A');
+            $table->string('estado', 1)->default('A');
             $table->softDeletes();
             $table->timestamps();
-            $table->foreign('idpermiso')->references('id')->on('permiso')->ondelete('cascade');
-            $table->foreign('idrol')->references('id')->on('rol')->ondelete('cascade');
+            $table->foreign('fkidpermiso')->references('idpermiso')->on('permiso')->ondelete('cascade');
+            $table->foreign('fkidrol')->references('idrol')->on('rol')->ondelete('cascade');
         });
     }
 
