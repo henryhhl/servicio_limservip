@@ -1,0 +1,1 @@
+[{"fkidsolicitud":1,"fkidusuarioenviado":1,"fkidusuariorecibido":5,"fkidasignartrabajo":2,"mensaje":"SE HA ASIGNADO UNA NUEVA SOLICITUD","tipo":"A","fecha":"2020-10-10","hora":"20:33:56","updated_at":"2020-10-11 00:33:56","created_at":"2020-10-11 00:33:56","idnotificacion":5}]

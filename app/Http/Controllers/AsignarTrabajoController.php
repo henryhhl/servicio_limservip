@@ -155,7 +155,7 @@ class AsignarTrabajoController extends Controller
                     DB::raw(
                         "(SELECT COUNT(*)  
                         FROM asignardetalle as det 
-                        WHERE pers.idpersonal = det.idpersonal AND det.estadoproceso = 'A') as cantidad"
+                        WHERE pers.idpersonal = det.fkidpersonal AND det.estadoproceso = 'A') as cantidad"
                     )
                 )
                 ->where('rol.fkidrol', '=', '4')
@@ -202,7 +202,7 @@ class AsignarTrabajoController extends Controller
                 $solcituddetalle->estadoproceso = 'E';
                 $solcituddetalle->update();
 
-                $solictud = Solicitud::findOrFail($solcituddetalle->idsolicitud);
+                $solictud = Solicitud::findOrFail($solcituddetalle->fkidsolicitud);
                 $solictud->estadoproceso = 'E';
                 $solictud->update();
 
@@ -219,10 +219,10 @@ class AsignarTrabajoController extends Controller
                         $objpersonal = Personal::findOrFail($personal->id);
 
                         $notificacion = new Notificacion();
-                        $notificacion->fkidsolicitud = $solictud->id;
+                        $notificacion->fkidsolicitud = $solictud->idsolicitud;
                         $notificacion->fkidusuarioenviado = Auth::user()->id;
                         $notificacion->fkidusuariorecibido = $objpersonal->fkidusuario;
-                        $notificacion->fkidasignartrabajo = $data->id;
+                        $notificacion->fkidasignartrabajo = $data->idasignartrabajo;
                         $notificacion->mensaje = 'SE HA ASIGNADO UNA NUEVA SOLICITUD';
                         $notificacion->tipo = 'A';
                         $notificacion->fecha = $mytime->toDateString();
@@ -313,7 +313,7 @@ class AsignarTrabajoController extends Controller
                 $notificacion->fkidsolicitud = $solictud->idsolicitud;
                 $notificacion->fkidusuarioenviado = Auth::user()->id;
                 $notificacion->fkidusuariorecibido = $solictud->fkidusuario;
-                $notificacion->fkidasignartrabajo = $data->id;
+                $notificacion->fkidasignartrabajo = $data->idasignartrabajo;
                 $notificacion->mensaje = 'SE LE HA ASIGNADO PERSONAL A SU SOLICITUD.';
                 $notificacion->tipo = 'A';
                 $notificacion->fecha = $mytime->toDateString();

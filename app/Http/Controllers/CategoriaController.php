@@ -31,17 +31,17 @@ class CategoriaController extends Controller
 
             if ($search == null) {
                 $data = DB::table('categoria as cat')
-                    ->select('cat.idcategorias as id', 'cat.nombre as descripcion', 'cat.estado')
+                    ->select('cat.idcategoria as id', 'cat.nombre as descripcion', 'cat.estado')
                     ->where('cat.estado', '=', 'A')
                     ->whereNull('cat.deleted_at')
                     ->orderBy('cat.idcategoria', 'desc')
                     ->paginate(10);
             }else {
                 $data = DB::table('categoria as cat')
-                    ->select('cat.idcategoria as id', 'cat.nombre ad descripcion', 'cat.estado')
+                    ->select('cat.idcategoria as id', 'cat.nombre as descripcion', 'cat.estado')
                     ->where(function ($query) use ($search) {
                         return $query
-                            ->orWhere('cat.descripcion', 'LIKE', '%'.$search.'%');
+                            ->orWhere('cat.nombre', 'LIKE', '%'.$search.'%');
                     })
                     ->where('cat.estado', '=', 'A')
                     ->whereNull('cat.deleted_at')
@@ -137,7 +137,13 @@ class CategoriaController extends Controller
             $data->nombre = $descripcion;
             $data->save();
 
+            // $data = Categoria::select('idcategoria as id', 'nombre as descripcion')->where('idcategoria', '=', $data->idcategoria)->first();
+
+            $data->id = $data->idcategoria;
+            $data->descripcion = $data->nombre;
+
             $categoria = DB::table('categoria')
+                ->select('idcategoria as id', 'nombre as descripcion')
                 ->where('estado', '=', 'A')
                 ->orderBy('idcategoria', 'desc')
                 ->get();

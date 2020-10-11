@@ -172,13 +172,13 @@ class IndexUsuario extends Component {
                                                             <i className='fa fa-edit'></i>
                                                         </button> : null 
                                                     }
-                                                    { isPermission(this.props.permisos_habilitados, permissions.usuariodelete) ?
+                                                    {/* { isPermission(this.props.permisos_habilitados, permissions.usuariodelete) ?
                                                         <button className={"mb-2 mr-2 btn-hover-shine btn btn-xs btn-" + optiondelete}
                                                             onClick={this.onDelete.bind(this, data)}
                                                         >
                                                             <i className='fa fa-trash'></i>
                                                         </button> : null 
-                                                    }
+                                                    } */}
                                                 </td>
                                             </tr>
                                         )

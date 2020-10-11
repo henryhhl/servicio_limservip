@@ -14,7 +14,7 @@ class CreateNotificacionTable extends Migration
     public function up()
     {
         Schema::create('notificacion', function (Blueprint $table) {
-            $table->increments('id');
+            $table->increments('idnotificacion');
             $table->integer('fkidsolicitud')->unsigned()->nullable();
             $table->integer('fkidasignartrabajo')->unsigned()->nullable();
             $table->integer('fkidusuarioenviado')->unsigned()->nullable();

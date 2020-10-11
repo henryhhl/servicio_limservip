@@ -16,14 +16,14 @@ class CreateAjusteTable extends Migration
         Schema::create('ajuste', function (Blueprint $table) {
             $table->increments('idajuste');
             $table->integer('fkidusuario')->unsigned();
-            $table->string('colorheader', 25)->nullable();
-            $table->string('colorsidebar', 25)->nullable();
-            $table->string('colorfooter', 25)->nullable();
-            $table->string('colorplantilla',25)->nullable();
-            $table->string('colorgeneral', 25)->nullable();
-            $table->string('sizetext', 20)->nullable();
-            $table->string('fontfamilytext', 20)->nullable();
-            $table->string('fontweighttext', 20)->nullable();
+            $table->string('colorheader', 40)->nullable();
+            $table->string('colorsidebar', 40)->nullable();
+            $table->string('colorfooter', 40)->nullable();
+            $table->string('colorplantilla',40)->nullable();
+            $table->string('colorgeneral', 40)->nullable();
+            $table->string('sizetext', 35)->nullable();
+            $table->string('fontfamilytext', 35)->nullable();
+            $table->string('fontweighttext', 35)->nullable();
             $table->softDeletes();
             $table->timestamps();
             $table->foreign('fkidusuario')->references('id')->on('users')->ondelete('cascade');

@@ -374,7 +374,7 @@ class PersonalController extends Controller
                 $detalle->save();
 
             }else {
-                $detalle = GrupoUsuarioDetalle::find($rol_usuario->idroldetalle);
+                $detalle = GrupoUsuarioDetalle::find($rol_usuario->id);
                 $detalle->estado = 'A';
                 $detalle->fkidrol = $idrol;
                 $detalle->update();

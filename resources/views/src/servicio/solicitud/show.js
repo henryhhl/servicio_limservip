@@ -17,6 +17,19 @@ import PropTypes from 'prop-types';
 
 import { GoogleMap, InfoWindow, Marker, withGoogleMap, withScriptjs } from "react-google-maps";
 
+
+const WrappedMap = withScriptjs( withGoogleMap(
+    props => (
+        <GoogleMap 
+            defaultZoom={15}
+            defaultCenter={{ lat: props.latitud, lng: props.longitud, }}
+        >
+            {props.children}
+        </GoogleMap>
+    )
+) );
+
+
 class ShowSolicitud extends Component {
 
     constructor(props) {
@@ -446,31 +459,6 @@ class ShowSolicitud extends Component {
         var colordanger = this.props.buttoncolor == '' ? 'danger' : 'outline-' + this.props.buttoncolor;
         var colorback = this.props.buttoncolor == '' ? 'focus' : this.props.buttoncolor;
 
-        const WrappedMap = withScriptjs( withGoogleMap(
-            props => <GoogleMap 
-                defaultZoom={15}
-                defaultCenter={ {lat: this.state.mapPosition.lat, lng: this.state.mapPosition.lng,} }
-            >
-                <Marker
-                    position={{ lat: this.state.markerPosition.lat, lng: this.state.markerPosition.lng }}
-                />
-                <InfoWindow
-                    position={{ lat: (this.state.markerPosition.lat + 0.0018), lng: this.state.markerPosition.lng }}
-                >
-                    <div>
-                        <div style={{textAlign: 'center', paddingBottom: 8, paddingTop: 2,}}>
-                            <span style={{ padding: 0, margin: 0, fontWeight: 'bold' }}>
-                                {this.state.nombre} {this.state.apellido}
-                            </span>
-                        </div>
-                        <span style={{ padding: 0, margin: 0 }}>
-                            {this.state.direccioncompleto}
-                        </span>
-                    </div>
-                </InfoWindow>
-            </GoogleMap>
-        ) );
-
         var estado = this.state.estadoproceso;
         estado = (estado == 'P') ? 'PENDIENTE' : (estado == 'E') ? 'EN PROCESO' : (estado == 'C') ? 'CANCELADO' : (estado == 'N') ? 'FALLIDO' : 'FINALIZADO';
         
@@ -885,7 +873,26 @@ class ShowSolicitud extends Component {
                                                 loadingElement={ <div style={ {height:'100%', } }></div> }
                                                 containerElement={ <div style={ {height: '100%',} }></div> }
                                                 mapElement={ <div style={ {height: '100%',} }></div> }
-                                            />
+
+                                                latitud={ this.state.mapPosition.lat }
+                                                longitud={ this.state.mapPosition.lng }
+                                            >
+                                                <Marker
+                                                    draggable={true}
+                                                    //onDragEnd={this.onMarkerDragEnd.bind(this)}
+                                                    position={{ lat: this.state.markerPosition.lat, lng: this.state.markerPosition.lng }}
+                                                />
+                                                <InfoWindow
+                                                    //onClose={this.onInfoWindowClose.bind(this)}
+                                                    position={{ lat: (this.state.markerPosition.lat + 0.0018), lng: this.state.markerPosition.lng }}
+                                                >
+                                                    <div>
+                                                        <span style={{ padding: 0, margin: 0 }}>
+                                                            {this.state.direccioncompleto}
+                                                        </span>
+                                                    </div>
+                                                </InfoWindow>
+                                            </WrappedMap>
                                         </div>
                                     </div>
                                 </div>

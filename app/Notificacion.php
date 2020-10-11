@@ -15,7 +15,7 @@ class Notificacion extends Model
 
     protected $table = 'notificacion';
 
-    protected $primaryKey = 'id';
+    protected $primaryKey = 'idnotificacion';
 
     protected $fillable = [
         
