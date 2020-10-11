@@ -299,29 +299,25 @@ class EditarPersonal extends Component {
                 this.setState({ loading: false, });
                 if (response.data.response == 1) {
                     notification.success({
-                        message: 'SUCCESS',
-                        description: 'PERSONAL CREADO EXITOSAMENTE',
+                        description: 'PERSONAL ACTUALIZADO EXITOSAMENTE',
                     });
                     this.props.history.goBack();
                     return;
                 }
                 if (response.data.response == -1) {
                     notification.error({
-                        message: 'ERROR',
                         description: 'EL USUARIO YA EXISTE. FAVOR DE INGRESAR OTRO USUARIO',
                     });
                     this.setState({ error_usuario: 'error', });
                     return;
                 }
                 notification.error({
-                    message: 'ERROR',
                     description: 'HUBO UN ERROR AL SOLICITAR SERVICIO FAVOR DE INTENTAR.',
                 });
             }
         ).catch( error => {
             this.setState({ loading: false, });
             notification.error({
-                message: 'ERROR',
                 description: 'HUBO UN ERROR AL SOLICITAR SERVICIO FAVOR DE REVISAR CONEXION.',
             });
         } );
@@ -346,8 +342,7 @@ class EditarPersonal extends Component {
                 if (response.status == 200) {
                     if (response.data.response == 1) {
                         notification.success({
-                            message: 'SUCCESS',
-                            description: 'ROL REGISTRADO EXITOSAMENTE.',
+                            description: 'ROL CREADO EXITOSAMENTE.',
                         });
                         this.setState({
                             visible_rol: false, new_create: false,
@@ -359,7 +354,6 @@ class EditarPersonal extends Component {
                     }
                     if (response.data.response == -1) {
                         notification.warning({
-                            message: 'ADVERTENCIA',
                             description: 'NO SE PERMITE ROL REPETIDO.',
                         });
                         this.setState({ error_nombrerol: 'error', });
@@ -370,7 +364,6 @@ class EditarPersonal extends Component {
         ).catch( error => {
             this.setState({ loading_create: false, });
             notification.error({
-                message: 'ERROR',
                 description: 'HUBO UN ERROR AL SOLICITAR SERVICIO FAVOR DE REVISAR CONEXION.',
             });
             if (error.response.status == 401) {

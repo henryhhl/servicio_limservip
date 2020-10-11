@@ -710,7 +710,7 @@ class UsuarioController extends Controller
 
                 $rol_usuario = DB::table('detalle_rol')
                     ->select('idroldetalle as id', 'fkidrol as idrol', 'fkidusuario as idusuario', 'estado')
-                    ->where('idusuario', '=', $id)
+                    ->where('fkidusuario', '=', $id)
                     ->first();
 
                 if ($rol_usuario == null) {

@@ -1,0 +1,1 @@
+[{"fkidsolicitud":null,"fkidusuarioenviado":1,"fkidusuariorecibido":2,"fkidasignartrabajo":null,"mensaje":"NUEVA SOLICITUD DE PEDIDO DEL CLIENTE admin administra","tipo":"P","fecha":"2020-10-10","hora":"20:18:10","updated_at":"2020-10-11 00:18:10","created_at":"2020-10-11 00:18:10","idnotificacion":2}]

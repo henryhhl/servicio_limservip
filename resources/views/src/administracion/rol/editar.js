@@ -191,7 +191,7 @@ class EditarRol extends Component {
                             message: 'SUCCESS',
                             description: 'ROL ACTUALIZADO EXITOSAMENTE',
                         });
-                        this.props.history.push('/taller_mecanico/rol');
+                        this.props.history.goBack();
                     }
                     if (response.data.response == -1) {
                         this.setState({ errorname: 'error', });

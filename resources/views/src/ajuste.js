@@ -45,7 +45,7 @@ export default class Ajuste extends Component {
                 }
                 if (response.data.response == 1) {
                     this.props.loadingservice(false, '');
-                    console.log(response.data.data)
+                    console.log(response.data)
                     if (response.data.data != null) {
                         this.setState({
                             header: response.data.data.colorheader == null ? '' : response.data.data.colorheader,
@@ -360,6 +360,12 @@ export default class Ajuste extends Component {
             }
         ).then(
             response => {
+                console.log(response.data)
+                console.log(this.state.header)
+                console.log(this.state.sidebar)
+                console.log(this.state.button)
+                console.log(this.state.footer)
+                console.log(this.state.sizetext)
                 if (response.data.response == 1) {
                     notification.success({
                         message: 'SUCCESS',

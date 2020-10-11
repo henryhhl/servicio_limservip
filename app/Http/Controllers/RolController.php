@@ -158,6 +158,7 @@ class RolController extends Controller
             $data->save();
             
             $array_permiso = DB::table('permiso')
+                ->select('idpermiso as id', 'nombre')
                 ->where('estado', '=', 'A')
                 ->orderBy('idpermiso', 'asc')
                 ->get();
@@ -175,7 +176,7 @@ class RolController extends Controller
             foreach ($array_usuario as $key => $idusuario) {
 
                 $detallerol = DB::table('detalle_rol')
-                    ->select('idroldetalle as id', 'idusuario', 'fkidrol as idrol', 'estado')
+                    ->select('idroldetalle as id', 'fkidusuario as idusuario', 'fkidrol as idrol', 'estado')
                     ->where('fkidusuario', '=', $idusuario)
                     ->first();
 

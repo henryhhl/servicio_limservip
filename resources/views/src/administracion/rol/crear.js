@@ -177,6 +177,7 @@ class CreateRol extends Component {
             },
         } ).then(
             response => {
+                console.log(response.data)
                 this.setState({ loading: false, });
                 if (response.status == 200) {
                     if (response.data.response == 1) {
@@ -184,7 +185,7 @@ class CreateRol extends Component {
                             message: 'SUCCESS',
                             description: 'ROL CREADO EXITOSAMENTE',
                         });
-                        this.props.history.push('/taller_mecanico/rol');
+                        this.props.history.goBack();
                     }
                     if (response.data.response == -1) {
                         this.setState({ errorname: 'error', });
