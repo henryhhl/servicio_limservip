@@ -267,7 +267,7 @@ class Notificacion extends Model
         $notificacion = new Notificacion();
         $notificacion->fkidsolicitud = $idsolicitud;
         $notificacion->fkidusuarioenviado = $idusuario;
-        $notificacion->fkidusuariorecibido = $solicitud->idusuario;
+        $notificacion->fkidusuariorecibido = $solicitud->fkidusuario;
         $notificacion->fkidasignartrabajo = null;
         $notificacion->mensaje = 'Su solicitud del pedido ' . ' ha sido '. $estadoproceso;
         $notificacion->tipo = 'P';

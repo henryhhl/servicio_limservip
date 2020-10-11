@@ -37,31 +37,35 @@ class SeguimientoController extends Controller
             }
 
             $personalasignado = DB::table('personal as pers')
-                ->leftJoin('users as user', 'pers.idusuario', '=', 'user.id')
-                ->leftJoin('detalle_rol as rol', 'user.id', '=', 'rol.idusuario')
+                ->leftJoin('users as user', 'pers.fkidusuario', '=', 'user.id')
+                ->leftJoin('detalle_rol as rol', 'user.id', '=', 'rol.fkidusuario')
                 ->select(
-                    'user.nombre', 'user.apellido', 'user.email', 'user.imagen', 'pers.id', 'pers.ci', 'pers.contacto', 'pers.direccion', 'pers.ciudad'
+                    'user.nombre', 'user.apellido', 'user.email', 'user.imagen', 'pers.idpersonal as id', 'pers.ci', 
+                    'pers.contacto', 'pers.direccion', 'pers.ciudad'
                 )
                 ->where(DB::raw("(SELECT COUNT(*) as cantidad 
                         FROM asignardetalle as det 
-                        WHERE det.idpersonal = pers.id and det.estadoproceso = 'A')"), '>', '0'
+                        WHERE det.fkidpersonal = pers.idpersonal and det.estadoproceso = 'A')"), '>', '0'
                 )
-                ->where('rol.idrol', '=', '4')
+                ->where('rol.fkidrol', '=', '4')
                 ->whereNull('pers.deleted_at')
+                ->orderBy('user.nombre')
                 ->get();
 
             $personallibre = DB::table('personal as pers')
-                ->leftJoin('users as user', 'pers.idusuario', '=', 'user.id')
-                ->leftJoin('detalle_rol as rol', 'user.id', '=', 'rol.idusuario')
+                ->leftJoin('users as user', 'pers.fkidusuario', '=', 'user.id')
+                ->leftJoin('detalle_rol as rol', 'user.id', '=', 'rol.fkidusuario')
                 ->select(
-                    'user.nombre', 'user.apellido', 'user.email', 'user.imagen', 'pers.id', 'pers.ci', 'pers.contacto', 'pers.direccion', 'pers.ciudad'
+                    'user.nombre', 'user.apellido', 'user.email', 'user.imagen', 'pers.idpersonal as id', 
+                    'pers.ci', 'pers.contacto', 'pers.direccion', 'pers.ciudad'
                 )
                 ->where(DB::raw("(SELECT COUNT(*) as cantidad 
                         FROM asignardetalle as det 
-                        WHERE det.idpersonal = pers.id and det.estadoproceso = 'A')"), '=', '0'
+                        WHERE det.fkidpersonal = pers.idpersonal and det.estadoproceso = 'A')"), '=', '0'
                 )
-                ->where('rol.idrol', '=', '4')
+                ->where('rol.fkidrol', '=', '4')
                 ->whereNull('pers.deleted_at')
+                ->orderBy('user.nombre')
                 ->get();
 
             return response()->json([

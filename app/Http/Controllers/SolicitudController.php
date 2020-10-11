@@ -432,23 +432,21 @@ class SolicitudController extends Controller
             $data->estadoproceso = $estado;
             $data->update();
 
-            if ($estado != 'E') {
                 
-                $detalle = DB::table('solicituddetalle as det')
-                    ->leftJoin('asignartrabajo as asignar', 'det.idsolicituddetalle', '=', 'asignar.fkidsolicituddetalle')
-                    ->leftJoin('asignardetalle as asig', 'asignar.idasignartrabajo', '=', 'asig.fkidasignartrabajo')
-                    ->select('asig.fkidpersonal', 'asig.idasignardetalle as id')
-                    ->where('det.fkidsolicitud', '=', $id)
-                    ->get();
+            $detalle = DB::table('solicituddetalle as det')
+                ->leftJoin('asignartrabajo as asignar', 'det.idsolicituddetalle', '=', 'asignar.fkidsolicituddetalle')
+                ->leftJoin('asignardetalle as asig', 'asignar.idasignartrabajo', '=', 'asig.fkidasignartrabajo')
+                ->select('asig.fkidpersonal', 'asig.idasignardetalle as id')
+                ->where('det.fkidsolicitud', '=', $id)
+                ->get();
 
-                foreach ($detalle as $det) {
-                    $asignar = AsignarDetalle::findOrFail($det->id);
-                    $asignar->estadoproceso = 'F';
-                    $asignar->update();
-                }
-    
-                $idusuario = Auth::user()->id;
+            foreach ($detalle as $det) {
+                $asignar = AsignarDetalle::findOrFail($det->id);
+                $asignar->estadoproceso = 'F';
+                $asignar->update();
             }
+
+            $idusuario = Auth::user()->id;
 
             $notificacion = new Notificacion();
             $notificacion->updateestado($data->idsolicitud, $estado, $idusuario);
