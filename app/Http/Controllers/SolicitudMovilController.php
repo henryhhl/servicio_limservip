@@ -184,7 +184,7 @@ class SolicitudMovilController extends Controller
             ->join('asignartrabajo as at', 'soldet.idsolicituddetalle', '=', 'at.fkidsolicituddetalle')
             ->join('asignardetalle as ad', 'at.idasignartrabajo', '=', 'ad.fkidasignartrabajo')
             ->join('personal as per','per.idpersonal','=','ad.fkidpersonal')
-            ->join('users as user','user.id','=','per.idusuario')
+            ->join('users as user','user.id','=','per.fkidusuario')
             ->select('user.nombre','user.imagen','per.ci','per.contacto')
             ->where('soldet.idsolicituddetalle', '=', $iddet)
             ->get();
