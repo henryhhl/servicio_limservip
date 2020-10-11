@@ -17,7 +17,7 @@ class SolicitudMovilController extends Controller
     public function get_notificacionMovil(Request $request) {
 
         try {
-            
+
             $nickname= $request->nickname;
             $idusuario= $request->idusuario;
             $bandera = '';
@@ -143,7 +143,7 @@ class SolicitudMovilController extends Controller
 
                // $iddet = $request->iddet;
                 $personal = DB::table('solicituddetalle as soldet')
-                    ->join('asignartrabajo as at', 'soldet.idsoolicituddetalle', '=', 'at.fkidsolicituddetalle')
+                    ->join('asignartrabajo as at', 'soldet.idsolicituddetalle', '=', 'at.fkidsolicituddetalle')
                     ->join('asignardetalle as ad', 'at.idasignartrabajo', '=', 'ad.fkidasignartrabajo')
                     ->join('personal as per','per.idpersonal','=','ad.fkidpersonal')
                     ->join('users as user','user.id','=','per.fkidusuario')
