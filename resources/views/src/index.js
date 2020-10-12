@@ -67,6 +67,8 @@ import VisualizarSeguimiento from './administracion/seguimiento';
 
 import Reporte from './reporte';
 
+import IndexNotificacion from './notificacion';
+
 import web from './utils/services';
 
 import Ajuste from './ajuste';
@@ -901,10 +903,22 @@ export default class Index extends Component {
                                             <Home get_link={this.get_link.bind(this)} 
                                                 logout={this.onLogout.bind(this)}
                                                 permisos_habilitados={this.state.permisos_habilitados}
+                                                idrol={this.state.usuario.idrol}
                                                 { ...props} 
                                             />
                                         } 
                                     />
+
+
+                                    <Route exact path={ web.serv_link + '/notificacion' }
+                                        render={props => 
+                                            <IndexNotificacion get_link={this.get_link.bind(this)} { ...props} 
+                                                loadingservice={this.loadingservice.bind(this)}
+                                                logout={this.onLogout.bind(this)}
+                                                buttoncolor={this.state.layoutoption.buttoncolor}
+                                            />} 
+                                    />
+
 
                                     <Route exact path={ web.serv_link + '/ajuste' } 
                                         render={ props => 

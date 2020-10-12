@@ -596,7 +596,6 @@ class ShowMySolicitudAsignado extends Component {
                                                 >
                                                     <Option value={'E'}>EN PROCESO</Option>
                                                     <Option value={'F'}>FINALIZAR</Option>
-                                                    <Option value={'C'}>CANCELAR</Option>
                                                     <Option value={'N'}>FALLIDO</Option>
                                                 </Select>
                                             </div>

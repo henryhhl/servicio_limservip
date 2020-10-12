@@ -201,8 +201,8 @@ class MySolicitudPedidoController extends Controller
 
             foreach ($array_servicio as $data) {
                 $detalle = new SolicitudDetalle();
-                $detalle->idsolicitud = $servicio->idsolicitud;
-                $detalle->idservicio = $data->id;
+                $detalle->fkidsolicitud = $servicio->idsolicitud;
+                $detalle->fkidservicio = $data->id;
                 $detalle->cantidad = $data->cantidad;
                 $detalle->precio = $data->precio;
                 $detalle->nota = $data->nota;

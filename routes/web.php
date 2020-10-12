@@ -44,6 +44,20 @@ Route::get( $servidor . '/usuario/update_notificacion/{id}', 'UsuarioController@
 Route::get( $servidor . '/home/sesion', 'HomeController@sesion');
 
 
+
+Route::get( $servidor . '/estadistica/get_year', 'EstadisticaController@get_year');
+Route::get( $servidor . '/estadistica/get_mes', 'EstadisticaController@get_mes');
+
+
+
+Route::get( $local . '/notificacion', 'HomeController@index');
+
+
+
+Route::get( $servidor . '/notificacion/index', 'NotificacionController@index');
+
+
+
 Route::get( $local . '/usuario', 'HomeController@index');
 Route::get( $local . '/usuario/create', 'HomeController@index');
 Route::get( $local . '/usuario/edit/{id}', 'HomeController@index');

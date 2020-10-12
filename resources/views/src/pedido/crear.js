@@ -664,7 +664,7 @@ class CreateMySolicitud extends Component {
     }
 
     onMarkerDragEnd(event) {
-        console.log(34)
+        
         let newLat = event.latLng.lat(),
             newLng = event.latLng.lng();
 
@@ -1136,17 +1136,18 @@ class CreateMySolicitud extends Component {
                                                     draggable={true}
                                                     onDragEnd={this.onMarkerDragEnd.bind(this)}
                                                     position={{ lat: this.state.markerPosition.lat, lng: this.state.markerPosition.lng }}
-                                                />
-                                                <InfoWindow
-                                                    onClose={this.onInfoWindowClose.bind(this)}
-                                                    position={{ lat: (this.state.markerPosition.lat + 0.0018), lng: this.state.markerPosition.lng }}
                                                 >
-                                                    <div>
-                                                        <span style={{ padding: 0, margin: 0 }}>
-                                                            {this.state.direccioncompleto}
-                                                        </span>
-                                                    </div>
-                                                </InfoWindow>
+                                                    <InfoWindow
+                                                        onClose={this.onInfoWindowClose.bind(this)}
+                                                        position={{ lat: (this.state.markerPosition.lat + 0.0018), lng: this.state.markerPosition.lng }}
+                                                    >
+                                                        <div>
+                                                            <span style={{ padding: 0, margin: 0 }}>
+                                                                {this.state.direccioncompleto}
+                                                            </span>
+                                                        </div>
+                                                    </InfoWindow>
+                                                </Marker>
                                             </WrappedMap>
                                         </div>
                                     </div>

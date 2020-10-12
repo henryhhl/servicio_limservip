@@ -138,9 +138,13 @@ class ShowSolicitud extends Component {
                             this.state.selected_servicio.push(object);
                         }
                         this.state.markerPosition = {
-                            lat: parseFloat(response.data.informacion.latitud == null ? '0' : response.data.informacion.latitud),
-                            lng: parseFloat(response.data.informacion.longitud == null ? '0' : response.data.informacion.longitud),
-                        },
+                            lat: parseFloat(response.data.informacion.latitud == null ? 0 : response.data.informacion.latitud * 1),
+                            lng: parseFloat(response.data.informacion.longitud == null ? 0 : response.data.informacion.longitud * 1),
+                        };
+                        this.state.mapPosition = {
+                            lat: parseFloat(response.data.informacion.latitud == null ? 0 : response.data.informacion.latitud * 1),
+                            lng: parseFloat(response.data.informacion.longitud == null ? 0 : response.data.informacion.longitud * 1),
+                        };
                         this.setState({
                             loadingcomponent: true,
                             nombre: response.data.informacion.nombre == null ? '' : response.data.informacion.nombre,
@@ -153,6 +157,7 @@ class ShowSolicitud extends Component {
                             zona: response.data.informacion.zona == null ? '' : response.data.informacion.zona,
 
                             markerPosition: this.state.markerPosition,
+                            mapPosition: this.state.mapPosition,
                             selected_servicio: this.state.selected_servicio,
 
                             montototal: response.data.solicitud.montototal,
@@ -748,6 +753,7 @@ class ShowSolicitud extends Component {
                                     </div>
                                 </div>
                             </div>
+
                             <div className='forms-groups'>
                                 <div className='cols-lg-7 cols-md-7 cols-sm-12 cols-xs-12' style={{paddingTop: 0,}}>
                                     <div className="cols-lg-12 cols-md-12 cols-sm-12 cols-xs-12" style={{padding: 0, }}>
@@ -877,21 +883,41 @@ class ShowSolicitud extends Component {
                                                 latitud={ this.state.mapPosition.lat }
                                                 longitud={ this.state.mapPosition.lng }
                                             >
-                                                <Marker
-                                                    draggable={true}
-                                                    //onDragEnd={this.onMarkerDragEnd.bind(this)}
-                                                    position={{ lat: this.state.markerPosition.lat, lng: this.state.markerPosition.lng }}
-                                                />
-                                                <InfoWindow
-                                                    //onClose={this.onInfoWindowClose.bind(this)}
-                                                    position={{ lat: (this.state.markerPosition.lat + 0.0018), lng: this.state.markerPosition.lng }}
+
+                                                <Marker 
+                                                    name={'LIMSERVIP'}
+                                                    position={{ lat: -17.775404, lng: -63.165923, }}
+                                                    icon={'/img/marker_limservip.png'}
                                                 >
-                                                    <div>
-                                                        <span style={{ padding: 0, margin: 0 }}>
-                                                            {this.state.direccioncompleto}
-                                                        </span>
-                                                    </div>
-                                                </InfoWindow>
+                                                    <InfoWindow 
+                                                        position={{ lat: (-17.775404 + 0.0018), lng: -63.165923 }}
+                                                    >
+                                                        <div>
+                                                            <div>
+                                                                <span role="img" style={{marginRight: 6, fontWeight: 'bold', }}>
+                                                                    <label style={{fontSize: 12,}}>LIMSERVIP</label> 
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </InfoWindow>
+                                                </Marker>
+
+                                                <Marker
+                                                    // draggable={true}
+                                                    //onDragEnd={this.onMarkerDragEnd.bind(this)}
+                                                    position={{ lat: this.state.markerPosition.lat * 1, lng: this.state.markerPosition.lng * 1 }}
+                                                >
+                                                    <InfoWindow
+                                                        //onClose={this.onInfoWindowClose.bind(this)}
+                                                        position={{ lat: (this.state.markerPosition.lat * 1 + 0.0018), lng: this.state.markerPosition.lng * 1 }}
+                                                    >
+                                                        <div>
+                                                            <span style={{ padding: 0, margin: 0 }}>
+                                                                {this.state.direccioncompleto}
+                                                            </span>
+                                                        </div>
+                                                    </InfoWindow>
+                                                </Marker>
                                             </WrappedMap>
                                         </div>
                                     </div>
