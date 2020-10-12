@@ -205,7 +205,7 @@ class IndexNotificacion extends Component {
                                                             <p style={{textAlign: 'right', fontSize: 9, color: '#3f6ad8'}}>{this.formatFecha(data.fecha)}</p>
                                                         </td>
                                                         <td style={{textAlign: 'center',}}>
-
+                                                            
                                                         </td>
                                                     </tr>
                                                 )

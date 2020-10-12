@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateIniciarjornadaTable extends Migration
+class CreateSeguimientoTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,20 @@ class CreateIniciarjornadaTable extends Migration
      */
     public function up()
     {
-        Schema::create('iniciarjornada', function (Blueprint $table) {
-            $table->increments('idiniciarjornada');
+        Schema::create('seguimiento', function (Blueprint $table) {
+            $table->increments('idseguimiento');
             $table->integer('fkidusuario')->unsigned();
-            $table->string('descripcion');
+            $table->integer('fkidasignartrabajo')->unsigned()->nullable();
+            $table->string('descripcion', 70);
+            $table->text('latitud');
+            $table->text('longitud');
+            $table->string('direccion', 120);
             $table->date('fecha');
             $table->time('hora');
-            $table->timestamps();
             $table->softDeletes();
+            $table->timestamps();
             $table->foreign('fkidusuario')->references('id')->on('users')->ondelete('cascade');
+            $table->foreign('fkidasignartrabajo')->references('idasignardetalle')->on('asignardetalle')->ondelete('cascade');
         });
     }
 
@@ -32,6 +37,6 @@ class CreateIniciarjornadaTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('iniciarjornada');
+        Schema::dropIfExists('seguimiento');
     }
 }

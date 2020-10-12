@@ -9,6 +9,7 @@ import 'antd/dist/antd.css';
 import web from '../utils/services';
 import { isPermission } from '../utils/functions';
 import permissions from '../utils/permisions';
+import { EnvironmentOutlined } from '@ant-design/icons';
 
 class IndexMySolicitudAsignado extends Component {
 
@@ -115,6 +116,7 @@ class IndexMySolicitudAsignado extends Component {
     render() {
         var color = this.props.buttoncolor == '' ? 'outline-focus' : this.props.buttoncolor;
         var optionshow = this.props.buttoncolor == '' ? 'success' : 'outline-' + this.props.buttoncolor;
+        var optionsmarker = this.props.buttoncolor == '' ? 'primary' : 'outline-' + this.props.buttoncolor;
         var optiondelete = this.props.buttoncolor == '' ? 'danger' : 'outline-' + this.props.buttoncolor;
         return (
             <div className="rows">
@@ -196,6 +198,12 @@ class IndexMySolicitudAsignado extends Component {
                                                     >
                                                         <i className='fa fa-eye'></i>
                                                     </button> 
+                                                    <button className={"mb-2 mr-2 btn-hover-shine btn btn-xs btn-" + optionsmarker }
+                                                        onClick={this.onShow.bind(this, data)}
+                                                    >
+                                                        <EnvironmentOutlined />
+                                                    </button> 
+                                                    
                                                 </td>
                                             </tr>
                                         )
