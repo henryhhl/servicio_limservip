@@ -270,7 +270,7 @@ export default class Index extends Component {
                     }
                 }
             }
-        }, 3000);
+        }, 5000);
     }
     get_notificacion() {
         setInterval(() => {
