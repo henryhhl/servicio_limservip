@@ -33,9 +33,8 @@ Route::get('solicitud/cancelar', 'SolicitudMovilController@Cancelar');
 
 Route::get('personal/loguear', 'PersonalMovilController@loguear');
 Route::get('personal/solicitud', 'PersonalMovilController@solicitudAsignada');
-<<<<<<< HEAD
+
 Route::get('personal/finalizar', 'PersonalMovilController@Finalizar');
-=======
+
 
 Route::get('seguimiento/iniciar_seguimiento', 'SeguimientoController@iniciar_seguimiento');
->>>>>>> 1eac75d3b2c60a09a1a49be6f3f6ec47b62dc0fb
