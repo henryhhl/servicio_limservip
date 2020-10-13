@@ -272,7 +272,7 @@ class SolicitudMovilController extends Controller
                 ->select('sol.idsolicitud as id', 'sol.montototal', 'sol.estadoproceso', 'sol.fecha', 'sol.hora', 
                     'user.nombre', 'user.apellido', 'info.direccion', 'info.latitud' , 'info.longitud', 'info.pais', 'info.ciudad', 'info.zona'
                 )
-                ->where('sol.idsolicitud', '=', $solicitud)
+                ->where('sol.idsolicitud', '=', $sol)
                // ->where('sol.estado', '=', 'A')
                 ->orderBy('sol.idsolicitud', 'desc')
                 ->first();
