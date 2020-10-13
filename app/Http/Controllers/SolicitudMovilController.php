@@ -247,15 +247,13 @@ class SolicitudMovilController extends Controller
 
                 
             $detalle = DB::table('solicituddetalle as det')
-                ->leftJoin('asignartrabajo as asignar', 'det.idsolicituddetalle', '=', 'asignar.fkidsolicituddetalle')
-                ->leftJoin('asignardetalle as asig', 'asignar.idasignartrabajo', '=', 'asig.fkidasignartrabajo')
-                ->select('asig.fkidpersonal as idpersonal', 'asig.idasignardetalle as id')
+                ->select('det.idsolicituddetalle as id')
                 ->where('det.fkidsolicitud', '=', $sol)
                 ->get();
 
             foreach ($detalle as $det) {
-                $asignar = AsignarDetalle::findOrFail($det->id);
-                $asignar->estadoproceso = 'F';
+                $asignar = SolicitudDetalle::findOrFail($det->id);
+                $asignar->estadoproceso = 'C';
                 $asignar->update();
             }
 
