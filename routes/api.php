@@ -33,3 +33,4 @@ Route::get('solicitud/cancelar', 'SolicitudMovilController@Cancelar');
 
 Route::get('personal/loguear', 'PersonalMovilController@loguear');
 Route::get('personal/solicitud', 'PersonalMovilController@solicitudAsignada');
+Route::get('personal/finalizar', 'PersonalMovilController@Finalizar');
