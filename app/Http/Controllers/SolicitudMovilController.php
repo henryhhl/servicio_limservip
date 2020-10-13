@@ -279,21 +279,11 @@ class SolicitudMovilController extends Controller
 
             DB::commit();
 
-            return response()->json([
-                'response'  => 1,
-            ]);
+            return response()->json( 1);
 
         }catch(\Exception $th) {
             DB::rollBack();
-            return response()->json([
-                'response' => 0,
-                'message' => 'Error al procesar la solicitud',
-                'error' => [
-                    'file'    => $th->getFile(),
-                    'line'    => $th->getLine(),
-                    'message' => $th->getMessage()
-                ]
-            ]);
+            return response()->json(0);
         }
 
     }
