@@ -171,7 +171,7 @@ export default class Index extends Component {
             array_notificacion: [],
 
             cargando: this.get_notificacion(),
-            ubicacionactual: this.mi_ubicacion_actual(),
+            //ubicacionactual: this.mi_ubicacion_actual(),
 
             mapPosition: {
                 lat: 0,
