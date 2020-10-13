@@ -241,18 +241,6 @@ class SolicitudMovilController extends Controller
             $sol = $request->solicitud;
             $idusuario = $request->cliente;
 
-            /*$asignar = DB::table('asignartrabajo as at')
-            ->join('solicituddetalle as soldet','soldet.idsolicituddetalle','=','at.fkidsolicituddetalle')
-            ->select('soldet.fkidsolicitud')
-            ->where('soldet.fkidsolicitud','=',$solicitud)
-            ->get();
-
-            if(count($asignar) > 0){
-                return response()->json([
-                    'response'  => 0,
-                ]);
-            }*/
-
             $data = Solicitud::findOrFail($sol);
             $data->estadoproceso = 'C';
             $data->update();
@@ -261,7 +249,7 @@ class SolicitudMovilController extends Controller
             $detalle = DB::table('solicituddetalle as det')
                 ->leftJoin('asignartrabajo as asignar', 'det.idsolicituddetalle', '=', 'asignar.fkidsolicituddetalle')
                 ->leftJoin('asignardetalle as asig', 'asignar.idasignartrabajo', '=', 'asig.fkidasignartrabajo')
-                ->select('asig.fkidpersonal', 'asig.idasignardetalle as id')
+                ->select('asig.fkidpersonal as idpersonal', 'asig.idasignardetalle as id')
                 ->where('det.fkidsolicitud', '=', $sol)
                 ->get();
 
@@ -285,7 +273,7 @@ class SolicitudMovilController extends Controller
                     'user.nombre', 'user.apellido', 'info.direccion', 'info.latitud' , 'info.longitud', 'info.pais', 'info.ciudad', 'info.zona'
                 )
                 ->where('sol.idsolicitud', '=', $solicitud)
-                ->where('sol.estado', '=', 'A')
+               // ->where('sol.estado', '=', 'A')
                 ->orderBy('sol.idsolicitud', 'desc')
                 ->first();
                 
@@ -294,7 +282,13 @@ class SolicitudMovilController extends Controller
         }catch(\Exception $th) {
             DB::rollBack();
             return response()->json([
-                'response' => 0, 
+                'response' => 0,
+                'message' => 'Error al procesar la solicitud',
+                'error' => [
+                    'file'    => $th->getFile(),
+                    'line'    => $th->getLine(),
+                    'message' => $th->getMessage()
+                ]
             ]);
         }
 
