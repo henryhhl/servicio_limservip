@@ -238,9 +238,6 @@ class SolicitudMovilController extends Controller
         try {
 
             DB::beginTransaction();
-
-           // $estado = $request->input('proceso');
-            //$id = $request->input('id');
             $sol = $request->solicitud;
             $idusuario = $request->cliente;
 
@@ -265,7 +262,7 @@ class SolicitudMovilController extends Controller
                 ->leftJoin('asignartrabajo as asignar', 'det.idsolicituddetalle', '=', 'asignar.fkidsolicituddetalle')
                 ->leftJoin('asignardetalle as asig', 'asignar.idasignartrabajo', '=', 'asig.fkidasignartrabajo')
                 ->select('asig.fkidpersonal', 'asig.idasignardetalle as id')
-                ->where('det.fkidsolicitud', '=', $id)
+                ->where('det.fkidsolicitud', '=', $sol)
                 ->get();
 
             foreach ($detalle as $det) {
@@ -281,11 +278,24 @@ class SolicitudMovilController extends Controller
 
             DB::commit();
 
-            return response()->json( 1);
+            $solicitudes =  DB::table('solicitud as sol')
+                ->leftJoin('users as user', 'sol.fkidusuario', '=', 'user.id')
+                ->join('informacion as info', 'info.fkidsolicitud', '=', 'sol.idsolicitud')
+                ->select('sol.idsolicitud as id', 'sol.montototal', 'sol.estadoproceso', 'sol.fecha', 'sol.hora', 
+                    'user.nombre', 'user.apellido', 'info.direccion', 'info.latitud' , 'info.longitud', 'info.pais', 'info.ciudad', 'info.zona'
+                )
+                ->where('sol.idsolicitud', '=', $solicitud)
+                ->where('sol.estado', '=', 'A')
+                ->orderBy('sol.idsolicitud', 'desc')
+                ->first();
+                
+            return response()->json($solicitudes);
 
         }catch(\Exception $th) {
             DB::rollBack();
-            return response()->json(0);
+            return response()->json([
+                'response' => 0, 
+            ]);
         }
 
     }
