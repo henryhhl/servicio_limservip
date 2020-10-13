@@ -32,11 +32,7 @@ class AsignarPermisoTableSeeder extends Seeder
     }
      public function permisos_cliente(){
          return [
-             [
-                 'fkidpermiso'   => 1,
-                 'fkidrol'       => 3,
-                 'estado'      => 'A',
-             ], //1
+           
              [
                 'fkidpermiso'   => 10,
                 'fkidrol'       => 3,
@@ -47,12 +43,7 @@ class AsignarPermisoTableSeeder extends Seeder
                 'fkidrol'       => 3,
                 'estado'      => 'A',
             ], //1
-            [
-                'fkidpermiso'   => 12,
-                'fkidrol'       => 3,
-                'estado'      => 'A',
-            ], //1
-            
+                        
             [
                 'fkidpermiso'   => 24,
                 'fkidrol'       => 3,
