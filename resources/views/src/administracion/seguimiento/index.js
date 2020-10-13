@@ -69,23 +69,31 @@ class VisualizarSeguimiento extends Component {
     goSeguimiento() {
         setInterval(() => {
 
-            axios(  {
-                method: 'get',
-                url: web.servidor + '/seguimiento/index',
-                params: {array_personal: JSON.stringify(this.state.array_personalubicacion)},
-                responseType: 'json',
-            } ).then(
-                (response) => {
-                    console.log('--- inserto --')
-                    this.setState({
-                        array_personalubicacion: response.data.personal,
-                    });
+            var formdata = new FormData();
+            formdata.append('array_personal', JSON.stringify(this.state.array_personalubicacion));
+            axios(
+                {
+                    method: 'post',
+                    url: web.servidor + '/seguimiento/index',
+                    data: formdata,
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        'enctype' : 'multipart/form-data',
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                    }
                 }
-            ).catch(
-                error => {
-                    console.log(error)
+            ).then(
+                response => {
+                    if (response.data.response == 1) {
+                        this.setState({
+                            array_personalubicacion: response.data.personal,
+                        });
+                        return;
+                    } 
                 }
-            );
+            ).catch( error => {
+                console.log(error)
+            } );
 
         }, 5000);
     }

@@ -59,7 +59,7 @@ Route::get( $servidor . '/notificacion/index', 'NotificacionController@index');
 
 
 Route::get( $servidor . '/seguimiento/iniciar_seguimiento', 'SeguimientoController@iniciar_seguimiento');
-Route::get( $servidor . '/seguimiento/index', 'SeguimientoController@index');
+Route::post( $servidor . '/seguimiento/index', 'SeguimientoController@index');
 
 
 
