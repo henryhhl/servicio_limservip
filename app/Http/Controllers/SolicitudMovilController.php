@@ -8,6 +8,8 @@ use App\Informacion;
 use App\Notificacion;
 use App\Solicitud;
 use App\SolicitudDetalle;
+use App\AsignarDetalle;
+use App\AsignarTrabajo;
 use Carbon\Carbon;
 
 class SolicitudMovilController extends Controller
@@ -47,7 +49,7 @@ class SolicitudMovilController extends Controller
             $notificacion = [];
             if (sizeof($bandera) > 0) {
                 $obj = new Notificacion();
-                $notificacion = $obj->get_notificacion( $idusuario );
+                $notificacion = $obj->get_notificacion($idusuario);
             }
 
             return response()->json([
