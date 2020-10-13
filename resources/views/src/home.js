@@ -310,8 +310,6 @@ export default class Home extends Component {
     }
     render() {
 
-        console.log(this.props.solicitud)
-
         if (!this.state.loading) {
         
             return (

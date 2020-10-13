@@ -61,14 +61,42 @@ class VisualizarSeguimiento extends Component {
             array_solicitud: [],
             solicitud_pendienteproceso: [],
 
-            //seguimiento: this.goSeguimiento(),
+            array_personalubicacion: [],
+
+            seguimiento: this.goSeguimiento(),
         }
     }
-    // goSeguimiento() {
-    //     setInterval(() => {
-    //         console.log(34)
-    //     }, 5000);
-    // }
+    goSeguimiento() {
+        setInterval(() => {
+
+            var formdata = new FormData();
+            formdata.append('array_personal', JSON.stringify(this.state.array_personalubicacion));
+            axios(
+                {
+                    method: 'post',
+                    url: web.servidor + '/seguimiento/index',
+                    data: formdata,
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        'enctype' : 'multipart/form-data',
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                    }
+                }
+            ).then(
+                response => {
+                    if (response.data.response == 1) {
+                        this.setState({
+                            array_personalubicacion: response.data.personal,
+                        });
+                        return;
+                    } 
+                }
+            ).catch( error => {
+                console.log(error)
+            } );
+
+        }, 5000);
+    }
     // componentWillUnmount() {
     //     clearInterval( this.goSeguimiento );
     // }
@@ -91,6 +119,7 @@ class VisualizarSeguimiento extends Component {
                         array_personallibre: response.data.personallibre,
                         array_solicitud: response.data.solicitud,
                         solicitud_pendienteproceso: response.data.solicitud_pendproc,
+                        array_personalubicacion: response.data.personal,
                     });
                     return;
                 }
@@ -219,7 +248,11 @@ class VisualizarSeguimiento extends Component {
             });
         } );
     }
-    onChangeIDSolicitud(value) {}
+    onChangeIDSolicitud(value) {
+        this.setState({
+            idsolicitud: value,
+        })
+    }
     IniciarSegumiento() {}
     formatFecha(date) {
         var array = date.split('-');
@@ -288,6 +321,13 @@ class VisualizarSeguimiento extends Component {
                                                 (data, key) => (
                                                     <Option key={key} value={data.id}>
                                                         <div className="demo-option-label-item">
+                                                            
+
+                                                            <span role="img" style={{marginRight: 6, fontWeight: 'bold', }}>
+                                                                <label style={{fontSize: 12,}}>NRO:</label> 000{data.id}
+                                                            </span>
+                                                            <label style={{color: 'blue', fontWeight: 'bold', fontSize: 12,}}> CLIENTE: </label> {data.nombre + ' ' + data.apellido} 
+
                                                             <div style={{display: 'flex', justifyContent: 'space-between', borderTop: '1px solid #e8e8e8', paddingTop: 5,}}>
                                                                 <div style={{fontSize: 10,}}>
                                                                     
@@ -304,10 +344,7 @@ class VisualizarSeguimiento extends Component {
                                                                     </Tag>
                                                                 </div>
                                                             </div>
-                                                            <span role="img" style={{marginRight: 6, fontWeight: 'bold', }}>
-                                                                <label style={{fontSize: 12,}}>NRO:</label> 000{data.id}
-                                                            </span>
-                                                            <label style={{color: 'blue', fontWeight: 'bold', fontSize: 12,}}> CLIENTE: </label> {data.nombre + ' ' + data.apellido} 
+
                                                             <div style={{display: 'flex', justifyContent: 'space-between', borderTop: '1px solid #e8e8e8', paddingTop: 5,}}>
                                                                 <div style={{fontSize: 10,}}>
                                                                     {this.formatFecha(data.fecha)}
@@ -407,6 +444,37 @@ class VisualizarSeguimiento extends Component {
                                                     </Marker>
                                                 )
                                             )}
+
+                                            {this.state.array_personalubicacion.map(
+                                                (data, key) => {
+                                                    if (data.ubicacion.length == 0) {
+                                                        return null;
+                                                    }
+                                                    var latitud = data.ubicacion[data.ubicacion.length - 1].latitud;
+                                                    var longitud = data.ubicacion[data.ubicacion.length - 1].longitud;
+                                                    return (
+                                                        <Marker key={key}
+                                                            //google={this.props.google}
+                                                            name={data.nombre + '' + data.apellido}
+                                                            position={{ lat: parseFloat(latitud), lng: parseFloat(longitud), }}
+                                                            icon={'/img/usuario.png'} //orangemarker.png
+                                                        >
+                                                            <InfoWindow 
+                                                                //onClose={this.onInfoWindowClose} marker_limservip.png
+                                                                position={{ lat: (data.latitud * 1 + 0.0018), lng: data.longitud * 1 }}
+                                                            >
+                                                                <div>
+                                                                    <div style={{position: 'relative', top: 10, marginBottom: 10,  fontWeight: 'bold',}}>
+                                                                        
+                                                                            {data.nombre + ' ' + data.apellido}
+                                                                    </div>
+                                                                </div>
+                                                            </InfoWindow>
+                                                        </Marker>
+                                                    );
+                                                }
+                                            )}
+
                                         </WrappedMap>
                                         </div>
                                     </div>

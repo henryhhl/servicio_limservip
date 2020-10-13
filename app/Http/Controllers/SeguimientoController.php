@@ -13,9 +13,65 @@ class SeguimientoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        try {
+
+            $sesion = Auth::guest();
+
+            if ($sesion) {
+                return response()->json([
+                    'response' => -3,
+                    'sesion'   => $sesion,
+                ]);
+            }
+
+
+            $personal = json_decode($request->input('array_personal'));
+
+            foreach ($personal as $obj) {
+
+                $usuario = $obj->usuario;
+                $bandera = '';
+
+                if (file_exists( public_path() . '/seguimiento/' . $usuario . '.txt' )) {
+
+                    $archivo = fopen(public_path() . '/seguimiento/' . $usuario . '.txt', 'r');
+                    while ($linea = fgets($archivo)) {
+                        $bandera .= $linea;
+                    }
+                    $bandera = preg_replace("/[\r\n|\n|\r]+/", "", $bandera);
+                    fclose($archivo);
+
+                } else {
+                    $archivo = fopen( public_path() . '/seguimiento/' . $usuario . '.txt', 'w+');
+                    if ( fwrite( $archivo, '' ) ) {
+                        fclose( $archivo );
+                    }
+                }
+                $bandera = $bandera == '' ? [] : json_decode($bandera);
+
+                $obj->ubicacion = $bandera;
+
+            }
+
+
+            return response()->json([
+                'response'  => 1,
+                'personal'  => $personal,
+            ]);
+
+        }catch(\Exception $th) {
+            return response()->json([
+                'response' => 0,
+                'message' => 'Error al procesar la solicitud',
+                'error' => [
+                    'file'    => $th->getFile(),
+                    'line'    => $th->getLine(),
+                    'message' => $th->getMessage()
+                ]
+            ]);
+        }
     }
 
     /**
@@ -41,7 +97,7 @@ class SeguimientoController extends Controller
                 ->leftJoin('detalle_rol as rol', 'user.id', '=', 'rol.fkidusuario')
                 ->select(
                     'user.nombre', 'user.apellido', 'user.email', 'user.imagen', 'pers.idpersonal as id', 'pers.ci', 
-                    'pers.contacto', 'pers.direccion', 'pers.ciudad'
+                    'pers.contacto', 'pers.direccion', 'pers.ciudad', 'user.usuario'
                 )
                 ->where(DB::raw("(SELECT COUNT(*) as cantidad 
                         FROM asignardetalle as det 
@@ -57,7 +113,7 @@ class SeguimientoController extends Controller
                 ->leftJoin('detalle_rol as rol', 'user.id', '=', 'rol.fkidusuario')
                 ->select(
                     'user.nombre', 'user.apellido', 'user.email', 'user.imagen', 'pers.idpersonal as id', 
-                    'pers.ci', 'pers.contacto', 'pers.direccion', 'pers.ciudad'
+                    'pers.ci', 'pers.contacto', 'pers.direccion', 'pers.ciudad', 'user.usuario'
                 )
                 ->where(DB::raw("(SELECT COUNT(*) as cantidad 
                         FROM asignardetalle as det 
@@ -116,12 +172,53 @@ class SeguimientoController extends Controller
                 }
             }
 
+
+            $personal = DB::table('personal as pers')
+                ->leftJoin('users as user', 'pers.fkidusuario', '=', 'user.id')
+                ->leftJoin('detalle_rol as rol', 'user.id', '=', 'rol.fkidusuario')
+                ->select(
+                    'user.nombre', 'user.apellido', 'user.email', 'user.imagen', 'pers.idpersonal as id', 'pers.ci', 
+                    'pers.contacto', 'pers.direccion', 'pers.ciudad', 'user.usuario'
+                )
+                ->where('rol.fkidrol', '=', '4')
+                ->whereNull('pers.deleted_at')
+                ->orderBy('user.nombre')
+                ->get();
+
+            foreach ($personal as $obj) {
+
+                $usuario = $obj->usuario;
+                $bandera = '';
+
+                if (file_exists( public_path() . '/seguimiento/' . $usuario . '.txt' )) {
+
+                    $archivo = fopen(public_path() . '/seguimiento/' . $usuario . '.txt', 'r');
+                    while ($linea = fgets($archivo)) {
+                        $bandera .= $linea;
+                    }
+                    $bandera = preg_replace("/[\r\n|\n|\r]+/", "", $bandera);
+                    fclose($archivo);
+
+                } else {
+                    $archivo = fopen( public_path() . '/seguimiento/' . $usuario . '.txt', 'w+');
+                    if ( fwrite( $archivo, '' ) ) {
+                        fclose( $archivo );
+                    }
+                }
+                $bandera = $bandera == '' ? [] : json_decode($bandera);
+
+                $obj->ubicacion = $bandera;
+
+            }
+
+
             return response()->json([
                 'response'  => 1,
                 'personalasignado'  => $personalasignado,
                 'personallibre'  => $personallibre,
                 'solicitud'  => $solicitud,
                 'solicitud_pendproc'  => $solicitud_pendproc,
+                'personal'  => $personal,
             ]);
 
         }catch(\Exception $th) {
@@ -197,22 +294,13 @@ class SeguimientoController extends Controller
 
         try {
 
-            $idusuario = $request->input('idusuario');
-            $nickname = $request->input('nickname');
-            $nombre = $request->input('nombre');
-            $apellido = $request->input('apellido');
+            $fkidusuario = $request->input('fkidusuario');
             $latitud = $request->input('latitud');
             $longitud = $request->input('longitud');
-
-
-            /*  notificacion web */
-
+            $nickname = $request->input('nickname');
 
             $obj = new \stdClass;
-            $obj->idusuario = $idusuario;
-            $obj->nickname = $nickname;
-            $obj->nombre = $nombre;
-            $obj->apellido = $apellido;
+            $obj->fkidusuario = $fkidusuario;
             $obj->latitud = $latitud;
             $obj->longitud = $longitud;
         

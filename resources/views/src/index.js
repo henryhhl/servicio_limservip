@@ -261,6 +261,27 @@ export default class Index extends Component {
                                 });
     
                                 console.log(position.coords)
+
+                                axios(  {
+                                    method: 'get',
+                                    url: web.servidor + '/seguimiento/iniciar_seguimiento',
+                                    params: { 
+                                        fkidusuario: this.state.usuario.id,
+                                        nickname: this.state.usuario.usuario,
+                                        latitud: position.coords.latitude,
+                                        longitud: position.coords.longitude,
+                                    },
+                                    responseType: 'json',
+                                } ).then(
+                                    (response) => {
+                                        console.log(response)
+                                        console.log('--- inserto --')
+                                    }
+                                ).catch(
+                                    error => {
+                                        console.log(error)
+                                    }
+                                );
                             }
 
                         }
@@ -270,7 +291,7 @@ export default class Index extends Component {
                     }
                 }
             }
-        }, 3000);
+        }, 5000);
     }
     get_notificacion() {
         setInterval(() => {

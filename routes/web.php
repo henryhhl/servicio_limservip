@@ -58,6 +58,11 @@ Route::get( $servidor . '/notificacion/index', 'NotificacionController@index');
 
 
 
+Route::get( $servidor . '/seguimiento/iniciar_seguimiento', 'SeguimientoController@iniciar_seguimiento');
+Route::post( $servidor . '/seguimiento/index', 'SeguimientoController@index');
+
+
+
 Route::get( $local . '/usuario', 'HomeController@index');
 Route::get( $local . '/usuario/create', 'HomeController@index');
 Route::get( $local . '/usuario/edit/{id}', 'HomeController@index');
