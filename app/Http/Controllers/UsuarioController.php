@@ -47,7 +47,7 @@ class UsuarioController extends Controller
                 ->where('soli.estado', '=', 'A')
                 ->where([ ['soli.fecha', '>=', $fechainicio], ['soli.fecha', '<=', $fechafin] ])
                 ->whereNull('soli.deleted_at')
-                ->groupBy('dia')
+                ->groupBy('soli.fecha')
                 ->orderBy('soli.fecha')
                 ->get();
 
@@ -58,7 +58,7 @@ class UsuarioController extends Controller
                 ->where('soli.estado', '=', 'A')
                 ->where([ ['soli.fecha', '>=', $fechainiciomes], ['soli.fecha', '<=', $fechafinmes] ])
                 ->whereNull('soli.deleted_at')
-                ->groupBy('mes')
+                ->groupBy('soli.fecha')
                 ->orderBy('soli.fecha')
                 ->get();
 
