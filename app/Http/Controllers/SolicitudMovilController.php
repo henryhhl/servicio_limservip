@@ -8,6 +8,8 @@ use App\Informacion;
 use App\Notificacion;
 use App\Solicitud;
 use App\SolicitudDetalle;
+use App\AsignarDetalle;
+use App\AsignarTrabajo;
 use Carbon\Carbon;
 
 class SolicitudMovilController extends Controller
@@ -314,5 +316,63 @@ class SolicitudMovilController extends Controller
                 ]
             ]);
         }
+    }
+
+    public function Cancelar(Request $request){
+        try {
+
+            DB::beginTransaction();
+            $sol = $request->solicitud;
+            $idusuario = $request->cliente;
+
+            $data = Solicitud::findOrFail($sol);
+            $data->estadoproceso = 'C';
+            $data->update();
+
+                
+            $detalle = DB::table('solicituddetalle as det')
+                ->select('det.idsolicituddetalle as id')
+                ->where('det.fkidsolicitud', '=', $sol)
+                ->get();
+
+            foreach ($detalle as $det) {
+                $asignar = SolicitudDetalle::findOrFail($det->id);
+                $asignar->estadoproceso = 'C';
+                $asignar->update();
+            }
+
+            //$idusuario = Auth::user()->id;
+
+            $notificacion = new Notificacion();
+            $notificacion->updateestado($data->idsolicitud, 'C', $idusuario);
+
+            DB::commit();
+
+            $solicitudes =  DB::table('solicitud as sol')
+                ->leftJoin('users as user', 'sol.fkidusuario', '=', 'user.id')
+                ->join('informacion as info', 'info.fkidsolicitud', '=', 'sol.idsolicitud')
+                ->select('sol.idsolicitud as id', 'sol.montototal', 'sol.estadoproceso', 'sol.fecha', 'sol.hora', 
+                    'user.nombre', 'user.apellido', 'info.direccion', 'info.latitud' , 'info.longitud', 'info.pais', 'info.ciudad', 'info.zona'
+                )
+                ->where('sol.idsolicitud', '=', $sol)
+               // ->where('sol.estado', '=', 'A')
+                ->orderBy('sol.idsolicitud', 'desc')
+                ->first();
+                
+            return response()->json($solicitudes);
+
+        }catch(\Exception $th) {
+            DB::rollBack();
+            return response()->json([
+                'response' => 0,
+                'message' => 'Error al procesar la solicitud',
+                'error' => [
+                    'file'    => $th->getFile(),
+                    'line'    => $th->getLine(),
+                    'message' => $th->getMessage()
+                ]
+            ]);
+        }
+
     }
 }

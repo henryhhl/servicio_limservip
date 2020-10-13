@@ -17,7 +17,7 @@ class CreatePagoTable extends Migration
             $table->increments('idpago');
             $table->integer('fkidsolicitud')->unsigned();
             $table->decimal('montopagado', 12, 2);
-            $table->text('tipopago')->nullable();
+            $table->string('tipopago',30)->nullable();
             // $table->enum('estado', ['A', 'N'])->default('A');
             $table->string('estado', 1)->default('A');
             $table->date('fecha');

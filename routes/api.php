@@ -28,7 +28,8 @@ Route::post('solicitud/registrar', 'SolicitudMovilController@store');
 Route::get('solicitud/notificacion', 'SolicitudMovilController@get_notificacionMovil');
 Route::get('solicitud/versolicitud', 'SolicitudMovilController@verSolicitud');
 
-
 Route::get('solicitud/actualizarNoti', 'SolicitudMovilController@update_notificacion');
+Route::get('solicitud/cancelar', 'SolicitudMovilController@Cancelar');
 
 Route::get('personal/loguear', 'PersonalMovilController@loguear');
+Route::get('personal/solicitud', 'PersonalMovilController@solicitudAsignada');

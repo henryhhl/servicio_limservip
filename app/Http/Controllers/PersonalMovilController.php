@@ -55,7 +55,7 @@ class PersonalMovilController extends Controller
         $solicitudes = DB::table('solicitud as sol')
                     ->leftJoin('users as user', 'sol.fkidusuario', '=', 'user.id')
                     ->leftJoin('informacion as info', 'sol.idsolicitud', '=', 'info.fkidsolicitud')
-                    ->leftJoin('solicituddetalle as soldet', 'sol.idsolicitud', '=', 'soldet.idsolicitud')
+                    ->leftJoin('solicituddetalle as soldet', 'sol.idsolicitud', '=', 'soldet.fkidsolicitud')
                     ->leftJoin('asignartrabajo as asignar', 'soldet.idsolicituddetalle', '=', 'asignar.fkidsolicituddetalle')
                     ->leftJoin('asignardetalle as asignardet', 'asignar.idasignartrabajo', '=', 'asignardet.fkidasignartrabajo')
                     ->leftJoin('personal as pers', 'asignardet.fkidpersonal', '=', 'pers.idpersonal')
