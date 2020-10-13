@@ -21,7 +21,7 @@ class UsuarioController extends Controller
      * @return \Illuminate\Http\Response
      */
     //comentario  2
-    public function inicio() {
+    public function inicio(Request $request) {
         
         try {
 
@@ -34,48 +34,61 @@ class UsuarioController extends Controller
                 ]);
             }
 
-            $cliente = sizeof(DB::table('cliente')->where('estado', '=', 'A')->get());
+            $fechainicio = $request->input('fechainicio');
+            $fechafin = $request->input('fechafin');
 
-            $venta = DB::table('venta')
-                ->where('estado', '=', 'A')
-                ->get();
+            $fechainiciomes = $request->input('fechainiciomes');
+            $fechafinmes = $request->input('fechafinmes');
 
-            $montotal = 0;
-
-            foreach ($venta as $data) {
-                $montotal += $data->montototal;
-            }
-
-            $data = DB::table('venta as vent')
-                ->leftJoin('cliente as cli', 'vent.idcliente', '=', 'cli.id')
-                ->leftJoin('vehiculo as veh', 'vent.idvehiculo', '=', 'veh.id')
-                ->leftJoin('marca as marc', 'veh.idmarca', '=', 'marc.id')
-                ->leftJoin('users as user', 'vent.idusuario', '=', 'user.id')
-                ->leftJoin('detalleventa as det', 'vent.id', '=', 'det.idventa')
-                ->leftJoin('servicio as serv', 'det.idservicio', '=', 'serv.id')
-                ->leftJoin('mecanico as mec', 'det.idmecanico', '=', 'mec.id')
-                ->select('cli.nombre as cliente', 'cli.apellido as cliapellido', 'user.nombre as usuario', 'user.apellido as userapellido', 
-                    'veh.placa', 'marc.descripcion as marca', 'vent.descuento as decventa', 'vent.montototal', 'vent.fecha', 'vent.hora', 'vent.id',
-                    'det.precio', 'det.cantidad', 'det.descuento', 'det.montodescuento', 'serv.descripcion', 'serv.comision',
-                    'mec.nombre as mecanico', 'mec.apellido as mecapellido', 'serv.id as idproducto', 'serv.tipo', 'vent.montodescuento as mtodescuento'
+            $solicitud = DB::table('solicitud as soli')
+                ->select( 
+                    DB::raw("DAY(soli.fecha) as dia"), DB::raw("COUNT(*) as cantidad")
                 )
-                ->where( 'vent.estado', '=', 'A' )
-                ->orderBy('serv.id')
+                ->where('soli.estado', '=', 'A')
+                ->where([ ['soli.fecha', '>=', $fechainicio], ['soli.fecha', '<=', $fechafin] ])
+                ->whereNull('soli.deleted_at')
+                ->groupBy('dia')
+                ->orderBy('soli.fecha')
                 ->get();
 
-            $servicios = DB::table('servicio')
-                ->where('estado', '=', 'A')
-                ->orderBy('id')
+            $solicitud_mes = DB::table('solicitud as soli')
+                ->select( 
+                    DB::raw("MONTH(soli.fecha) as mes"), DB::raw("COUNT(*) as cantidad")
+                )
+                ->where('soli.estado', '=', 'A')
+                ->where([ ['soli.fecha', '>=', $fechainiciomes], ['soli.fecha', '<=', $fechafinmes] ])
+                ->whereNull('soli.deleted_at')
+                ->groupBy('mes')
+                ->orderBy('soli.fecha')
+                ->get();
+
+
+            $data = DB::table('solicitud as sol')
+                ->leftJoin('users as user', 'sol.fkidusuario', '=', 'user.id')
+                ->leftJoin('informacion as info', 'sol.idsolicitud', '=', 'info.fkidsolicitud')
+                ->leftJoin('solicituddetalle as soldet', 'sol.idsolicitud', '=', 'soldet.fkidsolicitud')
+                ->leftJoin('asignartrabajo as asignar', 'soldet.idsolicituddetalle', '=', 'asignar.fkidsolicituddetalle')
+                ->leftJoin('asignardetalle as asignardet', 'asignar.idasignartrabajo', '=', 'asignardet.fkidasignartrabajo')
+                ->leftJoin('personal as pers', 'asignardet.fkidpersonal', '=', 'pers.idpersonal')
+                ->select( 'sol.idsolicitud as id', 'sol.montototal', 'sol.estadoproceso', 'sol.fecha', 'sol.hora', 'sol.nota',
+                    'user.nombre as usuario', 'user.apellido as apellidouser',
+                    'info.nombre', 'info.apellido', 'info.pais', 'info.ciudad', 'info.direccion', 'info.direccioncompleto',
+                    'info.telefono', 'info.email'
+                )
+                ->where('sol.estado', '=', 'A')
+                ->where('sol.estadoproceso', '=', 'E')
+                ->where('pers.fkidusuario', '=', Auth::user()->id)
+                ->whereNull('sol.deleted_at')
+                ->orderBy('sol.idsolicitud', 'desc')
                 ->get();
             
             return response()->json([
                 'response' => 1,
-                'cliente' => $cliente,
-                'totalventa' => sizeof($venta),
-                'montototal' => $montotal,
+                'solicitud' => $solicitud,
+                'solicitud_mes' => $solicitud_mes,
                 'data' => $data,
-                'servicio' => $servicios,
             ]);
+
         } catch(\Exception $th) {
             return response()->json([
                 'response' => 0,

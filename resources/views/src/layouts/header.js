@@ -24,6 +24,17 @@ class Header extends Component {
         this.props.history.push( web.serv_link + '/ajuste');
     }
 
+    onShowAllMensajes(event) {
+        event.preventDefault();
+        this.setState({
+            visible_notificacion: false,
+        }, () => {
+            setTimeout(() => {
+                this.props.history.push( web.serv_link + '/notificacion' );
+            }, 500);
+        });
+    }
+
     onShowPedido(data) {
 
         axios.get( web.servidor + '/usuario/update_notificacion/' + data.id).then(
@@ -202,7 +213,9 @@ class Header extends Component {
                 <ul className="nav flex-column">
                     <li className="nav-item-divider nav-item"></li>
                     <li className="nav-item-btn text-center nav-item">
-                        <button className="btn-shadow btn-wide btn-pill btn btn-focus btn-sm">
+                        <button className="btn-shadow btn-wide btn-pill btn btn-focus btn-sm"
+                            onClick={this.onShowAllMensajes.bind(this)}
+                        >
                             Ver Todos los Mensajes
                         </button>
                     </li>

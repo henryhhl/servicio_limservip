@@ -76,6 +76,15 @@ class ShowMySolicitudAsignado extends Component {
                 lng: 0,
             },
 
+            markerPositionActual : {
+                lat: 0,
+                lng: 0,
+            },
+            mapPositionActual: {
+                lat: 0,
+                lng: 0,
+            },
+
             direccioncompleto: '',
 
             productodetalle: {
@@ -596,7 +605,6 @@ class ShowMySolicitudAsignado extends Component {
                                                 >
                                                     <Option value={'E'}>EN PROCESO</Option>
                                                     <Option value={'F'}>FINALIZAR</Option>
-                                                    <Option value={'C'}>CANCELAR</Option>
                                                     <Option value={'N'}>FALLIDO</Option>
                                                 </Select>
                                             </div>
@@ -836,6 +844,78 @@ class ShowMySolicitudAsignado extends Component {
                                     </table>
                                 </div>
                             </div>
+
+                            {this.state.estadoproceso == 'E' ?
+                                <div className='forms-groups'>
+                                    <div className='cols-lg-12 cols-md-12 cols-sm-12 cols-xs-12'>
+                                        <div className='inputs-groups'>
+                                            <input type='text' readOnly
+                                                className={`forms-control title_form ${this.props.buttoncolor}`} value={'SEGUIMIENTO'}
+                                            />
+                                        </div>
+                                    </div>
+                                </div> : null
+                            }
+
+                            {this.state.estadoproceso == 'E' ?
+                                <div className="forms-groups">
+                                    <div className='cols-lg-12 cols-md-12 cols-sm-12 cols-xs-12' style={{paddingTop: 4, }}>
+                                        <div className='inputs-groups'>
+                                            <div style={{width: '100%', height: 400, }}>
+                                            <WrappedMap 
+                                                // googleMapURL={'https://maps.googleapis.com/maps/api/js?key=AIzaSyAofod0Bp0frLcLHVLxuacn0QBXqVyJ7lc&callback=initMap'}
+                                                googleMapURL={'https://maps.googleapis.com/maps/api/js?key=AIzaSyAofod0Bp0frLcLHVLxuacn0QBXqVyJ7lc&v=3.exp&libraries=geometry,drawing,places'}
+                                                loadingElement={ <div style={ {height:'100%', } }></div> }
+                                                containerElement={ <div style={ {height: '100%',} }></div> }
+                                                mapElement={ <div style={ {height: '100%',} }></div> }
+
+                                                latitud={ this.state.mapPosition.lat }
+                                                longitud={ this.state.mapPosition.lng }
+                                            >
+
+                                                <Marker 
+                                                    name={'LIMSERVIP'}
+                                                    position={{ lat: -17.775404, lng: -63.165923, }}
+                                                    icon={'/img/marker_limservip.png'}
+                                                >
+                                                    <InfoWindow 
+                                                        position={{ lat: (-17.775404 * 1 + 0.0018), lng: -63.165923 * 1 }}
+                                                    >
+                                                        <div>
+                                                            <div>
+                                                                <span role="img" style={{marginRight: 6, fontWeight: 'bold', }}>
+                                                                    <label style={{fontSize: 12,}}>LIMSERVIP</label> 
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </InfoWindow>
+                                                </Marker>
+
+                                                <Marker
+                                                    draggable={true}
+                                                    //onDragEnd={this.onMarkerDragEnd.bind(this)}
+                                                    position={{ lat: this.state.markerPosition.lat * 1, lng: this.state.markerPosition.lng * 1 }}
+                                                >
+                                                    <InfoWindow
+                                                        //onClose={this.onInfoWindowClose.bind(this)}
+                                                        position={{ lat: (this.state.markerPosition.lat * 1 + 0.0018), lng: this.state.markerPosition.lng * 1 }}
+                                                    >
+                                                        <div>
+                                                            <span style={{ padding: 0, margin: 0 }}>
+                                                                {this.state.direccioncompleto}
+                                                            </span>
+                                                        </div>
+                                                    </InfoWindow>
+                                                </Marker>
+
+                                            </WrappedMap>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div> : 
+                                null
+                            }
+
                             <div className='forms-groups'>
                                 <div className='cols-lg-12 cols-md-12 cols-sm-12 cols-xs-12'>
                                     <div className='inputs-groups'>

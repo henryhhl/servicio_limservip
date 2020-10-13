@@ -3,16 +3,20 @@ import React, { Component } from 'react';
 import {Redirect} from 'react-router-dom';
 import axios from 'axios';
 
-import { notification, Card, Transfer, Switch, Button, Modal } from 'antd';
+import { notification, Card, Transfer, Switch, Button, Modal, DatePicker, Tag } from 'antd';
+import { EnvironmentOutlined } from '@ant-design/icons';
 import 'antd/dist/antd.css';
 import web from './utils/services';
 
-import { Bar, Pie } from 'react-chartjs-2';
+import { Bar, HorizontalBar, Pie } from 'react-chartjs-2';
 import { isPermission } from './utils/functions';
 import permissions from './utils/permisions';
 
 import PropTypes from 'prop-types';
 import { GoogleMap, InfoWindow, Marker, withGoogleMap, withScriptjs } from 'react-google-maps';
+
+import moment from 'moment';
+
 
 function Map() {
     return (
@@ -42,58 +46,114 @@ export default class Home extends Component {
         super(props);
         this.state = {
             auth: false,
-            totalcliente: 0,
-            totalventa: 0,
-            montototal: 0,
-            array_servicio: [],
-            cantidad_estadistica: [],
+            cargando: false,
+
             loading: false,
             array_color: [],
             texto: '',
+
+            yearpormes: 0,
+            yearpordia: 0,
+            name_mes: '',
+            fechainicioactual: '',
+            fechafinactual: '',
+            cantdiasmes: 0,
+
+            array_mes: ["ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO", "JULIO", 
+                "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE"
+            ],
+
+            array_solicitudpordia: [],
+            array_cantidaddiapormes: [],
+            fechapormes: '',
+
+            array_cantidadmesporyear: ["ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO", "JULIO", 
+                "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE"
+            ],
+            array_solicitudpormes: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+
+            array_solicitudpersonal: [],
         }
     }
+
     componentDidMount() {
         this.props.get_link('home');
-        //this.get_data();
+        this.get_data();
     }
     generarNumero(numero){
         return (Math.random()*numero).toFixed(0);
     }
     
     colorRGB(){
-        var coolor = "("+this.generarNumero(255)+"," + this.generarNumero(255) + "," + this.generarNumero(255) +")";
-        return "rgb" + coolor;
+        var color = "("+this.generarNumero(255)+"," + this.generarNumero(255) + "," + this.generarNumero(255) +")";
+        return "rgb" + color;
     }
     get_data() {
-        axios.get( web.servidor + '/usuario/inicio').then(
+        let date = new Date();
+        let month = date.getMonth() + 1;
+        let year  = date.getFullYear();
+
+        let diasmes = new Date(year, month, 0).getDate();
+        let namemes = this.state.array_mes[month - 1];
+        month = month < 10 ? '0' + month : month;
+        let fechainicio = '01' + '/' + month + '/' + year;
+        let fechafin = diasmes + '/' + month + '/' + year;
+
+        axios(  {
+            method: 'get',
+            url: web.servidor + '/usuario/inicio',
+            params: { 
+                fechainicio: year + '-' + month + '-' + '01',
+                fechafin: year + '-' + month + '-' + diasmes,
+
+                fechainiciomes: year + '-' + '01' + '-' + '01',
+                fechafinmes: year + '-' + '12' + '-' + '31',
+            },
+            responseType: 'json',
+        } ).then(
             (response) => {
                 if (response.data.response == -3) {
                     this.props.logout();
                     return;
                 }
+                console.log(response.data)
                 if (response.data.response == 1) {
-                    console.log(response.data)
-                    for (let index = 0; index < response.data.servicio.length; index++) {
-                        const element = response.data.servicio[index];
-                        this.state.array_servicio.push(element.descripcion);
-                        var cantidad = 0;
-                        for (let j = 0; j < response.data.data.length; j++) {
-                            const service = response.data.data[j];
-                            if (element.id == service.idproducto) {
-                                cantidad = cantidad + service.cantidad * 1;
-                            }
-                        }
-                        this.state.cantidad_estadistica.push(cantidad);
-                        this.state.array_color.push(this.colorRGB());
+                    
+                    for (let index = 0; index < diasmes; index++) {
+                        this.state.array_cantidaddiapormes.push(index + 1);
+                        this.state.array_solicitudpordia.push(0);
                     }
+                    for (let index = 0; index < response.data.solicitud.length; index++) {
+                        var element = response.data.solicitud[index];
+                        this.state.array_solicitudpordia[element.dia * 1 - 1] = element.cantidad;
+                    }
+                    for (let index = 0; index < response.data.solicitud_mes.length; index++) {
+                        var element = response.data.solicitud_mes[index];
+                        this.state.array_solicitudpormes[element.mes * 1 - 1] = element.cantidad;
+                    }
+
+                    this.props.getsolicitudasignado(response.data.data);
+
                     this.setState({
-                        totalcliente: response.data.cliente,
-                        totalventa: response.data.totalventa,
-                        montototal: response.data.montototal,
-                        array_servicio: this.state.array_servicio,
-                        cantidad_estadistica: this.state.cantidad_estadistica,
-                        loading: true,
-                    })
+                        yearpormes: year,
+                        yearpordia: year,
+                        fechapormes: month + '/' + year,
+                        name_mes: namemes,
+                        fechainicioactual: fechainicio,
+                        fechafinactual: fechafin,
+                        cantdiasmes: diasmes,
+                        
+                        array_cantidaddiapormes: this.state.array_cantidaddiapormes,
+                        array_solicitudpordia: this.state.array_solicitudpordia,
+
+                        array_solicitudpormes: this.state.array_solicitudpormes,
+                        array_solicitudpersonal: response.data.data,
+                    }, () => {
+                        setTimeout(() => {
+                            this.setState({ loading: true, });
+                        }, 500);
+                    });
+                    
                     return;
                 }
                 Modal.error({
@@ -131,58 +191,178 @@ export default class Home extends Component {
             }
         );
     }
+    get_year(year) {
+        this.setState({cargando: true, });
+        axios(  {
+            method: 'get',
+            url: web.servidor + '/estadistica/get_year',
+            params: { 
+
+                fechainicio: year + '-' + '01' + '-' + '01',
+                fechafin: year + '-' + '12' + '-' + '31',
+            },
+            responseType: 'json',
+        } ).then(
+            (response) => {
+                if (response.data.response == -3) {
+                    this.props.logout();
+                    return;
+                }
+                this.setState({cargando: false,});
+                
+                if (response.data.response == 1) {
+                    this.state.array_solicitudpormes =  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                    for (let index = 0; index < response.data.solicitud.length; index++) {
+                        var element = response.data.solicitud[index];
+                        this.state.array_solicitudpormes[element.mes * 1 - 1] = element.cantidad;
+                    }
+                    
+                    this.setState({
+                        yearpormes: year,
+                        array_solicitudpormes: this.state.array_solicitudpormes,
+                    }, () => {
+                        setTimeout(() => {
+                            this.setState({loading: true,});
+                        }, 500);
+                    })
+                    return;
+                }
+                notification.error({
+                    description: 'HUBO UN ERROR AL SOLICITAR SERVICIO FAVOR DE REVISAR CONEXION.',
+                    zIndex: 1200,
+                })
+            }
+        ).catch(
+            error => {
+                notification.error({
+                    description: 'HUBO UN ERROR AL SOLICITAR SERVICIO FAVOR DE REVISAR CONEXION.',
+                    zIndex: 1200,
+                });
+                this.setState({cargando: false, loading: true,});
+            }
+        );
+    }
+    get_mes(date) {
+        var array = date.split('/');
+        let diasmes = new Date(array[1], array[0], 0).getDate();
+        this.setState({cargando: true, });
+        axios(  {
+            method: 'get',
+            url: web.servidor + '/estadistica/get_mes',
+            params: { 
+                fechainicio: array[1] + '-' + array[0] + '-' + '01',
+                fechafin: array[1] + '-' + array[0] + '-' + diasmes,
+            },
+            responseType: 'json',
+        } ).then(
+            (response) => {
+                if (response.data.response == -3) {
+                    this.props.logout();
+                    return;
+                }
+                this.setState({cargando: false,});
+                
+                if (response.data.response == 1) {
+                    this.state.array_solicitudpordia = [];
+                    this.state.array_cantidaddiapormes = [];
+                    for (let index = 0; index < diasmes; index++) {
+                        this.state.array_cantidaddiapormes.push(index + 1);
+                        this.state.array_solicitudpordia.push(0);
+                    }
+                    for (let index = 0; index < response.data.solicitud.length; index++) {
+                        var element = response.data.solicitud[index];
+                        this.state.array_solicitudpordia[element.dia * 1 - 1] = element.cantidad;
+                    }
+                    
+                    this.setState({
+                        fechapormes: date,
+                        yearpordia: array[1],
+                        name_mes: this.state.array_mes[array[0] - 1],
+
+                        array_cantidaddiapormes: this.state.array_cantidaddiapormes,
+                        array_solicitudpordia: this.state.array_solicitudpordia,
+
+                    }, () => {
+                        setTimeout(() => {
+                            this.setState({loading: true,});
+                        }, 500);
+                    })
+                    return;
+                }
+                notification.error({
+                    description: 'HUBO UN ERROR AL SOLICITAR SERVICIO FAVOR DE REVISAR CONEXION.',
+                    zIndex: 1200,
+                })
+            }
+        ).catch(
+            error => {
+                notification.error({
+                    description: 'HUBO UN ERROR AL SOLICITAR SERVICIO FAVOR DE REVISAR CONEXION.',
+                    zIndex: 1200,
+                });
+                this.setState({cargando: false, loading: true,});
+            }
+        );
+    }
+    onShow(data, event) {
+        event.preventDefault();
+        this.props.history.push( web.serv_link + '/mysolicitud_asignado/show/' + data.id);
+    }
     render() {
 
-        //if (!this.state.loading) return null;
+        console.log(this.props.solicitud)
 
-        var today = new Date();
-        var dd = today.getDate();
-        var mm = today.getMonth() + 1; //January is 0!
-        var yyyy = today.getFullYear();
-
-        if (dd < 10) {
-            dd = '0' + dd;
+        if (!this.state.loading) {
+        
+            return (
+                <div className="rows">
+                    <Modal
+                        title="Cargando Informacion"
+                        centered closable={ false }
+                        visible={this.state.cargando}
+                        footer={ null } bodyStyle={{ padding: 2, }}
+                        >
+                        <div className='forms-groups'>
+                            <div className="loader-wrapper d-flex justify-content-center align-items-center" style={{width: '100%'}}>
+                                <div className="loader">
+                                    <div className="ball-clip-rotate-multiple">
+                                        <div></div>
+                                        <div></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <p style={{ textAlign: 'center', }}>LOADING...</p>
+                        </div>
+                    </Modal>
+                </div>
+            );
         }
 
-        if (mm < 10) {
-            mm = '0' + mm;
-        }
-        today = mm + '/' + dd + '/' + yyyy;
+        var optionshow = this.props.buttoncolor == '' ? 'success' : 'outline-' + this.props.buttoncolor;
+        var optionsmarker = this.props.buttoncolor == '' ? 'primary' : 'outline-' + this.props.buttoncolor;
 
-
-        var servicio = {
-            labels: this.state.array_servicio,
-            datasets: [{
-                label: 'MANTENIMIENTOS',
-                backgroundColor: 'rgba(0, 255, 0, 1)',
-                borderColor: 'black',
-                borderWidth: 1,
-                hoverBackGroundColor: 'rgba(0, 255, 0, .2)',
-                hoverBorderColor: '#FFFF00',
-                data: this.state.cantidad_estadistica,
-            }]
-        }
-
-        var opciones = {
-            maintainAspectRatio: false,
-            response: true,
-        };
-
-
-        var circular = {
-            labels: this.state.array_servicio,
-            datasets: [{
-                data: this.state.cantidad_estadistica,
-                backgroundColor: this.state.array_color,
-            }]
-        };
-
-        var opcioncircular = {
-            response: true,
-        }
+        console.log(this.props.solicitud)
 
         return (
             <div style={{'width': '100%'}}>
+                <Modal
+                    title="Cargando Informacion"
+                    centered closable={ false }
+                    visible={this.state.cargando}
+                    footer={ null } bodyStyle={{ padding: 2, }}
+                    >
+                    <div className='forms-groups'>
+                        <div className="loader-wrapper d-flex justify-content-center align-items-center" style={{width: '100%'}}>
+                            <div className="loader">
+                                <div className="ball-clip-rotate-multiple">
+                                    <div></div>
+                                    <div></div>
+                                </div>
+                            </div>
+                        </div>
+                        <p style={{ textAlign: 'center', }}>LOADING...</p>
+                    </div>
+                </Modal>
                 <div className="tabs-animation">
                     
                     <div className="card mb-3">
@@ -191,6 +371,15 @@ export default class Home extends Component {
                                 <i className="header-icon lnr-laptop-phone mr-3 text-muted opacity-6"> </i>
                                     BIENVENIDO AL SISTEMA LIMSERVIP
                             </div>
+                            {(this.props.idrol == 4) ?
+                                <div className="btn-actions-pane-right text-capitalize mb-2">
+                                    <button className={"btn-shadow btn btn-info" }
+                                        //onClick={this.onAdd.bind(this)}
+                                    >
+                                        INICIAR TRABAJO
+                                    </button> 
+                                </div> : null 
+                            }
                         </div>
                     </div>
                     <div className="tabs-animation">
@@ -198,51 +387,192 @@ export default class Home extends Component {
                         </div>
 
                         <div className="rows">
-                            <div className="cards">
-                                <div className="forms-groups" style={{width: '100%', height: 500,}}>
-                                    {/* <WrappedMap 
-                                        googleMapURL={'https://maps.googleapis.com/maps/api/js?key=AIzaSyAofod0Bp0frLcLHVLxuacn0QBXqVyJ7lc&v=3.exp&libraries=geometry,drawing,places'}
-                                        loadingElement={ <div style={ {height:'100%', } }></div> }
-                                        containerElement={ <div style={ {height: '100%',} }></div> }
-                                        mapElement={ <div style={ {height: '100%',} }></div> }
-                                    >
-                                        <Marker
-                                            // google={this.props.google}
-                                            // name={ this.state.nombre.toString().trim().length == 0 ? '-' : this.state.nombre }
-                                            //draggable={true}
-                                            //onDragEnd={this.onMarkerDragEnd.bind(this)}
-                                            position={{ lat: -17.775404, lng: -63.165923, }}
-                                        />
-                                        <InfoWindow
-                                            //onClose={this.onInfoWindowClose.bind(this)}
-                                            position={{ lat: (-17.775404 + 0.0029), lng: -63.165923 }}
+                            {(this.props.idrol == 1 || this.props.idrol == 2) ? 
+                                <div className="cards">
+                                    <div className="forms-groups">
+                                        <Card
+                                            style={{ width: '100%', }}
+                                            title="ESTADISTICA DE SOLICITUD DE SERVICIOS POR DIA"
+                                            bodyStyle={{padding: 0,}}
+                                            headStyle={{fontSize: 14, }}
                                         >
-                                            <div>
-                                                <span style={{ padding: 0, margin: 0 }}>
-                                                    {'aslmlkamsd'}
-                                                </span>
+                                            <div className='forms-groups'>
+                                                <div className="forms-groups">
+                                                    <div className="cols-lg-5 cols-md-5 cols-sm-5"></div>
+                                                    <div className="cols-lg-2 cols-md-2 cols-sm-2 cols-xs-12">
+                                                        <div className="inputs-groups">
+                                                            <DatePicker style={{width: '100%', minWidth: '100%',}}
+                                                                picker="month" 
+                                                                onChange={(date, dateString) => {
+                                                                    this.get_mes(dateString);
+                                                                }}
+                                                                placeholder='SELECCIONAR AÑO'
+                                                                value={(this.state.fechapormes == '') ? undefined : moment(this.state.fechapormes, 'MM/YYYY')}
+                                                                format="MM/YYYY"
+                                                                allowClear={false}
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div className={'cols-lg-12 cols-md-12 cols-sm-12 cols-xs-12'} style={{padding: 2, height: 300}}>
+                                                    <Bar 
+                                                        data={{
+                                                            labels: this.state.array_cantidaddiapormes,
+                                                            datasets: [{ 
+                                                                label: this.state.name_mes + ' - ' + this.state.yearpordia,
+                                                                backgroundColor: 'rgba(22, 170, 255, 0.8)',
+                                                                borderColor: 'black',
+                                                                borderWidth: 1,
+                                                                hoverBackGroundColor: 'rgba(0, 123, 255, 0.8)',
+                                                                hoverBorderColor: '#FFFF00',
+                                                                data: this.state.array_solicitudpordia,
+                                                            }]
+                                                        }} 
+                                                        options={{
+                                                            maintainAspectRatio: false,
+                                                            response: true,
+                                                        }}
+                                                    />
+                                                </div>
                                             </div>
-                                        </InfoWindow>
-                                    </WrappedMap> */}
-                                </div>
-                            </div>
+                                        </Card>
+                                    </div>
+                                    <div className="forms-groups">
+                                        <Card
+                                            style={{ width: '100%', }}
+                                            title="ESTADISTICA DE SOLICITUD DE SERVICIOS POR MES"
+                                            bodyStyle={{padding: 0,}}
+                                            headStyle={{fontSize: 14, }}
+                                        >
+                                            <div className='forms-groups'>
+                                                <div className="forms-groups">
+                                                    <div className="cols-lg-5 cols-md-5 cols-sm-5"></div>
+                                                    <div className="cols-lg-2 cols-md-2 cols-sm-2 cols-xs-12">
+                                                        <div className="inputs-groups">
+                                                            <DatePicker style={{width: '100%', minWidth: '100%',}}
+                                                                picker="year" 
+                                                                onChange={(date, dateString) => {
+                                                                    this.get_year(dateString);
+                                                                }}
+                                                                placeholder='SELECCIONAR AÑO'
+                                                                value={(this.state.yearpormes == '' || this.state.yearpormes == 0) ? undefined : moment(this.state.yearpormes, 'YYYY')}
+                                                                format="YYYY"
+                                                                allowClear={false}
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div className={'cols-lg-12 cols-md-12 cols-sm-12 cols-xs-12'} style={{padding: 2, height: 350,}}>
+                                                    <HorizontalBar 
+                                                        data={{
+                                                            labels: this.state.array_cantidadmesporyear,
+                                                            datasets: [{ 
+                                                                label: this.state.yearpormes,
+                                                                backgroundColor: 'rgba(75,192,192,0.4)',
+                                                                borderColor: 'rgba(75,192,192,1)',
+                                                                borderWidth: 1,
+                                                                hoverBackGroundColor: 'rgba(75,192,192,1)',
+                                                                hoverBorderColor: 'rgba(220,220,220,1)',
+                                                                data: this.state.array_solicitudpormes,
+                                                            }]
+                                                        }} 
+                                                        options={{
+                                                            maintainAspectRatio: false,
+                                                            response: true,
+                                                        }}
+                                                    />
+                                                </div>
+                                            </div>
+                                        </Card>
+                                    </div>
+                                </div> : 
+                                (this.props.idrol == 4) ?
+                                    <div className="cards">
+                                        <div className="card-header-tab card-header mt-4" style={{border: '1px solid transparent'}}>
+                                            <div className="card-header-title font-size-lg text-capitalize font-weight-normal mb-4">
+                                                <i className="header-icon lnr-charts icon-gradient bg-happy-green"> </i>
+                                                    MI SOLICITUD DE PEDIDO ASIGNADO
+                                            </div>
+                                        </div>
+                                        <div className="forms-groups">
+                                            <div className="tabless">
+                                                <table className="tables-respons">
+                                                    <thead>
+                                                        <tr>
+                                                            <td>NRO</td>
+                                                            <td>Cliente</td>
+                                                            <td>Direccion</td>
+                                                            <td>Email</td>
+                                                            <td>Telefono</td>
+                                                            <td>Monto</td>
+                                                            <td>Estado</td>
+                                                            <td>Opcion</td>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {this.props.solicitud.map(
+                                                            (data, key) => (
+                                                                <tr key={key}>
+                                                                    <td>
+                                                                        <label className='cols_show'>NRO: </label>
+                                                                        {key + 1}
+                                                                    </td>
+                                                                    <td>
+                                                                        <label className='cols_show'>Cliente: </label>
+                                                                            {data.apellido == null ? data.nombre : data.nombre + ' ' + data.apellido} &nbsp;
+                                                                    </td>
+                                                                    <td>
+                                                                        <label className='cols_show'>Direccion: </label>
+                                                                        {data.direccion == null ? '' : data.direccion}
+                                                                    </td>
+                                                                    <td>
+                                                                        <label className='cols_show'>Email: </label>
+                                                                        {data.email == null ? '' : data.email}
+                                                                    </td>
+                                                                    <td>
+                                                                        <label className='cols_show'>Telefono: </label>
+                                                                        {data.telefono == null ? '' : data.telefono}
+                                                                    </td>
+                                                                    <td>
+                                                                        <label className='cols_show'>Monto: </label>
+                                                                        {data.montototal}
+                                                                    </td>
+                                                                    <td>
+                                                                        <label className='cols_show'>Estado: </label>
+                                                                        <Tag color={(data.estadoproceso == 'P') ? 'warning' : (data.estadoproceso == 'E') ? 'processing' : 
+                                                                                (data.estadoproceso == 'C') ? 'red' : (data.estadoproceso == 'N') ? 'red' : 'success'
+                                                                            }
+                                                                        >
+                                                                            {(data.estadoproceso == 'P') ? 'PENDIENTE' : (data.estadoproceso == 'E') ? 'EN PROCESO' : 
+                                                                                (data.estadoproceso == 'C') ? 'CANCELADO' : (data.estadoproceso == 'N') ? 'FALLIDO' : 'FINALIZADO'
+                                                                            }
+                                                                        </Tag>
+                                                                    </td>
+                                                                    <td>
+                                                                        <button className={"mb-2 mr-2 btn-hover-shine btn btn-xs btn-" + optionshow }
+                                                                            onClick={this.onShow.bind(this, data)}
+                                                                        >
+                                                                            <i className='fa fa-eye'></i>
+                                                                        </button> 
+                                                                        <button className={"mb-2 mr-2 btn-hover-shine btn btn-xs btn-" + optionsmarker }
+                                                                            onClick={this.onShow.bind(this, data)}
+                                                                        >
+                                                                            <EnvironmentOutlined />
+                                                                        </button> 
+                                                                        
+                                                                    </td>
+                                                                </tr>
+                                                            )
+                                                        )}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div> 
+                                    : 
+                                    <div className="cards"></div>
+                            }
                         </div>
-
-                        <div className='forms-groups'>
-                            <div className='cols-lg-4 cols-md-4 cols-sm-4'></div>
-                            <div className='cols-lg-4 cols-md-4 cols-sm-4 cols-xs-12' style={{paddingTop: 0, }}>
-                                <div className='inputs-groups'>
-                                    <input type='text' placeholder='INGRESAR DESCRIPCION...'
-                                        style={{ textAlign: 'left', paddingLeft: 10, paddingRight: 24, }}
-                                        className={`forms-control`}
-                                        value={this.state.texto}
-                                        onChange={ (event) => this.setState({texto: event.target.value,}) }
-                                    />
-                                </div>
-                            </div>
-                        </div>
-
-
 
                     </div>
                 </div>
@@ -254,11 +584,17 @@ export default class Home extends Component {
 
 Home.propTypes = {
     permisos_habilitados: PropTypes.array,
+    idrol: PropTypes.any,
+    solicitud: PropTypes.array,
+    buttoncolor: PropTypes.string,
 }
 
 
 Home.defaultProps = {
     permisos_habilitados: [],
+    idrol: null,
+    solicitud: [],
+    buttoncolor: '',
 }
 
 

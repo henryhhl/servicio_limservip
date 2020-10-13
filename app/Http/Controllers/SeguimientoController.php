@@ -68,10 +68,60 @@ class SeguimientoController extends Controller
                 ->orderBy('user.nombre')
                 ->get();
 
+            
+            $solicitud = DB::table('solicitud as soli')
+                ->leftJoin('informacion as info', 'soli.idsolicitud', '=', 'info.fkidsolicitud')
+                ->select('soli.idsolicitud as id', 'soli.estadoproceso as estado', 'info.nombre', 'info.apellido', 'info.latitud', 
+                    'info.longitud', 'soli.fecha', 'soli.hora', 'soli.montototal'
+                )
+                ->where('soli.estado', '=', 'A')
+                ->whereNull('soli.deleted_at')
+                ->get();
+
+            $solicitud_pendproc = DB::table('solicitud as soli')
+                ->leftJoin('informacion as info', 'soli.idsolicitud', '=', 'info.fkidsolicitud')
+                ->select('soli.idsolicitud as id', 'soli.estadoproceso as estado', 'info.nombre', 'info.apellido', 'info.latitud', 
+                    'info.longitud', 'soli.fecha', 'soli.hora', 'soli.montototal'
+                )
+                ->where('soli.estado', '=', 'A')
+                ->where(function ($query) {
+                    return $query
+                        ->orWhere('soli.estadoproceso', '=', 'E')
+                        ->orWhere('soli.estadoproceso', '=', 'P');
+                })
+                ->whereNull('soli.deleted_at')
+                ->get();
+
+            foreach ($solicitud_pendproc as $det) {
+
+                $det->servicios = DB::table('servicio as serv')
+                    ->leftJoin('solicituddetalle as det', 'serv.idservicio', '=', 'det.fkidservicio')
+                    ->select('serv.idservicio', 'serv.nombre', 'serv.descripcion', 'serv.imagen', 
+                        'det.cantidad', 'det.precio', 'det.nota', 'det.idsolicituddetalle as iddetalle'
+                    )
+                    ->where('det.fkidsolicitud', '=', $det->id)
+                    ->where('det.estado', '=', 'A')
+                    ->whereNull('det.deleted_at')
+                    ->get();
+                
+                foreach ($det->servicios as $array) {
+                    $array->personales = DB::table('asignartrabajo as asignar')
+                        ->leftJoin('asignardetalle as det', 'asignar.idasignartrabajo', '=', 'det.fkidasignartrabajo')
+                        ->leftJoin('personal as pers', 'det.fkidpersonal', '=', 'pers.idpersonal')
+                        ->leftJoin('users as user', 'pers.fkidusuario', '=', 'user.id')
+                        ->select('pers.idpersonal', 'user.nombre', 'user.apellido')
+                        ->where('asignar.fkidsolicituddetalle', '=', $array->iddetalle)
+                        ->whereNull('asignar.deleted_at')
+                        ->get();
+                }
+            }
+
             return response()->json([
                 'response'  => 1,
                 'personalasignado'  => $personalasignado,
                 'personallibre'  => $personallibre,
+                'solicitud'  => $solicitud,
+                'solicitud_pendproc'  => $solicitud_pendproc,
             ]);
 
         }catch(\Exception $th) {

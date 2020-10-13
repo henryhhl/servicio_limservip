@@ -11,12 +11,17 @@ import web from '../../utils/services';
 import { isPermission } from '../../utils/functions';
 import permissions from '../../utils/permisions';
 
+import Lightbox from 'react-image-lightbox';
+import 'react-image-lightbox/style.css';
+
 class IndexServicio extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
             auth: false,
+            isOpen: false,
+            img_selected: '',
             search: '',
             timeoutSearch: undefined,
             active_search: 'active',
@@ -125,6 +130,13 @@ class IndexServicio extends Component {
         var optiondelete = this.props.buttoncolor == '' ? 'danger' : 'outline-' + this.props.buttoncolor;
         return (
             <div className="rows">
+            { (this.state.isOpen && this.state.img_selected != '') ? 
+                    <Lightbox
+                        mainSrc={this.state.img_selected}
+                        onCloseRequest={() => this.setState({ isOpen: false, img_selected: '', })}
+                    />
+                    : null 
+                }
                 <div className="cards">
                     <div className="card-header-tab card-header mt-4" style={{border: '1px solid transparent'}}>
                         <div className="card-header-title font-size-lg text-capitalize font-weight-normal mb-4">
@@ -186,7 +198,11 @@ class IndexServicio extends Component {
                                                         </td>
                                                         <td>
                                                             <label className='cols_show'>Imagen: </label>
-                                                                { '' }
+                                                            {(data.imagen == null || data.imagen == '') ? '-' : 
+                                                                <img width="42" height="42" class="rounded-circle" src={data.imagen} 
+                                                                    alt="" onClick={() => this.setState({ isOpen: true, img_selected: data.imagen })}
+                                                                />
+                                                            }
                                                         </td>
                                                         <td>
                                                         { isPermission(this.props.permisos_habilitados, permissions.servicioshow) ?

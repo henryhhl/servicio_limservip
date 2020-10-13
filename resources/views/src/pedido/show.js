@@ -17,6 +17,18 @@ import PropTypes from 'prop-types';
 
 import { GoogleMap, InfoWindow, Marker, withGoogleMap, withScriptjs } from "react-google-maps";
 
+
+const WrappedMap = withScriptjs( withGoogleMap(
+    props => (
+        <GoogleMap 
+            defaultZoom={15}
+            defaultCenter={{ lat: props.latitud, lng: props.longitud, }}
+        >
+            {props.children}
+        </GoogleMap>
+    )
+) );
+
 class ShowMySolicitud extends Component {
 
     constructor(props) {
@@ -125,9 +137,13 @@ class ShowMySolicitud extends Component {
                             this.state.selected_servicio.push(object);
                         }
                         this.state.markerPosition = {
-                            lat: parseFloat(response.data.informacion.latitud == null ? '0' : response.data.informacion.latitud),
-                            lng: parseFloat(response.data.informacion.longitud == null ? '0' : response.data.informacion.longitud),
-                        },
+                            lat: parseFloat(response.data.informacion.latitud == null ? 0 : response.data.informacion.latitud * 1),
+                            lng: parseFloat(response.data.informacion.longitud == null ? 0 : response.data.informacion.longitud * 1),
+                        };
+                        this.state.mapPosition = {
+                            lat: parseFloat(response.data.informacion.latitud == null ? 0 : response.data.informacion.latitud * 1),
+                            lng: parseFloat(response.data.informacion.longitud == null ? 0 : response.data.informacion.longitud * 1),
+                        };
                         this.setState({
                             loadingcomponent: true,
                             nombre: response.data.informacion.nombre == null ? '' : response.data.informacion.nombre,
@@ -140,6 +156,7 @@ class ShowMySolicitud extends Component {
                             zona: response.data.informacion.zona == null ? '' : response.data.informacion.zona,
 
                             markerPosition: this.state.markerPosition,
+                            mapPosition: this.state.mapPosition,
                             selected_servicio: this.state.selected_servicio,
 
                             montototal: response.data.solicitud.montototal,
@@ -515,30 +532,6 @@ class ShowMySolicitud extends Component {
         var colordanger = this.props.buttoncolor == '' ? 'danger' : 'outline-' + this.props.buttoncolor;
         var colorback = this.props.buttoncolor == '' ? 'focus' : this.props.buttoncolor;
 
-        const WrappedMap = withScriptjs( withGoogleMap(
-            props => <GoogleMap 
-                defaultZoom={15}
-                defaultCenter={ {lat: this.state.mapPosition.lat, lng: this.state.mapPosition.lng,} }
-            >
-                <Marker
-                    position={{ lat: this.state.markerPosition.lat, lng: this.state.markerPosition.lng }}
-                />
-                <InfoWindow
-                    position={{ lat: (this.state.markerPosition.lat + 0.0018), lng: this.state.markerPosition.lng }}
-                >
-                    <div>
-                        <div style={{textAlign: 'center', paddingBottom: 8, paddingTop: 2,}}>
-                            <span style={{ padding: 0, margin: 0, fontWeight: 'bold' }}>
-                                {this.state.nombre} {this.state.apellido}
-                            </span>
-                        </div>
-                        <span style={{ padding: 0, margin: 0 }}>
-                            {this.state.direccioncompleto}
-                        </span>
-                    </div>
-                </InfoWindow>
-            </GoogleMap>
-        ) );
 
         var estado = this.state.estadoproceso;
         estado = (estado == 'P') ? 'PENDIENTE' : (estado == 'E') ? 'EN PROCESO' : (estado == 'C') ? 'CANCELADO' : (estado == 'N') ? 'FALLIDO' : 'FINALIZADO';
@@ -833,6 +826,79 @@ class ShowMySolicitud extends Component {
                                     </table>
                                 </div>
                             </div>
+                            
+                            {this.state.estadoproceso == 'E' ?
+                                <div className='forms-groups'>
+                                    <div className='cols-lg-12 cols-md-12 cols-sm-12 cols-xs-12'>
+                                        <div className='inputs-groups'>
+                                            <input type='text' readOnly
+                                                className={`forms-control title_form ${this.props.buttoncolor}`} value={'SEGUIMIENTO'}
+                                            />
+                                        </div>
+                                    </div>
+                                </div> : null
+                            }
+                            
+                            {this.state.estadoproceso == 'E' ?
+                                <div className="forms-groups">
+                                    <div className='cols-lg-12 cols-md-12 cols-sm-12 cols-xs-12'>
+                                        <div className='inputs-groups'>
+                                            <div style={{width: '100%', height: 400, }}>
+                                            <WrappedMap 
+                                                // googleMapURL={'https://maps.googleapis.com/maps/api/js?key=AIzaSyAofod0Bp0frLcLHVLxuacn0QBXqVyJ7lc&callback=initMap'}
+                                                googleMapURL={'https://maps.googleapis.com/maps/api/js?key=AIzaSyAofod0Bp0frLcLHVLxuacn0QBXqVyJ7lc&v=3.exp&libraries=geometry,drawing,places'}
+                                                loadingElement={ <div style={ {height:'100%', } }></div> }
+                                                containerElement={ <div style={ {height: '100%',} }></div> }
+                                                mapElement={ <div style={ {height: '100%',} }></div> }
+
+                                                latitud={ this.state.mapPosition.lat }
+                                                longitud={ this.state.mapPosition.lng }
+                                            >
+
+                                                <Marker 
+                                                    name={'LIMSERVIP'}
+                                                    position={{ lat: -17.775404, lng: -63.165923, }}
+                                                    icon={'/img/marker_limservip.png'}
+                                                >
+                                                    <InfoWindow 
+                                                        position={{ lat: (-17.775404 * 1 + 0.0018), lng: -63.165923 * 1 }}
+                                                    >
+                                                        <div>
+                                                            <div>
+                                                                <span role="img" style={{marginRight: 6, fontWeight: 'bold', }}>
+                                                                    <label style={{fontSize: 12,}}>LIMSERVIP</label> 
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </InfoWindow>
+                                                </Marker>
+
+                                                <Marker
+                                                    draggable={true}
+                                                    //onDragEnd={this.onMarkerDragEnd.bind(this)}
+                                                    position={{ lat: this.state.markerPosition.lat * 1, lng: this.state.markerPosition.lng * 1 }}
+                                                >
+                                                    <InfoWindow
+                                                        //onClose={this.onInfoWindowClose.bind(this)}
+                                                        position={{ lat: (this.state.markerPosition.lat * 1 + 0.0018), lng: this.state.markerPosition.lng * 1 }}
+                                                    >
+                                                        <div>
+                                                            <span style={{ padding: 0, margin: 0 }}>
+                                                                {this.state.direccioncompleto}
+                                                            </span>
+                                                        </div>
+                                                    </InfoWindow>
+                                                </Marker>
+
+                                            </WrappedMap>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div> : 
+                                null
+                            }
+
+                            
                             <div className='forms-groups'>
                                 <div className='cols-lg-12 cols-md-12 cols-sm-12 cols-xs-12'>
                                     <div className='inputs-groups'>
@@ -967,7 +1033,46 @@ class ShowMySolicitud extends Component {
                                                 loadingElement={ <div style={ {height:'100%', } }></div> }
                                                 containerElement={ <div style={ {height: '100%',} }></div> }
                                                 mapElement={ <div style={ {height: '100%',} }></div> }
-                                            />
+
+                                                latitud={ this.state.mapPosition.lat }
+                                                longitud={ this.state.mapPosition.lng }
+                                            >
+
+                                                <Marker 
+                                                    name={'LIMSERVIP'}
+                                                    position={{ lat: -17.775404, lng: -63.165923, }}
+                                                    icon={'/img/marker_limservip.png'}
+                                                >
+                                                    <InfoWindow 
+                                                        position={{ lat: (-17.775404 + 0.0018), lng: -63.165923 }}
+                                                    >
+                                                        <div>
+                                                            <div>
+                                                                <span role="img" style={{marginRight: 6, fontWeight: 'bold', }}>
+                                                                    <label style={{fontSize: 12,}}>LIMSERVIP</label> 
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </InfoWindow>
+                                                </Marker>
+
+                                                <Marker
+                                                    // draggable={true}
+                                                    //onDragEnd={this.onMarkerDragEnd.bind(this)}
+                                                    position={{ lat: this.state.markerPosition.lat * 1, lng: this.state.markerPosition.lng * 1 }}
+                                                >
+                                                    <InfoWindow
+                                                        //onClose={this.onInfoWindowClose.bind(this)}
+                                                        position={{ lat: (this.state.markerPosition.lat * 1 + 0.0018), lng: this.state.markerPosition.lng * 1 }}
+                                                    >
+                                                        <div>
+                                                            <span style={{ padding: 0, margin: 0 }}>
+                                                                {this.state.direccioncompleto}
+                                                            </span>
+                                                        </div>
+                                                    </InfoWindow>
+                                                </Marker>
+                                            </WrappedMap>
                                         </div>
                                     </div>
                                 </div>
