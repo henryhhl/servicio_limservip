@@ -61,11 +61,32 @@ class UsuarioController extends Controller
                 ->groupBy('mes')
                 ->orderBy('soli.fecha')
                 ->get();
+
+
+            $data = DB::table('solicitud as sol')
+                ->leftJoin('users as user', 'sol.fkidusuario', '=', 'user.id')
+                ->leftJoin('informacion as info', 'sol.idsolicitud', '=', 'info.fkidsolicitud')
+                ->leftJoin('solicituddetalle as soldet', 'sol.idsolicitud', '=', 'soldet.fkidsolicitud')
+                ->leftJoin('asignartrabajo as asignar', 'soldet.idsolicituddetalle', '=', 'asignar.fkidsolicituddetalle')
+                ->leftJoin('asignardetalle as asignardet', 'asignar.idasignartrabajo', '=', 'asignardet.fkidasignartrabajo')
+                ->leftJoin('personal as pers', 'asignardet.fkidpersonal', '=', 'pers.idpersonal')
+                ->select( 'sol.idsolicitud as id', 'sol.montototal', 'sol.estadoproceso', 'sol.fecha', 'sol.hora', 'sol.nota',
+                    'user.nombre as usuario', 'user.apellido as apellidouser',
+                    'info.nombre', 'info.apellido', 'info.pais', 'info.ciudad', 'info.direccion', 'info.direccioncompleto',
+                    'info.telefono', 'info.email'
+                )
+                ->where('sol.estado', '=', 'A')
+                ->where('sol.estadoproceso', '=', 'E')
+                ->where('pers.fkidusuario', '=', Auth::user()->id)
+                ->whereNull('sol.deleted_at')
+                ->orderBy('sol.idsolicitud', 'desc')
+                ->get();
             
             return response()->json([
                 'response' => 1,
                 'solicitud' => $solicitud,
                 'solicitud_mes' => $solicitud_mes,
+                'data' => $data,
             ]);
 
         } catch(\Exception $th) {

@@ -3,7 +3,8 @@ import React, { Component } from 'react';
 import {Redirect} from 'react-router-dom';
 import axios from 'axios';
 
-import { notification, Card, Transfer, Switch, Button, Modal, DatePicker } from 'antd';
+import { notification, Card, Transfer, Switch, Button, Modal, DatePicker, Tag } from 'antd';
+import { EnvironmentOutlined } from '@ant-design/icons';
 import 'antd/dist/antd.css';
 import web from './utils/services';
 
@@ -15,6 +16,7 @@ import PropTypes from 'prop-types';
 import { GoogleMap, InfoWindow, Marker, withGoogleMap, withScriptjs } from 'react-google-maps';
 
 import moment from 'moment';
+
 
 function Map() {
     return (
@@ -69,6 +71,8 @@ export default class Home extends Component {
                 "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE"
             ],
             array_solicitudpormes: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+
+            array_solicitudpersonal: [],
         }
     }
 
@@ -128,6 +132,8 @@ export default class Home extends Component {
                         this.state.array_solicitudpormes[element.mes * 1 - 1] = element.cantidad;
                     }
 
+                    this.props.getsolicitudasignado(response.data.data);
+
                     this.setState({
                         yearpormes: year,
                         yearpordia: year,
@@ -141,11 +147,13 @@ export default class Home extends Component {
                         array_solicitudpordia: this.state.array_solicitudpordia,
 
                         array_solicitudpormes: this.state.array_solicitudpormes,
+                        array_solicitudpersonal: response.data.data,
                     }, () => {
                         setTimeout(() => {
                             this.setState({ loading: true, });
                         }, 500);
-                    })
+                    });
+                    
                     return;
                 }
                 Modal.error({
@@ -296,7 +304,13 @@ export default class Home extends Component {
             }
         );
     }
+    onShow(data, event) {
+        event.preventDefault();
+        this.props.history.push( web.serv_link + '/mysolicitud_asignado/show/' + data.id);
+    }
     render() {
+
+        console.log(this.props.solicitud)
 
         if (!this.state.loading) {
         
@@ -323,6 +337,11 @@ export default class Home extends Component {
                 </div>
             );
         }
+
+        var optionshow = this.props.buttoncolor == '' ? 'success' : 'outline-' + this.props.buttoncolor;
+        var optionsmarker = this.props.buttoncolor == '' ? 'primary' : 'outline-' + this.props.buttoncolor;
+
+        console.log(this.props.solicitud)
 
         return (
             <div style={{'width': '100%'}}>
@@ -352,6 +371,15 @@ export default class Home extends Component {
                                 <i className="header-icon lnr-laptop-phone mr-3 text-muted opacity-6"> </i>
                                     BIENVENIDO AL SISTEMA LIMSERVIP
                             </div>
+                            {(this.props.idrol == 4) ?
+                                <div className="btn-actions-pane-right text-capitalize mb-2">
+                                    <button className={"btn-shadow btn btn-info" }
+                                        //onClick={this.onAdd.bind(this)}
+                                    >
+                                        INICIAR TRABAJO
+                                    </button> 
+                                </div> : null 
+                            }
                         </div>
                     </div>
                     <div className="tabs-animation">
@@ -458,7 +486,91 @@ export default class Home extends Component {
                                         </Card>
                                     </div>
                                 </div> : 
-                                <div className="cards"></div>
+                                (this.props.idrol == 4) ?
+                                    <div className="cards">
+                                        <div className="card-header-tab card-header mt-4" style={{border: '1px solid transparent'}}>
+                                            <div className="card-header-title font-size-lg text-capitalize font-weight-normal mb-4">
+                                                <i className="header-icon lnr-charts icon-gradient bg-happy-green"> </i>
+                                                    MI SOLICITUD DE PEDIDO ASIGNADO
+                                            </div>
+                                        </div>
+                                        <div className="forms-groups">
+                                            <div className="tabless">
+                                                <table className="tables-respons">
+                                                    <thead>
+                                                        <tr>
+                                                            <td>NRO</td>
+                                                            <td>Cliente</td>
+                                                            <td>Direccion</td>
+                                                            <td>Email</td>
+                                                            <td>Telefono</td>
+                                                            <td>Monto</td>
+                                                            <td>Estado</td>
+                                                            <td>Opcion</td>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {this.props.solicitud.map(
+                                                            (data, key) => (
+                                                                <tr key={key}>
+                                                                    <td>
+                                                                        <label className='cols_show'>NRO: </label>
+                                                                        {key + 1}
+                                                                    </td>
+                                                                    <td>
+                                                                        <label className='cols_show'>Cliente: </label>
+                                                                            {data.apellido == null ? data.nombre : data.nombre + ' ' + data.apellido} &nbsp;
+                                                                    </td>
+                                                                    <td>
+                                                                        <label className='cols_show'>Direccion: </label>
+                                                                        {data.direccion == null ? '' : data.direccion}
+                                                                    </td>
+                                                                    <td>
+                                                                        <label className='cols_show'>Email: </label>
+                                                                        {data.email == null ? '' : data.email}
+                                                                    </td>
+                                                                    <td>
+                                                                        <label className='cols_show'>Telefono: </label>
+                                                                        {data.telefono == null ? '' : data.telefono}
+                                                                    </td>
+                                                                    <td>
+                                                                        <label className='cols_show'>Monto: </label>
+                                                                        {data.montototal}
+                                                                    </td>
+                                                                    <td>
+                                                                        <label className='cols_show'>Estado: </label>
+                                                                        <Tag color={(data.estadoproceso == 'P') ? 'warning' : (data.estadoproceso == 'E') ? 'processing' : 
+                                                                                (data.estadoproceso == 'C') ? 'red' : (data.estadoproceso == 'N') ? 'red' : 'success'
+                                                                            }
+                                                                        >
+                                                                            {(data.estadoproceso == 'P') ? 'PENDIENTE' : (data.estadoproceso == 'E') ? 'EN PROCESO' : 
+                                                                                (data.estadoproceso == 'C') ? 'CANCELADO' : (data.estadoproceso == 'N') ? 'FALLIDO' : 'FINALIZADO'
+                                                                            }
+                                                                        </Tag>
+                                                                    </td>
+                                                                    <td>
+                                                                        <button className={"mb-2 mr-2 btn-hover-shine btn btn-xs btn-" + optionshow }
+                                                                            onClick={this.onShow.bind(this, data)}
+                                                                        >
+                                                                            <i className='fa fa-eye'></i>
+                                                                        </button> 
+                                                                        <button className={"mb-2 mr-2 btn-hover-shine btn btn-xs btn-" + optionsmarker }
+                                                                            onClick={this.onShow.bind(this, data)}
+                                                                        >
+                                                                            <EnvironmentOutlined />
+                                                                        </button> 
+                                                                        
+                                                                    </td>
+                                                                </tr>
+                                                            )
+                                                        )}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div> 
+                                    : 
+                                    <div className="cards"></div>
                             }
                         </div>
 
@@ -473,12 +585,16 @@ export default class Home extends Component {
 Home.propTypes = {
     permisos_habilitados: PropTypes.array,
     idrol: PropTypes.any,
+    solicitud: PropTypes.array,
+    buttoncolor: PropTypes.string,
 }
 
 
 Home.defaultProps = {
     permisos_habilitados: [],
     idrol: null,
+    solicitud: [],
+    buttoncolor: '',
 }
 
 

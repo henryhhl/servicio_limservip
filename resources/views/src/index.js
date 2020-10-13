@@ -171,6 +171,16 @@ export default class Index extends Component {
             array_notificacion: [],
 
             cargando: this.get_notificacion(),
+            ubicacionactual: this.mi_ubicacion_actual(),
+
+            mapPosition: {
+                lat: 0,
+                lng: 0,
+            },
+            markerPosition: {
+                lat: 0,
+                lng: 0,
+            },
 
         }
     }
@@ -224,6 +234,43 @@ export default class Index extends Component {
                 centered: true,
             });
         } );
+    }
+    mi_ubicacion_actual() {
+        setInterval(() => {
+            if (this.state.loading_page) {
+                if (this.state.usuario.idrol == 4) {
+                    if (navigator.geolocation) {
+            
+                        navigator.geolocation.getCurrentPosition(position => {
+                            
+                            var obj = {
+                                lat: position.coords.latitude,
+                                lng: position.coords.longitude,
+                            };
+
+                            if (obj.lat != this.state.markerPosition.lat || obj.lng != this.state.markerPosition.lng) {
+                                this.setState({
+                                    mapPosition: {
+                                        lat: position.coords.latitude,
+                                        lng: position.coords.longitude,
+                                    },
+                                    markerPosition: {
+                                        lat: position.coords.latitude,
+                                        lng: position.coords.longitude,
+                                    }
+                                });
+    
+                                console.log(position.coords)
+                            }
+
+                        }
+                    );
+                    } else {
+                        console.error("Geolocation is not supported by this browser!");
+                    }
+                }
+            }
+        }, 3000);
     }
     get_notificacion() {
         setInterval(() => {
@@ -327,6 +374,12 @@ export default class Index extends Component {
             paginate: this.state.paginate,
             visible_drawer: false,
             visitasitio: visitasitio,
+        });
+    }
+    getsolicitudasignado(data) {
+        this.setState({
+            array_solicitud: data,
+            visible_drawer: false,
         });
     }
     getsolicitud(data, pagination, page, visitasitio = '') {
@@ -904,6 +957,9 @@ export default class Index extends Component {
                                                 logout={this.onLogout.bind(this)}
                                                 permisos_habilitados={this.state.permisos_habilitados}
                                                 idrol={this.state.usuario.idrol}
+                                                getsolicitudasignado={this.getsolicitudasignado.bind(this)}
+                                                solicitud={this.state.array_solicitud}
+                                                buttoncolor={this.state.layoutoption.buttoncolor}
                                                 { ...props} 
                                             />
                                         } 
