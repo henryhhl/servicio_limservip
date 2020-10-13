@@ -50,7 +50,7 @@ class UsuarioController extends Controller
                 ->whereNull('soli.deleted_at')
                 ->groupBy('soli.fecha')
                 ->orderBy('soli.fecha')
-                ->get();
+                ->get(); 
 
             $solicitud_mes = DB::table('solicitud as soli')
                 ->select( 
