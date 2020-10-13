@@ -197,22 +197,13 @@ class SeguimientoController extends Controller
 
         try {
 
-            $idusuario = $request->input('idusuario');
-            $nickname = $request->input('nickname');
-            $nombre = $request->input('nombre');
-            $apellido = $request->input('apellido');
+            $fkidusuario = $request->input('fkidusuario');
             $latitud = $request->input('latitud');
             $longitud = $request->input('longitud');
-
-
-            /*  notificacion web */
-
+            $nickname = $request->input('nickname');
 
             $obj = new \stdClass;
-            $obj->idusuario = $idusuario;
-            $obj->nickname = $nickname;
-            $obj->nombre = $nombre;
-            $obj->apellido = $apellido;
+            $obj->fkidusuario = $fkidusuario;
             $obj->latitud = $latitud;
             $obj->longitud = $longitud;
         
