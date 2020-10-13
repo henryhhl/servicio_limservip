@@ -43,6 +43,7 @@ class UsuarioController extends Controller
             $solicitud = DB::table('solicitud as soli')
                 ->select( 
                     DB::raw("DATE_TRUNC('day', soli.fecha) as dia"), DB::raw("COUNT(*) as cantidad")
+                    // DB::raw("DAY(soli.fecha) as dia"), DB::raw("COUNT(*) as cantidad")
                 )
                 ->where('soli.estado', '=', 'A')
                 ->where([ ['soli.fecha', '>=', $fechainicio], ['soli.fecha', '<=', $fechafin] ])
@@ -54,6 +55,7 @@ class UsuarioController extends Controller
             $solicitud_mes = DB::table('solicitud as soli')
                 ->select( 
                     DB::raw("DATE_TRUNC('month', soli.fecha) as mes"), DB::raw("COUNT(*) as cantidad")
+                    // DB::raw("MONTH(soli.fecha) as mes"), DB::raw("COUNT(*) as cantidad")
                 )
                 ->where('soli.estado', '=', 'A')
                 ->where([ ['soli.fecha', '>=', $fechainiciomes], ['soli.fecha', '<=', $fechafinmes] ])
