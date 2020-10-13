@@ -232,6 +232,72 @@ class SolicitudMovilController extends Controller
         }
     }
 
+    public function Cancelar(Request $request){
+        try {
+
+            DB::beginTransaction();
+
+           // $estado = $request->input('proceso');
+            //$id = $request->input('id');
+            $sol = $request->solicitud;
+            $idusuario = $request->cliente;
+
+            /*$asignar = DB::table('asignartrabajo as at')
+            ->join('solicituddetalle as soldet','soldet.idsolicituddetalle','=','at.fkidsolicituddetalle')
+            ->select('soldet.fkidsolicitud')
+            ->where('soldet.fkidsolicitud','=',$solicitud)
+            ->get();
+
+            if(count($asignar) > 0){
+                return response()->json([
+                    'response'  => 0,
+                ]);
+            }*/
+
+            $data = Solicitud::findOrFail($sol);
+            $data->estadoproceso = 'C';
+            $data->update();
+
+                
+            $detalle = DB::table('solicituddetalle as det')
+                ->leftJoin('asignartrabajo as asignar', 'det.idsolicituddetalle', '=', 'asignar.fkidsolicituddetalle')
+                ->leftJoin('asignardetalle as asig', 'asignar.idasignartrabajo', '=', 'asig.fkidasignartrabajo')
+                ->select('asig.fkidpersonal', 'asig.idasignardetalle as id')
+                ->where('det.fkidsolicitud', '=', $id)
+                ->get();
+
+            foreach ($detalle as $det) {
+                $asignar = AsignarDetalle::findOrFail($det->id);
+                $asignar->estadoproceso = 'F';
+                $asignar->update();
+            }
+
+            //$idusuario = Auth::user()->id;
+
+            $notificacion = new Notificacion();
+            $notificacion->updateestado($data->idsolicitud, 'C', $idusuario);
+
+            DB::commit();
+
+            return response()->json([
+                'response'  => 1,
+            ]);
+
+        }catch(\Exception $th) {
+            DB::rollBack();
+            return response()->json([
+                'response' => 0,
+                'message' => 'Error al procesar la solicitud',
+                'error' => [
+                    'file'    => $th->getFile(),
+                    'line'    => $th->getLine(),
+                    'message' => $th->getMessage()
+                ]
+            ]);
+        }
+
+    }
+
     public function store(Request $request){
         
         try {
